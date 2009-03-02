@@ -28,6 +28,7 @@
 #import "RMMarker.h"
 #import "RMMarkerStyle.h"
 #import "RMMarkerStyles.h"
+#import "RMMarkerManager.h"
 
 #import "RMPixel.h"
 
@@ -42,6 +43,8 @@ static CGImageRef _markerBlue = nil;
 @synthesize location;
 @synthesize data;
 @synthesize labelView;
+@synthesize manager;
+@synthesize markerChangeDelegate;
 
 + (RMMarker*) markerWithNamedStyle: (NSString*) styleName
 {
@@ -122,6 +125,10 @@ static CGImageRef _markerBlue = nil;
 	}
 }
 
+- (BOOL) canDragWithPoint:(CGPoint)point
+{
+    return YES;
+}
 
 - (void) setTextLabel: (NSString*)text
 {
@@ -195,6 +202,19 @@ static CGImageRef _markerBlue = nil;
 {
 	self.labelView = nil;
 	self.data = nil;
+
+     if (_markerBlue && ([(id)_markerBlue retainCount] == 1))
+     {
+         [(id)_markerBlue release];
+         _markerBlue = nil;
+     }
+     if (_markerRed && ([(id)_markerRed retainCount] == 1))
+     {
+         [(id)_markerRed release];
+         _markerRed = nil;
+     }
+
+
 	[super dealloc];
 }
 
@@ -226,7 +246,7 @@ static CGImageRef _markerBlue = nil;
 		|| [RMMarkerBlueKey isEqualToString:key])
 	{
 		if (_markerBlue == nil)
-			_markerBlue = [self loadPNGFromBundle:@"marker-blue"];
+			_markerBlue = (CGImageRef)[(id)[self loadPNGFromBundle:@"marker-blue"] retain];
 		
 		return _markerBlue;
 	}
@@ -234,7 +254,7 @@ static CGImageRef _markerBlue = nil;
 		|| [RMMarkerRedKey isEqualToString: key])
 	{
 		if (_markerRed == nil)
-			_markerRed = [self loadPNGFromBundle:@"marker-red"];
+			_markerRed = (CGImageRef)[(id)[self loadPNGFromBundle:@"marker-red"] retain];
 		
 		return _markerRed;
 	}
@@ -252,6 +272,18 @@ static CGImageRef _markerBlue = nil;
 	[self setHidden:NO];
 }
 
+- (void) focusSelf
+{
+    if (! [self focused])
+    {
+        [manager focusMarker:self];
+    }
+}
+
+- (BOOL) focused
+{
+    return (self.zPosition > 0.5);
+}
 
 /*- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {

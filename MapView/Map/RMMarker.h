@@ -34,9 +34,23 @@
 extern NSString * const RMMarkerBlueKey;
 extern NSString * const RMMarkerRedKey;
 
+@class RMMarkerManager;
+
+@class RMMarker;
+
+
+@protocol RMMarkerChangeDelegate
+
+- (void)markerChanged:(RMMarker*)marker;
+- (void)marker:(RMMarker*)marker focused:(BOOL)focus;
+
+@end
+
 @interface RMMarker : RMMapLayer <RMMovingMapLayer> {
-	RMXYPoint location;	
+	RMXYPoint location;
+    RMMarkerManager *manager;
 	NSObject* data;
+    id<RMMarkerChangeDelegate> markerChangeDelegate;
 	
 	// A label which comes up when you tap the marker
 	UIView* labelView;
@@ -60,6 +74,10 @@ extern NSString * const RMMarkerRedKey;
 - (void) showLabel;
 - (void) hideLabel;
 - (void) removeLabel;
+- (void) focusSelf;
+- (BOOL) focused;
+
+- (BOOL) canDragWithPoint:(CGPoint)point;
 
 - (void) replaceImage:(CGImageRef)image anchorPoint:(CGPoint)_anchorPoint;
 - (void) hide;
@@ -70,6 +88,8 @@ extern NSString * const RMMarkerRedKey;
 @property (assign, nonatomic) RMXYPoint location;
 @property (retain) NSObject* data;
 @property (nonatomic, retain) UIView* labelView;
+@property (nonatomic,assign) RMMarkerManager *manager;
+@property (nonatomic,assign) id<RMMarkerChangeDelegate> markerChangeDelegate;
 
 // Call this with either RMMarkerBlue or RMMarkerRed for the key.
 + (CGImageRef) markerImage: (NSString *) key;
