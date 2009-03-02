@@ -34,9 +34,11 @@
 
 @interface RMMarkerManager : NSObject {
 	RMMapContents *contents;
+    RMMarker *focused;
 }
 
 @property (assign, readwrite)  RMMapContents *contents;
+@property (readonly, assign) RMMarker *focused;
 
 - (id)initWithContents:(RMMapContents *)mapContents;
 
@@ -46,6 +48,8 @@
 - (void) removeMarkers;
 - (void) hideAllMarkers;
 - (void) unhideAllMarkers;
+
+- (void)focusMarker:(RMMarker*)marker;
 
 - (NSArray *)getMarkers;
 - (void) removeMarker:(RMMarker *)marker;

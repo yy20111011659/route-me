@@ -56,6 +56,7 @@ typedef struct {
 	RMGestureDetails lastGesture;
 	float decelerationFactor;
 	BOOL deceleration;
+    CALayer *draggable;
 }
 
 // Any other functions you need to manipulate the mapyou can access through this

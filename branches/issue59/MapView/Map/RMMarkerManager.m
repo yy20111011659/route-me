@@ -33,6 +33,7 @@
 @implementation RMMarkerManager
 
 @synthesize contents;
+@synthesize focused;
 
 - (id)initWithContents:(RMMapContents *)mapContents
 {
@@ -56,6 +57,7 @@
 
 - (void) addMarker: (RMMarker*)marker
 {
+    marker.manager = self;
 	[[contents overlay] addSublayer:marker];
 }
 
@@ -74,6 +76,10 @@
 
 - (void) removeMarkers
 {
+    for (RMMarker *marker in [[contents overlay] sublayers])
+    {
+        marker.manager = nil;
+    }
 	[[contents overlay] setSublayers:[NSArray arrayWithObjects:nil]]; 
 }
 
@@ -98,11 +104,16 @@
 
 - (void) removeMarker:(RMMarker *)marker
 {
+    marker.manager = nil;
 	[[contents overlay] removeSublayer:marker];
 }
 
 - (void) removeMarkers:(NSArray *)markers
 {
+    for (RMMarker *marker in markers)
+    {
+        marker.manager = nil;
+    }
 	[[contents overlay] removeSublayers:markers];
 }
 
@@ -128,6 +139,25 @@
 	}
 	
 	return markersInScreenBounds;
+}
+
+
+- (void)focusMarker:(RMMarker*)marker
+{
+    for (RMMarker *m in [self getMarkers])
+    {
+        if (m != marker)
+        {
+            if (m.zPosition != 0)
+            {
+                m.zPosition = 0;
+                [m.markerChangeDelegate marker:m focused:NO];
+            }
+        }
+    }
+    marker.zPosition = 1;
+    focused = marker;
+    [marker.markerChangeDelegate marker:marker focused:YES];
 }
 
 - (BOOL) isMarkerWithinScreenBounds:(RMMarker*)marker
@@ -165,12 +195,14 @@
 {
 	[marker setLocation:[[contents projection]latLongToPoint:point]];
 	[marker setPosition:[[contents mercatorToScreenProjection] projectXYPoint:[[contents projection] latLongToPoint:point]]];
+    [marker.markerChangeDelegate markerChanged:marker];
 }
 
 - (void) moveMarker:(RMMarker *)marker AtXY:(CGPoint)point
 {
 	[marker setLocation:[[contents mercatorToScreenProjection] projectScreenPointToXY:point]];
 	[marker setPosition:point];
+    [marker.markerChangeDelegate markerChanged:marker];
 }
 
 @end

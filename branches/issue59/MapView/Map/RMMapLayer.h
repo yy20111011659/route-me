@@ -43,3 +43,9 @@
 @property (assign, nonatomic) RMXYPoint location;
 
 @end
+
+@protocol RMScalingMapLayer
+
+@property (assign, nonatomic) CGFloat metersPerPixel;
+
+@end

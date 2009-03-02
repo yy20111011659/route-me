@@ -60,6 +60,11 @@
 		RMXYPoint location = [layer_with_proto location];
 		layer_with_proto.position = [[mapContents mercatorToScreenProjection] projectXYPoint:location];
 	}
+    if ([layer conformsToProtocol:@protocol(RMScalingMapLayer)])
+    {
+        CALayer<RMScalingMapLayer>* layer_with_proto = (CALayer<RMScalingMapLayer>*)layer;
+        layer_with_proto.metersPerPixel = [mapContents mercatorToScreenProjection].scale;
+    }
 }
 
 
