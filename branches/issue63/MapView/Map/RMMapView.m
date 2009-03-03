@@ -53,7 +53,6 @@
 	BOOL delegateHasTapOnMarker;
 	BOOL delegateHasTapOnLabelForMarker;
 	BOOL delegateHasAfterMapTouch;
-	BOOL delegateHasDragMarkerPosition;
 	NSTimer *decelerationTimer;
 	CGSize decelerationDelta;
 @end
@@ -180,8 +179,6 @@
 	delegateHasTapOnLabelForMarker = [(NSObject*) delegate respondsToSelector:@selector(tapOnLabelForMarker:onMap:)];
 	
 	delegateHasAfterMapTouch  = [(NSObject*) delegate respondsToSelector: @selector(afterMapTouch:)];
-	
-	delegateHasDragMarkerPosition = [(NSObject*) delegate respondsToSelector: @selector(dragMarkerPosition: onMap: position:)];
 }
 
 - (id<RMMapViewDelegate>) delegate
@@ -456,15 +453,18 @@
 	CALayer* hit = [contents.overlay hitTest:[touch locationInView:self]];
 //	NSLog(@"LAYER of type %@",[hit description]);
 	
-	if (hit != nil) {
-		
-		if ([hit isKindOfClass: [RMMarker class]]) {
-			if (delegateHasDragMarkerPosition) {
-				[delegate dragMarkerPosition:(RMMarker*)hit onMap:self position:[[[event allTouches] anyObject]locationInView:self]];
-				return;
-			}
-		}
-	}
+   if (hit != nil) {
+
+      if ([hit isMemberOfClass: [RMMarker class]]) {
+         BOOL delegateShouldMoveMarker = [(NSObject*) delegate respondsToSelector: @selector(mapView: shouldDragMarker: withEvent:)];
+         if ((delegateShouldMoveMarker && [delegate mapView:self shouldDragMarker:(RMMarker*)hit withEvent:event]) || !delegateShouldMoveMarker) {
+            if ([(NSObject*) delegate respondsToSelector: @selector(mapView: didDragMarker: withEvent:)]) {
+               [delegate mapView:self didDragMarker:(RMMarker*)hit withEvent:event];
+               return;
+            }
+         }
+      }
+   }
 	
 	RMGestureDetails newGesture = [self getGestureDetails:[event allTouches]];
 	
