@@ -414,14 +414,6 @@
 {
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
 	UITouch *touch = [[touches allObjects] objectAtIndex:0];
-	
-    if (draggable)
-    {
-        if (delegateHasDidDragMarker)
-        {
-            [delegate mapView:self didDragMarker:(RMMarker*)draggable];
-        }
-    }
     
 	//Check if the touch hit a RMMarker subclass and if so, forward the touch event on
 	//so it can be handled there
@@ -434,6 +426,17 @@
 	}
 	NSInteger lastTouches = lastGesture.numTouches;
 	
+    
+    if (draggable)
+    {
+        if (delegateHasDidDragMarker)
+        {
+            [delegate mapView:self didDragMarker:(RMMarker*)draggable];
+        }
+        draggable = nil;
+        return;
+    }
+    
 	// Calculate the gesture.
 	lastGesture = [self getGestureDetails:[event allTouches]];
 
@@ -467,7 +470,7 @@
 	}
 	
 		
-	if ((touch.tapCount == 1) && (! draggable)) 
+	if (touch.tapCount == 1) 
 	{
 		CALayer* hit = (CALayer*)furthestLayerDown;
 //		NSLog(@"LAYER of type %@",[hit description]);
@@ -508,21 +511,26 @@
 		}
 	}
 	
-	CALayer* hit = (CALayer*)furthestLayerDown;
-//	NSLog(@"LAYER of type %@",[hit description]);
-	
-	if (hit && (hit == draggable)) {
-		
-		if ([hit isKindOfClass: [RMMarker class]]) {
+	if (draggable) {
+        if ([[event allTouches] count] != 1)
+        {
+            if (delegateHasDidDragMarker)
+            {
+                [delegate mapView:self didDragMarker:(RMMarker*)draggable];
+            }
+            draggable = nil;
+        }
+        
+		if ([draggable isKindOfClass: [RMMarker class]]) {
 			if (delegateHasDragMarkerPosition) {
-				[delegate dragMarkerPosition:(RMMarker*)hit onMap:self position:[touch locationInView:self]];
-				return;
+				[delegate dragMarkerPosition:(RMMarker*)draggable onMap:self position:[touch locationInView:self]];
+                return;
 			}
 		}
 	}
-	
+    
 	RMGestureDetails newGesture = [self getGestureDetails:[event allTouches]];
-	
+    
 	if (enableDragging && newGesture.numTouches == lastGesture.numTouches)
 	{
 		CGSize delta;
