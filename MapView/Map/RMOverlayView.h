@@ -36,9 +36,9 @@
 
 - (id)initWithContents:(RMMapContents *)contents andFrame:(CGRect)frame;
 
+// These are passed through to the underlying markerLayer
 - (void)correctPositionOfAllSublayers;
 - (void)moveBy:(CGSize)delta;
 - (void)zoomByFactor:(float)zoomFactor near:(CGPoint)pivot;
-
 
 @end
