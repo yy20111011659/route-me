@@ -52,7 +52,6 @@
 	BOOL delegateHasDoubleTapOnMap;
 	BOOL delegateHasSingleTapOnMap;
 	BOOL delegateHasTapOnMarker;
-	BOOL delegateHasTapOnLabelForMarker;
 	BOOL delegateHasAfterMapTouch;
 	BOOL delegateHasDragMarkerPosition;
     BOOL delegateHasFocusChangedToMarker;
@@ -181,7 +180,6 @@
 	delegateHasSingleTapOnMap = [(NSObject*) delegate respondsToSelector: @selector(singleTapOnMap:At:)];
 	
 	delegateHasTapOnMarker = [(NSObject*) delegate respondsToSelector:@selector(tapOnMarker:onMap:)];
-	delegateHasTapOnLabelForMarker = [(NSObject*) delegate respondsToSelector:@selector(tapOnLabelForMarker:onMap:withTouch:)];
     
     delegateHasFocusChangedToMarker = [(NSObject*) delegate respondsToSelector:@selector(mapView:focusChangedToMarker:fromMarker:)];
 	delegateHasShouldDragMarker = [(NSObject*) delegate respondsToSelector:@selector(mapView:shouldDragMarker:)];
@@ -334,6 +332,11 @@
                 return;
             }
         }
+        if (lastGesture.numTouches != 1)
+        {
+            draggable = nil;
+            return;
+        }
         if (delegateHasDragMarkerPosition) {
             [delegate dragMarkerPosition:(RMMarker*)draggable onMap:self position:lastGesture.center];
             return;
@@ -351,7 +354,7 @@
     draggable = nil;
     if ([furthestLayerDown isKindOfClass:[RMMarker class]])
     {
-        if ([ (RMMarker*)furthestLayerDown canDragWithPoint:[furthestLayerDown convertPoint:[touch locationInView:self] fromLayer:self.layer]])
+        if ([ (RMMarker*)furthestLayerDown canAcceptTouchWithPoint:[furthestLayerDown convertPoint:[touch locationInView:self] fromLayer:self.layer]])
         {
             RMMarker *oldFocus = self.markerManager.focused;
             [(RMMarker*)furthestLayerDown setFocused:YES];
@@ -464,29 +467,22 @@
 	}
 	
 		
-	if (touch.tapCount == 1) 
+	if ((touch.tapCount == 1) && (! draggable)) 
 	{
-		CALayer* hit = [contents.overlay.markerLayer hitTest:[touch locationInView:self]];
+		CALayer* hit = (CALayer*)furthestLayerDown;
 //		NSLog(@"LAYER of type %@",[hit description]);
 		
-		if (hit && (hit == draggable)) {
-			CALayer *superlayer = [hit superlayer];
+		if (hit) {
 			
 			// See if tap was on a marker or marker label and send delegate protocol method
 			if ([hit isKindOfClass: [RMMarker class]]) {
-		                if ([ (RMMarker*)hit canDragWithPoint:[hit convertPoint:[touch locationInView:self] fromLayer:self.layer]])
-       		         {
+                if ([ (RMMarker*)hit canAcceptTouchWithPoint:[hit convertPoint:[touch locationInView:self] fromLayer:self.layer]])
+                {
                     if (delegateHasTapOnMarker) {
                         [delegate tapOnMarker:(RMMarker*)hit onMap:self];
                     }
                 }
-			} else if (superlayer != nil && [superlayer isKindOfClass: [RMMarker class]]) {
-	
-				if (delegateHasTapOnLabelForMarker) {
-					[delegate tapOnLabelForMarker:(RMMarker*)superlayer onMap:self];
-				}
-			}
-			else if (delegateHasSingleTapOnMap) {
+			} else if (delegateHasSingleTapOnMap) {
 				[delegate singleTapOnMap: self At: [touch locationInView:self]];
 			}
 		}
@@ -505,21 +501,21 @@
 	//Check if the touch hit a RMMarker subclass and if so, forward the touch event on
 	//so it can be handled there
 	id furthestLayerDown = [[[self contents] overlay].markerLayer hitTest:[touch locationInView:self]];
-	if ([[furthestLayerDown class]isSubclassOfClass: [RMMarker class]]) {
+	if ([[furthestLayerDown class] isSubclassOfClass: [RMMarker class]]) {
 		if ([furthestLayerDown respondsToSelector:@selector(touchesMoved:withEvent:)]) {
 			[furthestLayerDown performSelector:@selector(touchesMoved:withEvent:) withObject:touches withObject:event];
 			return;
 		}
 	}
 	
-	CALayer* hit = [contents.overlay.markerLayer hitTest:[touch locationInView:self]];
+	CALayer* hit = (CALayer*)furthestLayerDown;
 //	NSLog(@"LAYER of type %@",[hit description]);
 	
-	if (hit != nil) {
+	if (hit && (hit == draggable)) {
 		
 		if ([hit isKindOfClass: [RMMarker class]]) {
 			if (delegateHasDragMarkerPosition) {
-				[delegate dragMarkerPosition:(RMMarker*)hit onMap:self position:[[[event allTouches] anyObject]locationInView:self]];
+				[delegate dragMarkerPosition:(RMMarker*)hit onMap:self position:[touch locationInView:self]];
 				return;
 			}
 		}

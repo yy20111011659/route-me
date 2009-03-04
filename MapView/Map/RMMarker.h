@@ -51,6 +51,10 @@ extern NSString * const RMMarkerRedKey;
     RMMarkerManager *manager;
 	NSObject* data;
     id<RMMarkerChangeDelegate> markerChangeDelegate;
+    
+    // The region, relative to bounds, in which touches will be accepted.
+    // By default, this is the full bounds.
+    CGRect touchAcceptRegion;
 	
 	// A label which comes up when you tap the marker
 	UIView* labelView;
@@ -82,8 +86,9 @@ extern NSString * const RMMarkerRedKey;
 - (void) setFocused:(BOOL)aFocused;
 - (BOOL) focused;
 
-// Subclasses can override this to specify whether a point is acceptable to begin dragging
-- (BOOL) canDragWithPoint:(CGPoint)point;
+// Subclasses can override this to specify whether a point is acceptable for touch
+// By default, observes the touchAcceptRegion property.
+- (BOOL) canAcceptTouchWithPoint:(CGPoint)point;
 
 - (void) replaceImage:(CGImageRef)image anchorPoint:(CGPoint)_anchorPoint;
 
@@ -92,6 +97,7 @@ extern NSString * const RMMarkerRedKey;
 @property (nonatomic, retain) UIView* labelView;
 @property (nonatomic,assign,setter=setMarkerManager:) RMMarkerManager *manager;
 @property (nonatomic,assign) id<RMMarkerChangeDelegate> markerChangeDelegate;
+@property (nonatomic,assign) CGRect touchAcceptRegion;
 
 
 @end
