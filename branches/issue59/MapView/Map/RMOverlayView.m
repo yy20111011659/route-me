@@ -55,6 +55,8 @@
     return self;
 }
 
+#pragma mark Forwarding to markerLayer
+
 - (void)correctPositionOfAllSublayers
 {
     [markerLayer correctPositionOfAllSublayers];

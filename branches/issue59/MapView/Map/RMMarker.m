@@ -44,6 +44,7 @@ static CGImageRef _markerBlue = nil;
 @synthesize data;
 @synthesize manager;
 @synthesize markerChangeDelegate;
+@synthesize touchAcceptRegion;
 
 + (RMMarker*) markerWithNamedStyle: (NSString*) styleName
 {
@@ -60,12 +61,9 @@ static CGImageRef _markerBlue = nil;
 	if (![super init])
 		return nil;
 	
-	self.contents = (id)image;
-	self.bounds = CGRectMake(0, 0, CGImageGetWidth(image), CGImageGetHeight(image));
-	self.anchorPoint = _anchorPoint;
-	
-	self.masksToBounds = NO;
-	self.labelView = nil;
+    [self replaceImage:image anchorPoint:_anchorPoint];
+    
+    touchAcceptRegion = [self bounds];
 	
 	return self;
 }
@@ -142,9 +140,9 @@ static CGImageRef _markerBlue = nil;
 	}
 }
 
-- (BOOL) canDragWithPoint:(CGPoint)point
+- (BOOL) canAcceptTouchWithPoint:(CGPoint)point
 {
-    return YES;
+    return CGRectContainsPoint(touchAcceptRegion, point);
 }
 
 - (void) setTextLabel: (NSString*)text
