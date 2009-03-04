@@ -45,8 +45,8 @@
 
 - (void) tapOnMarker: (RMMarker*) marker onMap: (RMMapView*) map;
 - (void) tapOnLabelForMarker: (RMMarker*) marker onMap: (RMMapView*) map;
-- (BOOL)mapView:(RMMapView *)mapView shouldDragMarker:(RMMarker *)marker withEvent:(UIEvent *)event;
-- (void)mapView:(RMMapView *)mapView didDragMarker:(RMMarker *)marker withEvent:(UIEvent *)event;
+- (BOOL)mapView:(RMMapView *)map shouldDragMarker:(RMMarker *)marker withEvent:(UIEvent *)event;
+- (void)mapView:(RMMapView *)map didDragMarker:(RMMarker *)marker withEvent:(UIEvent *)event;
 
 - (void) afterMapTouch: (RMMapView*) map;
 
