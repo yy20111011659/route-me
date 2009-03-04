@@ -1,5 +1,5 @@
 //
-//  RMMapViewDelegate.h
+//  RMOverlayView.h
 //
 // Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
@@ -26,30 +26,19 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import <UIKit/UIKit.h>
+#import "RMLayerSet.h"
 
-@class RMMapView;
-@class RMMarker;
+@interface RMOverlayView : UIView {
+    RMLayerSet *markerLayer;
+}
 
-@protocol RMMapViewDelegate 
+@property(nonatomic,readonly) RMLayerSet *markerLayer;
 
-@optional
+- (id)initWithContents:(RMMapContents *)contents andFrame:(CGRect)frame;
 
-- (void) beforeMapMove: (RMMapView*) map;
-- (void) afterMapMove: (RMMapView*) map ;
+- (void)correctPositionOfAllSublayers;
+- (void)moveBy:(CGSize)delta;
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)pivot;
 
-- (void) beforeMapZoom: (RMMapView*) map byFactor: (float) zoomFactor near:(CGPoint) center;
-- (void) afterMapZoom: (RMMapView*) map byFactor: (float) zoomFactor near:(CGPoint) center;
-
-- (void) doubleTapOnMap: (RMMapView*) map At: (CGPoint) point;
-- (void) singleTapOnMap: (RMMapView*) map At: (CGPoint) point;
-
-- (void) tapOnMarker: (RMMarker*) marker onMap: (RMMapView*) map;
-- (void) tapOnLabelForMarker: (RMMarker*) marker onMap: (RMMapView*) map;
-- (void) dragMarkerPosition: (RMMarker*) marker onMap: (RMMapView*)map position:(CGPoint)position;
-- (void) mapView:(RMMapView*) focusChangedToMarker:(RMMarker*)toMarker fromMarker:(RMMarker*)fromMarker;
-- (BOOL) mapView:(RMMapView*) shouldDragMarker:(RMMarker*)marker;
-- (void) mapView:(RMMapView*) didDragMarker:(RMMarker*)marker;
-
-- (void) afterMapTouch: (RMMapView*) map;
 
 @end

@@ -34,6 +34,7 @@
 #import "RMMercatorToScreenProjection.h"
 #import "RMMarker.h"
 
+#import "RMOverlayView.h"
 #import "RMMarkerManager.h"
 
 @interface RMMapView (PrivateMethods)
@@ -55,8 +56,8 @@
 	BOOL delegateHasAfterMapTouch;
 	BOOL delegateHasDragMarkerPosition;
     BOOL delegateHasFocusChangedToMarker;
-    BOOL delegateHasStartedDraggingMarker;
-    BOOL delegateHasFinishedDraggingMarker;
+    BOOL delegateHasShouldDragMarker;
+    BOOL delegateHasDidDragMarker;
 	NSTimer *decelerationTimer;
 	CGSize decelerationDelta;
 @end
@@ -182,18 +183,13 @@
 	delegateHasTapOnMarker = [(NSObject*) delegate respondsToSelector:@selector(tapOnMarker:onMap:)];
 	delegateHasTapOnLabelForMarker = [(NSObject*) delegate respondsToSelector:@selector(tapOnLabelForMarker:onMap:withTouch:)];
     
-    delegateHasFocusChangedToMarker = [(NSObject*) delegate respondsToSelector:@selector(focusChangedToMarker:fromMarker:)];
-	delegateHasStartedDraggingMarker = [(NSObject*) delegate respondsToSelector:@selector(startedDraggingMarker:onMap:)];
-	delegateHasFinishedDraggingMarker = [(NSObject*) delegate respondsToSelector:@selector(finishedDraggingMarker:onMap:)];
+    delegateHasFocusChangedToMarker = [(NSObject*) delegate respondsToSelector:@selector(mapView:focusChangedToMarker:fromMarker:)];
+	delegateHasShouldDragMarker = [(NSObject*) delegate respondsToSelector:@selector(mapView:shouldDragMarker:)];
+	delegateHasDidDragMarker = [(NSObject*) delegate respondsToSelector:@selector(mapView:didDragMarker:)];
     
 	delegateHasAfterMapTouch  = [(NSObject*) delegate respondsToSelector: @selector(afterMapTouch:)];
 	
 	delegateHasDragMarkerPosition = [(NSObject*) delegate respondsToSelector: @selector(dragMarkerPosition: onMap: position:)];
-    
-    delegateHasTouchesBegan = [(NSObject*) delegate respondsToSelector: @selector(touchesBegan:withEvent:)];
-    delegateHasTouchesEnded = [(NSObject*) delegate respondsToSelector: @selector(touchesEnded:withEvent:)];
-    delegateHasTouchesMoved = [(NSObject*) delegate respondsToSelector: @selector(touchesMoved:withEvent:)];
-    delegateHasTouchesCancelled = [(NSObject*) delegate respondsToSelector: @selector(touchesCancelled:withEvent:)];
 }
 
 - (id<RMMapViewDelegate>) delegate
@@ -329,9 +325,14 @@
     draggable = draggableObject;
     if ([draggable isKindOfClass:[RMMarker class]])
     {
-        if (delegateHasStartedDraggingMarker)
+        if (delegateHasShouldDragMarker)
         {
-            [delegate startedDraggingMarker:(RMMarker*)draggable onMap:self];
+            if (! [delegate mapView:self shouldDragMarker:(RMMarker*)draggable])
+            {
+                // Delegate requests we don't drag the marker
+                draggable = nil;
+                return;
+            }
         }
         if (delegateHasDragMarkerPosition) {
             [delegate dragMarkerPosition:(RMMarker*)draggable onMap:self position:lastGesture.center];
@@ -342,25 +343,21 @@
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    if (delegateHasTouchesBegan)
-    {
-        [delegate touchesBegan:touches withEvent:event];
-    }
     
 	UITouch *touch = [[touches allObjects] objectAtIndex:0];
 	//Check if the touch hit a RMMarker subclass and if so, forward the touch event on
 	//so it can be handled there
-	CALayer* furthestLayerDown = [[[self contents] overlay] hitTest:[touch locationInView:self]];
+	CALayer* furthestLayerDown = [[[self contents] overlay].markerLayer hitTest:[touch locationInView:self]];
     draggable = nil;
     if ([furthestLayerDown isKindOfClass:[RMMarker class]])
     {
         if ([ (RMMarker*)furthestLayerDown canDragWithPoint:[furthestLayerDown convertPoint:[touch locationInView:self] fromLayer:self.layer]])
         {
             RMMarker *oldFocus = self.markerManager.focused;
-            [(RMMarker*)furthestLayerDown focusSelf];
+            [(RMMarker*)furthestLayerDown setFocused:YES];
             if (delegateHasFocusChangedToMarker)
             {
-                [delegate focusChangedToMarker:(RMMarker*)furthestLayerDown fromMarker:oldFocus];
+                [delegate mapView:self focusChangedToMarker:(RMMarker*)furthestLayerDown fromMarker:oldFocus];
             }
             
             [self performSelector:@selector(startedDraggingObject:) withObject:furthestLayerDown afterDelay:0.5];
@@ -398,7 +395,7 @@
 	
 	//Check if the touch hit a RMMarker subclass and if so, forward the touch event on
 	//so it can be handled there
-	id furthestLayerDown = [[[self contents] overlay] hitTest:[touch locationInView:self]];
+	id furthestLayerDown = [[[self contents] overlay].markerLayer hitTest:[touch locationInView:self]];
 	if ([[furthestLayerDown class]isSubclassOfClass: [RMMarker class]]) {
 		if ([furthestLayerDown respondsToSelector:@selector(touchesCancelled:withEvent:)]) {
 			[furthestLayerDown performSelector:@selector(touchesCancelled:withEvent:) withObject:touches withObject:event];
@@ -417,15 +414,15 @@
 	
     if (draggable)
     {
-        if (delegateHasFinishedDraggingMarker)
+        if (delegateHasDidDragMarker)
         {
-            [delegate finishedDraggingMarker:(RMMarker*)draggable onMap:self];
+            [delegate mapView:self didDragMarker:(RMMarker*)draggable];
         }
     }
     
 	//Check if the touch hit a RMMarker subclass and if so, forward the touch event on
 	//so it can be handled there
-	id furthestLayerDown = [[[self contents] overlay] hitTest:[touch locationInView:self]];
+	id furthestLayerDown = [[[self contents] overlay].markerLayer hitTest:[touch locationInView:self]];
 	if ([[furthestLayerDown class]isSubclassOfClass: [RMMarker class]]) {
 		if ([furthestLayerDown respondsToSelector:@selector(touchesEnded:withEvent:)]) {
 			[furthestLayerDown performSelector:@selector(touchesEnded:withEvent:) withObject:touches withObject:event];
@@ -469,7 +466,7 @@
 		
 	if (touch.tapCount == 1) 
 	{
-		CALayer* hit = [contents.overlay hitTest:[touch locationInView:self]];
+		CALayer* hit = [contents.overlay.markerLayer hitTest:[touch locationInView:self]];
 //		NSLog(@"LAYER of type %@",[hit description]);
 		
 		if (hit && (hit == draggable)) {
@@ -507,7 +504,7 @@
 	
 	//Check if the touch hit a RMMarker subclass and if so, forward the touch event on
 	//so it can be handled there
-	id furthestLayerDown = [[[self contents] overlay] hitTest:[touch locationInView:self]];
+	id furthestLayerDown = [[[self contents] overlay].markerLayer hitTest:[touch locationInView:self]];
 	if ([[furthestLayerDown class]isSubclassOfClass: [RMMarker class]]) {
 		if ([furthestLayerDown respondsToSelector:@selector(touchesMoved:withEvent:)]) {
 			[furthestLayerDown performSelector:@selector(touchesMoved:withEvent:) withObject:touches withObject:event];
@@ -515,7 +512,7 @@
 		}
 	}
 	
-	CALayer* hit = [contents.overlay hitTest:[touch locationInView:self]];
+	CALayer* hit = [contents.overlay.markerLayer hitTest:[touch locationInView:self]];
 //	NSLog(@"LAYER of type %@",[hit description]);
 	
 	if (hit != nil) {

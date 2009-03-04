@@ -60,6 +60,9 @@ extern NSString * const RMMarkerRedKey;
 + (CGImageRef) markerImage: (NSString *) key;
 + (CGImageRef) loadPNGFromBundle: (NSString *)filename;
 
+// Call this with either RMMarkerBlue or RMMarkerRed for the key.
++ (CGImageRef) markerImage: (NSString *) key;
+
 - (id) initWithCGImage: (CGImageRef) image anchorPoint: (CGPoint) anchorPoint;
 - (id) initWithCGImage: (CGImageRef) image;
 - (id) initWithKey: (NSString*) key;
@@ -67,31 +70,28 @@ extern NSString * const RMMarkerRedKey;
 - (id) initWithStyle: (RMMarkerStyle*) style;
 - (id) initWithNamedStyle: (NSString*) styleName;
 
-- (void) setLabel: (UIView*)aView;
+// These helper methods update the labelView to show some text
+// Position is specified relative to the overlay view
 - (void) setTextLabel: (NSString*)text;
-- (void) setTextLabel: (NSString*)text toPosition:(CGPoint)position;
+- (void) setTextLabel: (NSString*)text atPosition:(CGPoint)position;
+
 - (void) toggleLabel;
 - (void) showLabel;
 - (void) hideLabel;
 - (void) removeLabel;
-- (void) focusSelf;
+- (void) setFocused:(BOOL)aFocused;
 - (BOOL) focused;
 
+// Subclasses can override this to specify whether a point is acceptable to begin dragging
 - (BOOL) canDragWithPoint:(CGPoint)point;
 
 - (void) replaceImage:(CGImageRef)image anchorPoint:(CGPoint)_anchorPoint;
-- (void) hide;
-- (void) unhide;
-
-- (void) dealloc;
 
 @property (assign, nonatomic) RMXYPoint location;
 @property (retain) NSObject* data;
 @property (nonatomic, retain) UIView* labelView;
-@property (nonatomic,assign) RMMarkerManager *manager;
+@property (nonatomic,assign,setter=setMarkerManager:) RMMarkerManager *manager;
 @property (nonatomic,assign) id<RMMarkerChangeDelegate> markerChangeDelegate;
 
-// Call this with either RMMarkerBlue or RMMarkerRed for the key.
-+ (CGImageRef) markerImage: (NSString *) key;
 
 @end
