@@ -419,7 +419,7 @@
 				if (delegateHasTapOnMarker) {
 					[delegate tapOnMarker:(RMMarker*)hit onMap:self];
 				}
-			} else if (superlayer != nil && [superlayer isMemberOfClass: [RMMarker class]]) {
+			} else if (superlayer != nil && [superlayer isKindOfClass: [RMMarker class]]) {
 				if (delegateHasTapOnLabelForMarker) {
 					[delegate tapOnLabelForMarker:(RMMarker*)superlayer onMap:self];
 				}
@@ -455,11 +455,15 @@
 	
    if (hit != nil) {
 
-      if ([hit isMemberOfClass: [RMMarker class]]) {
+      if ([hit isKindOfClass: [RMMarker class]]) {
          BOOL delegateShouldMoveMarker = [(NSObject*) delegate respondsToSelector: @selector(mapView: shouldDragMarker: withEvent:)];
          if ((delegateShouldMoveMarker && [delegate mapView:self shouldDragMarker:(RMMarker*)hit withEvent:event]) || !delegateShouldMoveMarker) {
             if ([(NSObject*) delegate respondsToSelector: @selector(mapView: didDragMarker: withEvent:)]) {
                [delegate mapView:self didDragMarker:(RMMarker*)hit withEvent:event];
+               return;
+            } else if ([(NSObject*) delegate respondsToSelector: @selector(dragMarkerPosition: onMap: position:)]){
+               //This else portion only exists to maintain compatability with old versions.  SHOULD be removed after .5 tarball
+               [delegate dragMarkerPosition:(RMMarker*)hit onMap:self position:[[[event allTouches] anyObject]locationInView:self]];
                return;
             }
          }
