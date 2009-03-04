@@ -146,7 +146,7 @@
   [tileLoader clearLoadedBounds];
   [tileLoader updateLoadedImages];
   [renderer setFrame:frame];
-  [self correctPositionOfAllSublayers];
+  [overlay correctPositionOfAllSublayers];
 }
 
 -(void) dealloc
