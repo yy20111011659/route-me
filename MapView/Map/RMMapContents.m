@@ -24,6 +24,7 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
+
 #import "RMMapContents.h"
 
 #import "RMFoundation.h"
@@ -39,6 +40,7 @@
 #import "RMCoreAnimationRenderer.h"
 #import "RMCachedTileSource.h"
 
+#import "RMOverlayView.h"
 #import "RMLayerSet.h"
 #import "RMMarkerManager.h"
 
@@ -89,6 +91,7 @@
 	if (![super init])
 		return nil;
 	
+    parentMapView = view;
 	[self setMaxZoom:50.0];
 	
 	self.boundingMask = RMMapMinWidthBound;
@@ -123,8 +126,8 @@
 	[self setBackground:theBackground];
 	[theBackground release];
 	
-	RMLayerSet *theOverlay = [[RMLayerSet alloc] initForContents:self];
-	[self setOverlay:theOverlay];
+    RMOverlayView *theOverlay = [[RMOverlayView alloc] initWithContents:self andFrame:[view bounds]];
+    [self setOverlay:theOverlay];
 	[theOverlay release];
 	
 	markerManager = [[RMMarkerManager alloc] initWithContents:self];
@@ -471,8 +474,8 @@
 	
 	if (background != nil)
 		[layer insertSublayer:[renderer layer] above:background];
-	else if (overlay != nil)
-		[layer insertSublayer:[renderer layer] below:overlay];
+	else if (overlay.layer != nil)
+		[layer insertSublayer:[renderer layer] below:overlay.layer];
 	else
 		[layer insertSublayer:[renderer layer] atIndex: 0];
 }
@@ -501,8 +504,8 @@
 	
 	if ([renderer layer] != nil)
 		[layer insertSublayer:background below:[renderer layer]];
-	else if (overlay != nil)
-		[layer insertSublayer:background below:overlay];
+	else if (overlay.layer != nil)
+		[layer insertSublayer:background below:overlay.layer];
 	else
 		[layer insertSublayer:[renderer layer] atIndex: 0];
 }
@@ -512,29 +515,23 @@
 	return [[background retain] autorelease];
 }
 
-- (void) setOverlay: (RMLayerSet*) aLayer
+- (void) setOverlay: (RMOverlayView*) aView
 {
-	if (overlay == aLayer) return;
+	if (overlay == aView) return;
 	
 	if (overlay != nil)
 	{
 		[overlay release];
-		[overlay removeFromSuperlayer];		
+		[overlay removeFromSuperview];		
 	}
 	
-	overlay = [aLayer retain];
+	overlay = [aView retain];
 	
 	if (overlay == nil)
 		return;
 	
-	overlay.frame = [self screenBounds];
-	
-	if ([renderer layer] != nil)
-		[layer insertSublayer:overlay above:[renderer layer]];
-	else if (background != nil)
-		[layer insertSublayer:overlay above:background];
-	else
-		[layer insertSublayer:[renderer layer] atIndex: 0];
+    overlay.frame = parentMapView.frame;
+    [parentMapView addSubview:overlay];
 	
 	/* Test to make sure the overlay is working.
 	CALayer *testLayer = [[CALayer alloc] init];
@@ -546,7 +543,7 @@
 	[overlay addSublayer:testLayer];*/
 }
 
-- (RMLayerSet *)overlay
+- (RMOverlayView *)overlay
 {
 	return [[overlay retain] autorelease];
 }

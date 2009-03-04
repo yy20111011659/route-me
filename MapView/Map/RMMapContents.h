@@ -24,6 +24,7 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
+
 #import <UIKit/UIKit.h>
 
 #import "RMFoundation.h"
@@ -52,6 +53,7 @@ enum {
 @class RMMapLayer;
 @class RMLayerSet;
 @class RMMarker;
+@class RMOverlayView;
 @protocol RMMercatorToTileProjection;
 @protocol RMTileSource;
 
@@ -67,11 +69,12 @@ enum {
 	// TODO: Also support NSView.
 	
 	// This is the underlying UIView's layer.
+    UIView *parentMapView;
 	CALayer *layer;
 	
 	RMMarkerManager *markerManager;
 	RMMapLayer *background;
-	RMLayerSet *overlay;
+    RMOverlayView *overlay;
 	
 	// Latlong is calculated dynamically from mercatorBounds.
 	RMProjection *projection;
@@ -118,7 +121,7 @@ enum {
 @property (readonly)  CALayer *layer;
 
 @property (retain, readwrite) RMMapLayer *background;
-@property (retain, readwrite) RMLayerSet *overlay;
+@property (retain, readwrite) RMOverlayView *overlay;
 @property (retain, readonly)  RMMarkerManager *markerManager;
 @property (nonatomic, retain) id<RMTilesUpdateDelegate> tilesUpdateDelegate;
 @property (readwrite) NSUInteger boundingMask;

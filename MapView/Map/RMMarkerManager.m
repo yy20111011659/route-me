@@ -29,6 +29,7 @@
 #import "RMMercatorToScreenProjection.h"
 #import "RMProjection.h"
 #import "RMLayerSet.h"
+#import "RMOverlayView.h"
 
 @implementation RMMarkerManager
 
@@ -58,7 +59,7 @@
 - (void) addMarker: (RMMarker*)marker
 {
     marker.manager = self;
-	[[contents overlay] addSublayer:marker];
+	[[contents overlay].markerLayer addSublayer:marker];
 }
 
 - (void) addMarker: (RMMarker*)marker AtLatLong:(CLLocationCoordinate2D)point
@@ -76,11 +77,11 @@
 
 - (void) removeMarkers
 {
-    for (RMMarker *marker in [[contents overlay] sublayers])
+    for (RMMarker *marker in [[contents overlay].markerLayer sublayers])
     {
         marker.manager = nil;
     }
-	[[contents overlay] setSublayers:[NSArray arrayWithObjects:nil]]; 
+	[[contents overlay].markerLayer setSublayers:[NSArray arrayWithObjects:nil]]; 
 }
 
 - (void) hideAllMarkers 
@@ -99,13 +100,13 @@
 
 - (NSArray *)getMarkers
 {
-	return [[contents overlay] sublayers];
+	return [[contents overlay].markerLayer sublayers];
 }
 
 - (void) removeMarker:(RMMarker *)marker
 {
     marker.manager = nil;
-	[[contents overlay] removeSublayer:marker];
+	[[contents overlay].markerLayer removeSublayer:marker];
 }
 
 - (void) removeMarkers:(NSArray *)markers
@@ -114,7 +115,7 @@
     {
         marker.manager = nil;
     }
-	[[contents overlay] removeSublayers:markers];
+	[[contents overlay].markerLayer removeSublayers:markers];
 }
 
 - (CGPoint) getMarkerScreenCoordinate: (RMMarker *)marker

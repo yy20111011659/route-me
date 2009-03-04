@@ -1,5 +1,5 @@
 //
-//  RMMapViewDelegate.h
+//  RMOverlayView.m
 //
 // Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
@@ -25,31 +25,58 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import <UIKit/UIKit.h>
+#import "RMOverlayView.h"
 
-@class RMMapView;
-@class RMMarker;
 
-@protocol RMMapViewDelegate 
+@implementation RMOverlayView
+@synthesize markerLayer;
 
-@optional
+- (id)initWithContents:(RMMapContents *)contents andFrame:(CGRect)frame
+{
+    if (! [super initWithFrame:frame])
+    {
+        return nil;
+    }
+    
+    markerLayer = [[RMLayerSet alloc] initForContents:contents];
+    if (! markerLayer)
+    {
+        [self release];
+        return nil;
+    }
+    markerLayer.frame = [self bounds];
+    
+    // Add the marker layer as a sublayer of our layer
+    [[self layer] addSublayer:markerLayer];
+    
+    self.opaque = NO;
+    self.clipsToBounds = YES;
+    
+    return self;
+}
 
-- (void) beforeMapMove: (RMMapView*) map;
-- (void) afterMapMove: (RMMapView*) map ;
+- (void)correctPositionOfAllSublayers
+{
+    [markerLayer correctPositionOfAllSublayers];
+}
 
-- (void) beforeMapZoom: (RMMapView*) map byFactor: (float) zoomFactor near:(CGPoint) center;
-- (void) afterMapZoom: (RMMapView*) map byFactor: (float) zoomFactor near:(CGPoint) center;
 
-- (void) doubleTapOnMap: (RMMapView*) map At: (CGPoint) point;
-- (void) singleTapOnMap: (RMMapView*) map At: (CGPoint) point;
+- (void)moveBy:(CGSize)delta
+{
+    [markerLayer moveBy:delta];
+}
 
-- (void) tapOnMarker: (RMMarker*) marker onMap: (RMMapView*) map;
-- (void) tapOnLabelForMarker: (RMMarker*) marker onMap: (RMMapView*) map;
-- (void) dragMarkerPosition: (RMMarker*) marker onMap: (RMMapView*)map position:(CGPoint)position;
-- (void) mapView:(RMMapView*) focusChangedToMarker:(RMMarker*)toMarker fromMarker:(RMMarker*)fromMarker;
-- (BOOL) mapView:(RMMapView*) shouldDragMarker:(RMMarker*)marker;
-- (void) mapView:(RMMapView*) didDragMarker:(RMMarker*)marker;
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)pivot
+{
+    [markerLayer zoomByFactor:zoomFactor near:pivot];
+}
 
-- (void) afterMapTouch: (RMMapView*) map;
+
+- (void)dealloc {
+    [markerLayer removeFromSuperlayer];
+    [markerLayer release];
+    [super dealloc];
+}
+
 
 @end

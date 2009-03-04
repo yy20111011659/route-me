@@ -42,7 +42,6 @@ static CGImageRef _markerBlue = nil;
 
 @synthesize location;
 @synthesize data;
-@synthesize labelView;
 @synthesize manager;
 @synthesize markerChangeDelegate;
 
@@ -106,22 +105,40 @@ static CGImageRef _markerBlue = nil;
 	return [self initWithStyle: style];
 }
 
-- (void) setLabel: (UIView*)aView
+- (UIView*)labelView
 {
-	if (self.labelView == aView) {
+    return [[labelView retain] autorelease];
+}
+
+- (void) setMarkerManager:(RMMarkerManager*)aManager
+{
+    manager = aManager;
+    
+    // Changing the manager also changes where the label should be displayed
+    if (labelView)
+    {
+        [labelView removeFromSuperview];
+        [manager.contents.overlay addSubview:labelView];
+    }
+}
+
+- (void) setLabelView: (UIView*)aView
+{
+	if (labelView == aView) {
 		return;
 	}
 
 	if (labelView != nil)
 	{
-		[[self.labelView layer] removeFromSuperlayer];
-		self.labelView = nil;
+        [labelView removeFromSuperview];
+        [labelView release];
 	}
 	
-	if (aView != nil)
+    labelView = [aView retain];
+    
+	if (labelView)
 	{
-		self.labelView = [aView retain];
-		[self addSublayer:[self.labelView layer]];
+        [manager.contents.overlay addSubview:labelView];
 	}
 }
 
@@ -132,10 +149,14 @@ static CGImageRef _markerBlue = nil;
 
 - (void) setTextLabel: (NSString*)text
 {
-	[self setTextLabel:text toPosition:CGPointMake([self bounds].size.width / 2 - [text sizeWithFont:[UIFont systemFontOfSize:15]].width / 2, 4)];;	
+    CGRect bds = [self frame];
+    CGPoint pos = bds.origin;
+    pos.x += bds.size.width/2 - [text sizeWithFont:[UIFont systemFontOfSize:15]].width / 2;
+    pos.y += 4;
+	[self setTextLabel:text atPosition:pos];	
 }
 
-- (void) setTextLabel: (NSString*)text toPosition:(CGPoint)position
+- (void) setTextLabel: (NSString*)text atPosition:(CGPoint)position
 {
 	CGSize textSize = [text sizeWithFont:[UIFont systemFontOfSize:15]];
 	CGRect frame = CGRectMake(position.x,
@@ -152,28 +173,23 @@ static CGImageRef _markerBlue = nil;
 	[aLabel setTextAlignment:UITextAlignmentCenter];
 	[aLabel setText:text];
 	
-	[self setLabel:aLabel];
+	[self setLabelView:aLabel];
 	[aLabel release];
 	
 }
 
 - (void) removeLabel
 {
-	if (self.labelView != nil)
-	{
-		[[self.labelView layer] removeFromSuperlayer];
-		self.labelView = nil;
-	}
-
+    self.labelView = nil;
 }
 		
 - (void) toggleLabel
 {
-	if (self.labelView == nil) {
+	if (labelView == nil) {
 		return;
 	}
 	
-	if ([self.labelView isHidden]) {
+	if ([labelView isHidden]) {
 		[self showLabel];
 	} else {
 		[self hideLabel];
@@ -182,20 +198,20 @@ static CGImageRef _markerBlue = nil;
 
 - (void) showLabel
 {
-	if ([self.labelView isHidden]) {
-		// Using addSublayer will animate showing the label, whereas setHidden is not animated
-		[self addSublayer:[self.labelView layer]];
-		[self.labelView setHidden:NO];
-	}
+    [labelView setHidden:NO];
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.3];
+    labelView.alpha = 1.0;
+    [UIView commitAnimations];
 }
 
 - (void) hideLabel
 {
-	if (![self.labelView isHidden]) {
-		// Using removeFromSuperlayer will animate hiding the label, whereas setHidden is not animated
-		[[self.labelView layer] removeFromSuperlayer];
-		[self.labelView setHidden:YES];
-	}
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.3];
+    labelView.alpha = 0.0;
+    [UIView commitAnimations];
+    [labelView setHidden:YES];
 }
 
 - (void) dealloc 
@@ -216,6 +232,30 @@ static CGImageRef _markerBlue = nil;
 
 
 	[super dealloc];
+}
+
+- (void)setFrame:(CGRect)aFrame
+{
+    if (labelView)
+    {
+        CGPoint oldPosition = self.position;
+        CGPoint labelCenter = labelView.center;
+        labelView.center = CGPointMake(labelCenter.x - oldPosition.x + aFrame.origin.x, labelCenter.y - oldPosition.y + aFrame.origin.y);
+    }
+    
+    [super setFrame:aFrame];
+}
+
+- (void)setPosition:(CGPoint)aPosition
+{
+    if (labelView)
+    {
+        CGPoint oldPosition = self.position;
+        CGPoint labelCenter = labelView.center;
+        labelView.center = CGPointMake(labelCenter.x - oldPosition.x + aPosition.x, labelCenter.y - oldPosition.y + aPosition.y);
+    }
+    
+    [super setPosition:aPosition];
 }
 
 - (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center
@@ -262,21 +302,19 @@ static CGImageRef _markerBlue = nil;
 	return nil;
 }
 
-- (void) hide 
+- (void) setFocused:(BOOL)aFocused
 {
-	[self setHidden:YES];
-}
-
-- (void) unhide
-{
-	[self setHidden:NO];
-}
-
-- (void) focusSelf
-{
-    if (! [self focused])
+    BOOL wasFocused = [self focused];
+    if (wasFocused != aFocused)
     {
-        [manager focusMarker:self];
+        if (aFocused)
+        {
+            [manager focusMarker:self];
+        }
+        else if (wasFocused)
+        {
+            [manager focusMarker:nil];
+        }
     }
 }
 
@@ -285,11 +323,5 @@ static CGImageRef _markerBlue = nil;
     return (self.zPosition > 0.5);
 }
 
-/*- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
-//	[label setAlpha:1.0f - [label alpha]];
-//	[self setTextLabel:@"hello there"];
-	//	NSLog(@"marker at %f %f m %f %f touchesEnded", self.position.x, self.position.y, location.x, location.y);
-}*/
 
 @end
