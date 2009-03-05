@@ -181,35 +181,60 @@ static CGImageRef _markerBlue = nil;
     self.labelView = nil;
 }
 		
-- (void) toggleLabel
+- (void) toggleLabelAnimated:(BOOL)anim
 {
 	if (labelView == nil) {
 		return;
 	}
 	
-	if ([labelView isHidden]) {
-		[self showLabel];
+	if ([labelView isHidden] || labelView.alpha < 0.1) {
+		[self showLabelAnimated:anim];
 	} else {
-		[self hideLabel];
+		[self hideLabelAnimated:anim];
 	}
 }
 
-- (void) showLabel
+- (void) showLabelAnimated:(BOOL)anim
 {
-    [labelView setHidden:NO];
-    [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:0.3];
-    labelView.alpha = 1.0;
-    [UIView commitAnimations];
+    if (anim)
+    {
+        labelView.alpha = 0.0;
+        [labelView setHidden:NO];
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationDuration:0.3];
+        labelView.alpha = 1.0;
+        [UIView commitAnimations];
+    }
+    else
+    {
+        [labelView setHidden:NO];
+    }
 }
 
-- (void) hideLabel
+- (void)hideLabelAnimationDidStop:(NSString*)animationID finished:(NSNumber*)finished context:(void*)context
 {
-    [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:0.3];
-    labelView.alpha = 0.0;
-    [UIView commitAnimations];
-    [labelView setHidden:YES];
+    if (labelView.alpha < 0.1)
+    {
+        [labelView setHidden:YES];
+        labelView.alpha = 1.0;
+    }
+}
+
+- (void) hideLabelAnimated:(BOOL)anim
+{
+    if (anim)
+    {
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationDuration:0.3];
+        [UIView setAnimationDelegate:self];
+        [UIView setAnimationDidStopSelector:@selector(hideLabelAnimationDidStop:finished:context:)];
+        labelView.alpha = 0.0;
+        [UIView commitAnimations];
+    }
+    else
+    {
+        [labelView setHidden:YES];
+    }
 }
 
 - (void) dealloc 

@@ -79,9 +79,9 @@ extern NSString * const RMMarkerRedKey;
 - (void) setTextLabel: (NSString*)text;
 - (void) setTextLabel: (NSString*)text atPosition:(CGPoint)position;
 
-- (void) toggleLabel;
-- (void) showLabel;
-- (void) hideLabel;
+- (void) toggleLabelAnimated:(BOOL)animate;
+- (void) showLabelAnimated:(BOOL)animate;
+- (void) hideLabelAnimated:(BOOL)animate;
 - (void) removeLabel;
 - (void) setFocused:(BOOL)aFocused;
 - (BOOL) focused;
