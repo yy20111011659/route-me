@@ -21,14 +21,6 @@ tile factory = { 1. RMPrimaryTileCache, 2. covers access to RMSecondaryTileCache
 RMSecondaryTileCache -> { 1. storage, 2. network }
 
 
-Example requests _may_ look like this: 
-
-{{{
-RMTileImage *tile = [RMTileFactory imageForTile:(RMTile)tile delegate:someDelegate];
-}}}
-
-It is possible that I will put the RMTileFactory functionality into RMTileImage as class methods for generating RMTileImages. The benefit is that there is one less class to muddy things up and it will follow the same overall architecture of UIImage, where UIImage is given image names to load images, performs caching, etc., we will give RMTileImage a name (tile) delegate for asynchronous callback, and possibly the tile source. This will allow multiple tile sources to be used, and in some situations this may be necessary if not a feature that some people may wish to use. 
-
 * Communication *
 
 Communication between tile request initiator (client) and callback from the secondary cache / network fetch is TBD. Candidates:
@@ -46,7 +38,15 @@ So I will maintain flexibility in this regard.
 == Tile Factory Interface ==
 ----
 
-Outline:
+Example requests _may_ look like this: 
+
+{{{
+RMTileImage *tile = [RMTileFactory imageForTile:(RMTile)tile delegate:someDelegate];
+}}}
+
+It is possible that I will put the RMTileFactory functionality into RMTileImage as class methods for generating RMTileImages. The benefit is that there is one less class to muddy things up and it will follow the same overall architecture of UIImage, where UIImage is given image names to load images, performs caching, etc., we will give RMTileImage a name (tile) delegate for asynchronous callback, and possibly the tile source. This will allow multiple tile sources to be used, and in some situations this may be necessary if not a feature that some people may wish to use. 
+
+Summary:
 
   # if you want to receive tiles you register for a notification for tiles (see below note about communication)
   # you query the tile factory directly for a tile, it will either return you a neutral-ref-count tile, or nil
