@@ -354,16 +354,22 @@
     draggable = nil;
     if ([furthestLayerDown isKindOfClass:[RMMarker class]])
     {
-        if ([ (RMMarker*)furthestLayerDown canAcceptTouchWithPoint:[furthestLayerDown convertPoint:[touch locationInView:self] fromLayer:self.layer]])
+        RMMarkerManager *manager = self.markerManager;
+        RMMarker *realTouchedMarker = [manager markerTouchableHitTest:[touch locationInView:contents.overlay]];
+        RMMarker *oldFocus = manager.focused;
+        
+        if (realTouchedMarker)
         {
-            RMMarker *oldFocus = self.markerManager.focused;
-            [(RMMarker*)furthestLayerDown setFocused:YES];
-            if (delegateHasFocusChangedToMarker)
+            if (realTouchedMarker != oldFocus)
             {
-                [delegate mapView:self focusChangedToMarker:(RMMarker*)furthestLayerDown fromMarker:oldFocus];
+                [realTouchedMarker setFocused:YES];
+                if (delegateHasFocusChangedToMarker)
+                {
+                    [delegate mapView:self focusChangedToMarker:realTouchedMarker fromMarker:oldFocus];
+                }
             }
             
-            [self performSelector:@selector(startedDraggingObject:) withObject:furthestLayerDown afterDelay:0.5];
+            [self performSelector:@selector(startedDraggingObject:) withObject:realTouchedMarker afterDelay:0.5];
         }
             
         if ([[furthestLayerDown class]isSubclassOfClass: [RMMarker class]]) {

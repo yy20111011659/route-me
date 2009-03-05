@@ -206,4 +206,27 @@
     [marker.markerChangeDelegate markerChanged:marker];
 }
 
+
+- (RMMarker*) markerTouchableHitTest:(CGPoint)point
+{
+    RMLayerSet *markerLayer = contents.overlay.markerLayer;
+    if (focused)
+    {
+        if ([focused canAcceptTouchWithPoint:[focused convertPoint:point fromLayer:markerLayer]])
+        {
+            return focused;
+        }
+    }
+    
+    for (RMMarker *marker in [markerLayer sublayers])
+    {
+        CGPoint convertedPoint = [marker convertPoint:point fromLayer:markerLayer];
+        if ([marker containsPoint:convertedPoint] && [marker canAcceptTouchWithPoint:convertedPoint])
+        {
+            return marker;
+        }
+    }
+    return nil;
+}
+
 @end

@@ -63,5 +63,6 @@
 - (void) moveMarker:(RMMarker *)marker AtLatLon:(RMLatLong)point;
 - (void) moveMarker:(RMMarker *)marker AtXY:(CGPoint)point;
 
+- (RMMarker*) markerTouchableHitTest:(CGPoint)point;
 
 @end
