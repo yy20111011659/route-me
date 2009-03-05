@@ -64,6 +64,8 @@
 @implementation RMMapView
 @synthesize decelerationFactor;
 @synthesize deceleration;
+@synthesize enableDragging;
+@synthesize enableZoom;
 
 - (RMMarkerManager*)markerManager
 {
