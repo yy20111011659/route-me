@@ -78,6 +78,8 @@ extern NSString * const RMMarkerRedKey;
 // Position is specified relative to the overlay view
 - (void) setTextLabel: (NSString*)text;
 - (void) setTextLabel: (NSString*)text atPosition:(CGPoint)position;
+- (void) setTextLabel: (NSString*)text withFont:(UIFont*)font withTextColor:(UIColor*)textColor withBackgroundColor:(UIColor*)backgroundColor;
+- (void) setTextLabel: (NSString*)text atPosition:(CGPoint)position withFont:(UIFont*)font withTextColor:(UIColor*)textColor withBackgroundColor:(UIColor*)backgroundColor;
 
 - (void) toggleLabelAnimated:(BOOL)animate;
 - (void) showLabelAnimated:(BOOL)animate;
@@ -91,6 +93,7 @@ extern NSString * const RMMarkerRedKey;
 - (BOOL) canAcceptTouchWithPoint:(CGPoint)point;
 
 - (void) replaceImage:(CGImageRef)image anchorPoint:(CGPoint)_anchorPoint;
+- (void) replaceKey: (NSString*) key;
 
 @property (assign, nonatomic) RMXYPoint location;
 @property (retain) NSObject* data;
