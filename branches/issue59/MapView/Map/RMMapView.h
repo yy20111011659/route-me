@@ -70,6 +70,8 @@ typedef struct {
 @property (assign) id<RMMapViewDelegate> delegate;
 @property (readwrite) float decelerationFactor;
 @property (readwrite) BOOL deceleration;
+@property (readwrite) BOOL enableDragging;
+@property (readwrite) BOOL enableZoom;
 
 
 - (id)initWithFrame:(CGRect)frame WithLocation:(CLLocationCoordinate2D)latlong;
