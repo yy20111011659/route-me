@@ -29,6 +29,7 @@
 #import "RMMarkerStyle.h"
 #import "RMMarkerStyles.h"
 #import "RMMarkerManager.h"
+#import "RMRadiusLayer.h"
 
 #import "RMPixel.h"
 
@@ -44,7 +45,7 @@ static CGImageRef _markerBlue = nil;
 @synthesize data;
 @synthesize manager;
 @synthesize markerChangeDelegate;
-@synthesize touchAcceptRegion;
+@synthesize radiusLayer;
 
 + (RMMarker*) markerWithNamedStyle: (NSString*) styleName
 {
@@ -61,20 +62,101 @@ static CGImageRef _markerBlue = nil;
 	if (![super init])
 		return nil;
 	
-    [self replaceImage:image anchorPoint:_anchorPoint];
+    radius = 0.0;
+    radiusLayer = nil;
+    imageLayer = [[CALayer alloc] init];
+    [self addSublayer:imageLayer];
     
-    touchAcceptRegion = [self bounds];
+    [self replaceImage:image anchorPoint:_anchorPoint];
+    self.masksToBounds = NO;
+    
+    // By default, our bounds and anchor point match those of the marker image sublayer.
+    // Users should adjust the bounds and/or anchor point to adjust the touch acceptance region.
+    self.bounds = [self convertRect:imageLayer.bounds fromLayer:imageLayer];
+    self.anchorPoint = imageLayer.anchorPoint;
 	
 	return self;
 }
 
+- (CGFloat)radiusInPixels
+{
+    float radiusInPixels = radius / metersPerPixel;
+    return radiusInPixels;
+}
+
+- (void)updateImageLayer:(CGImageRef)markerImage withAnchor:(CGPoint)anchor
+{
+    CGSize imSize = CGSizeMake(CGImageGetWidth(markerImage), CGImageGetHeight(markerImage));
+    imageLayer.bounds = CGRectMake(0, 0, imSize.width, imSize.height);
+    imageLayer.contents = (id)markerImage;
+    imageLayer.anchorPoint = anchor;
+}
+
+- (void)updateRadiusLayer
+{
+    float radiusInPixels = [self radiusInPixels];
+    
+    if (radiusInPixels < 1.0)
+    {
+        [radiusLayer setHidden:YES];
+        return;
+    }
+    
+    if (! radiusLayer)
+    {
+        // Lazily create the radius layer, in case it is not needed
+        radiusLayer = [[RMRadiusLayer alloc] init];
+        radiusLayer.hidden = YES;
+        [self insertSublayer:radiusLayer below:imageLayer];
+    }
+    
+    CGSize radiusLayerSize = radiusLayer.bounds.size;
+    
+    // This is intentional; allow scaling up to 2x the underyling buffer size
+    if (radiusInPixels > radiusLayerSize.width)
+    {
+        [radiusLayer setHidden:YES];
+        return;
+    }
+    
+    // Force immediate animation of radius
+    [CATransaction begin];
+    [CATransaction setValue:[NSNumber numberWithFloat:0.0f]
+                     forKey:kCATransactionAnimationDuration];
+    [radiusLayer setAffineTransform:CGAffineTransformMakeScale(radiusInPixels*2/radiusLayerSize.width, radiusInPixels*2/radiusLayerSize.height)];
+    [CATransaction commit];
+    [radiusLayer setHidden:NO];
+}
+
+- (CLLocationDistance) radius
+{
+    return radius;
+}
+
+- (void)setRadius:(CLLocationDistance)r
+{
+    radius = r;
+    [markerChangeDelegate markerChanged:self];
+    [self updateRadiusLayer];
+}
+
 - (void) replaceImage:(CGImageRef)image anchorPoint:(CGPoint)_anchorPoint
 {
-	self.contents = (id)image;
-	self.bounds = CGRectMake(0, 0, CGImageGetWidth(image), CGImageGetHeight(image));
-	self.anchorPoint = _anchorPoint;
-	
-	self.masksToBounds = NO;
+    [self updateImageLayer:image withAnchor:_anchorPoint];
+    
+    // TODO: should we update the bounds here?
+	// Right now, we do NOT change the bounds and anchor point of the touch-accepting layer.
+}
+
+- (float) metersPerPixel
+{
+    return metersPerPixel;
+}
+
+- (void)setMetersPerPixel:(float)m
+{
+    metersPerPixel = m;
+    [self updateRadiusLayer];
 }
 
 - (void) replaceKey: (NSString*) key
@@ -147,7 +229,7 @@ static CGImageRef _markerBlue = nil;
 
 - (BOOL) canAcceptTouchWithPoint:(CGPoint)point
 {
-    return CGRectContainsPoint(touchAcceptRegion, point);
+    return CGRectContainsPoint(self.bounds, point);
 }
 
 - (void) setTextLabel: (NSString*)text
@@ -254,6 +336,8 @@ static CGImageRef _markerBlue = nil;
 
 - (void) dealloc 
 {
+    [imageLayer release];
+    [radiusLayer release];
 	self.labelView = nil;
 	self.data = nil;
 
@@ -298,6 +382,7 @@ static CGImageRef _markerBlue = nil;
 
 - (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center
 {
+    [self setMetersPerPixel:metersPerPixel / zoomFactor];
 	self.position = RMScaleCGPointAboutPoint(self.position, zoomFactor, center);
 	
 /*	CGRect currentRect = CGRectMake(self.position.x, self.position.y, self.bounds.size.width, self.bounds.size.height);

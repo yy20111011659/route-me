@@ -354,6 +354,10 @@
 	//so it can be handled there
 	CALayer* furthestLayerDown = [[[self contents] overlay].markerLayer hitTest:[touch locationInView:self]];
     draggable = nil;
+    if ([[furthestLayerDown superlayer] isKindOfClass:[RMMarker class]])
+    {
+        furthestLayerDown = [furthestLayerDown superlayer];
+    }
     if ([furthestLayerDown isKindOfClass:[RMMarker class]])
     {
         RMMarkerManager *manager = self.markerManager;
@@ -407,6 +411,10 @@
 	//Check if the touch hit a RMMarker subclass and if so, forward the touch event on
 	//so it can be handled there
 	id furthestLayerDown = [[[self contents] overlay].markerLayer hitTest:[touch locationInView:self]];
+    if ([[furthestLayerDown superlayer] isKindOfClass:[RMMarker class]])
+    {
+        furthestLayerDown = [furthestLayerDown superlayer];
+    }
 	if ([[furthestLayerDown class]isSubclassOfClass: [RMMarker class]]) {
 		if ([furthestLayerDown respondsToSelector:@selector(touchesCancelled:withEvent:)]) {
 			[furthestLayerDown performSelector:@selector(touchesCancelled:withEvent:) withObject:touches withObject:event];
@@ -426,6 +434,10 @@
 	//Check if the touch hit a RMMarker subclass and if so, forward the touch event on
 	//so it can be handled there
 	id furthestLayerDown = [[[self contents] overlay].markerLayer hitTest:[touch locationInView:self]];
+    if ([[furthestLayerDown superlayer] isKindOfClass:[RMMarker class]])
+    {
+        furthestLayerDown = [furthestLayerDown superlayer];
+    }
 	if ([[furthestLayerDown class]isSubclassOfClass: [RMMarker class]]) {
 		if ([furthestLayerDown respondsToSelector:@selector(touchesEnded:withEvent:)]) {
 			[furthestLayerDown performSelector:@selector(touchesEnded:withEvent:) withObject:touches withObject:event];
@@ -512,6 +524,10 @@
 	//Check if the touch hit a RMMarker subclass and if so, forward the touch event on
 	//so it can be handled there
 	id furthestLayerDown = [[[self contents] overlay].markerLayer hitTest:[touch locationInView:self]];
+    if ([[furthestLayerDown superlayer] isKindOfClass:[RMMarker class]])
+    {
+        furthestLayerDown = [furthestLayerDown superlayer];
+    }
 	if ([[furthestLayerDown class] isSubclassOfClass: [RMMarker class]]) {
 		if ([furthestLayerDown respondsToSelector:@selector(touchesMoved:withEvent:)]) {
 			[furthestLayerDown performSelector:@selector(touchesMoved:withEvent:) withObject:touches withObject:event];
