@@ -26,6 +26,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import <UIKit/UIKit.h>
+#import <CoreLocation/CoreLocation.h>
 #import "RMMapLayer.h"
 #import "RMFoundation.h"
 
@@ -37,7 +38,7 @@ extern NSString * const RMMarkerRedKey;
 @class RMMarkerManager;
 
 @class RMMarker;
-
+@class RMRadiusLayer;
 
 @protocol RMMarkerChangeDelegate
 
@@ -46,16 +47,16 @@ extern NSString * const RMMarkerRedKey;
 
 @end
 
-@interface RMMarker : RMMapLayer <RMMovingMapLayer> {
+@interface RMMarker : RMMapLayer <RMMovingMapLayer,RMScalingMapLayer> {
 	RMXYPoint location;
     RMMarkerManager *manager;
 	NSObject* data;
     id<RMMarkerChangeDelegate> markerChangeDelegate;
+    CALayer *imageLayer;
+    RMRadiusLayer *radiusLayer;
+	CGFloat metersPerPixel;
+    CLLocationDistance radius;
     
-    // The region, relative to bounds, in which touches will be accepted.
-    // By default, this is the full bounds.
-    CGRect touchAcceptRegion;
-	
 	// A label which comes up when you tap the marker
 	UIView* labelView;
 }
@@ -100,7 +101,8 @@ extern NSString * const RMMarkerRedKey;
 @property (nonatomic, retain) UIView* labelView;
 @property (nonatomic,assign,setter=setMarkerManager:) RMMarkerManager *manager;
 @property (nonatomic,assign) id<RMMarkerChangeDelegate> markerChangeDelegate;
-@property (nonatomic,assign) CGRect touchAcceptRegion;
+@property (assign,nonatomic) CLLocationDistance radius;
+@property (nonatomic,readonly) RMRadiusLayer *radiusLayer;
 
 
 @end
