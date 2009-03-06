@@ -52,6 +52,10 @@
     self.opaque = NO;
     self.clipsToBounds = YES;
     
+    // Must enable multi-touch here, otherwise multi-touch events
+    // will not get to the map view!
+    self.multipleTouchEnabled = YES;
+    
     return self;
 }
 
