@@ -229,4 +229,18 @@
     return nil;
 }
 
+// Linear search for a matching marker.
+- (RMMarker*) markerForLabelView:(UIView*)view
+{
+    RMLayerSet *markerLayer = contents.overlay.markerLayer;
+    for (RMMarker *marker in [markerLayer sublayers])
+    {
+        if ([marker labelView] == view)
+        {
+            return marker;
+        }
+    }
+    return nil;
+}
+
 @end

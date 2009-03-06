@@ -77,7 +77,6 @@
     [markerLayer zoomByFactor:zoomFactor near:pivot];
 }
 
-
 - (void)dealloc {
     [markerLayer removeFromSuperlayer];
     [markerLayer release];
