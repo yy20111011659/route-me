@@ -14,7 +14,7 @@ SnapMyLife is a place where you can share your day in photos, keep up with frien
 
 SnapMyLife consists of several components. The main one being the SnapMyLife website. The site is accessible from both desktop and mobile phone browsers. There is also a special version of the site for Safari on the iPhone.
 
-Because the iPhone is such a rich platform, we decided to create a native iPhone application using route-me open source project that makes using the site easier. What follows is a description of some of the views of the SnapMyLife iPhone application.
+Because the iPhone is such a rich platform, we decided to create a native iPhone application using the route-me open source project that makes accessing the site easier. What follows is a description of some of the views of the SnapMyLife iPhone application.
 
 The first two screen shots show the list view and the view used to upload an image taken with the camera. As long as the user allows it, the application will use the LocationManager to GeoTag images.
 
