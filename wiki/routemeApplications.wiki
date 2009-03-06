@@ -14,15 +14,15 @@ SnapMyLife is a place where you can share your day in photos, keep up with frien
 
 The first two screen shots show the list view and the view used to upload an image taken with the camera. As long as the user allows it the application will use the LocationManager to GeoTag images.
 
-[http://groups.google.com/group/route-me-map/web/SML_list.jpg] [http://groups.google.com/group/route-me-map/web/SML_send.jpg]
+[http://route-me-map.googlegroups.com/web/SML_list.jpg?gda=B6gmij4AAAAyi1FSti3u_TbV4V5gAsxowSWEYnqMGP22vc86xnpY8epGUnn3BzCRMeSRILO2eZLjsKXVs-X7bdXZc5buSfmx&gsc=vfabXQsAAAD2u4UiE8ZwGGxcHKKqAUb9] [http://route-me-map.googlegroups.com/web/SML_send.jpg?gda=3uz2Lz4AAAAyi1FSti3u_TbV4V5gAsxowSWEYnqMGP22vc86xnpY8VO-zJkMq4AlwvudcIqiaFvjsKXVs-X7bdXZc5buSfmx&gsc=vfabXQsAAAD2u4UiE8ZwGGxcHKKqAUb9]
 
 By GeoTaging the location an image was taken, the site can reverse GeoTag the image to provide a human readable location. See the detail view below.
 
-[http://groups.google.com/group/route-me-map/web/SML_detail.jpg]
+[http://route-me-map.googlegroups.com/web/SML_detail.jpg?gda=r-ka1UAAAAAyi1FSti3u_TbV4V5gAsxowSWEYnqMGP22vc86xnpY8T9Ab4szRFd6XZUOGTNvL6JtxVPdW1gYotyj7-X7wDON&gsc=vfabXQsAAAD2u4UiE8ZwGGxcHKKqAUb9]
 
 And all of this allows us to have a map view with pins showing images taken in the displayed area. It's not shown in this screen shot but if a user touches a pin a detail view will appear with more information about the image and a button to the detail view for the image. There is also a sliding window of thumbnails across the top of the view corresponding to the pins in the map view.
 
-[http://groups.google.com/group/route-me-map/web/SML_map.jpg]
+[http://route-me-map.googlegroups.com/web/SML_map.jpg?gda=_RJRjD0AAAAyi1FSti3u_TbV4V5gAsxowSWEYnqMGP22vc86xnpY8ZY_qPMWta-RDiqQScIyyoLlNv--OykrTYJH3lVGu2Z5&gsc=vfabXQsAAAD2u4UiE8ZwGGxcHKKqAUb9]
 
 You can visit SnapMyLife [http://www.snapmylife.com here]
 
