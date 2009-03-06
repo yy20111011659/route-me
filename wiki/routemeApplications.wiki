@@ -10,9 +10,9 @@ Quazie's Senior Design project at the University of Michigan - Still a work in p
 
 = SnapMyLife =
 
-SnapMyLife is a place where you can share your day in photos, keep up with friends or family, or just see someone's life on the other side of the world.
+SnapMyLife is a place where you can share your day in photos, keep up with friends and family, or just see someone's life on the other side of the world.
 
-The first two screen shots show the list view and the view used to upload an image taken with the camera. As long as the user allows it the application will use the LocationManager to GeoTag images.
+The first two screen shots show the list view and the view used to upload an image taken with the camera. As long as the user allows it, the application will use the LocationManager to GeoTag images.
 
 [http://route-me-map.googlegroups.com/web/SML_list.jpg?gda=B6gmij4AAAAyi1FSti3u_TbV4V5gAsxowSWEYnqMGP22vc86xnpY8epGUnn3BzCRMeSRILO2eZLjsKXVs-X7bdXZc5buSfmx&gsc=vfabXQsAAAD2u4UiE8ZwGGxcHKKqAUb9] [http://route-me-map.googlegroups.com/web/SML_send.jpg?gda=3uz2Lz4AAAAyi1FSti3u_TbV4V5gAsxowSWEYnqMGP22vc86xnpY8VO-zJkMq4AlwvudcIqiaFvjsKXVs-X7bdXZc5buSfmx&gsc=vfabXQsAAAD2u4UiE8ZwGGxcHKKqAUb9]
 
