@@ -52,6 +52,7 @@
 	BOOL delegateHasDoubleTapOnMap;
 	BOOL delegateHasSingleTapOnMap;
 	BOOL delegateHasTapOnMarker;
+	BOOL delegateHasTapOnLabelForMarker;
 	BOOL delegateHasAfterMapTouch;
 	BOOL delegateHasDragMarkerPosition;
     BOOL delegateHasFocusChangedToMarker;
@@ -182,6 +183,7 @@
 	delegateHasSingleTapOnMap = [(NSObject*) delegate respondsToSelector: @selector(singleTapOnMap:At:)];
 	
 	delegateHasTapOnMarker = [(NSObject*) delegate respondsToSelector:@selector(tapOnMarker:onMap:)];
+    delegateHasTapOnLabelForMarker = [(NSObject*) delegate respondsToSelector:@selector(tapOnLabelForMarker:onMap:withTouch:)];
     
     delegateHasFocusChangedToMarker = [(NSObject*) delegate respondsToSelector:@selector(mapView:focusChangedToMarker:fromMarker:)];
 	delegateHasShouldDragMarker = [(NSObject*) delegate respondsToSelector:@selector(mapView:shouldDragMarker:)];
@@ -505,10 +507,37 @@
                         [delegate tapOnMarker:(RMMarker*)hit onMap:self];
                     }
                 }
-			} else if (delegateHasSingleTapOnMap) {
-				[delegate singleTapOnMap: self At: [touch locationInView:self]];
+			}
+            else
+            {
+                // Pursuant to comments on r227, have included an implementation for tapOnLabelForMarker.
+                RMMarker *markerForTappedLabel = nil;
+                if (delegateHasTapOnLabelForMarker)
+                {
+                    CGPoint touchLoc = [touch locationInView:contents.overlay];
+                    for (UIView *view in contents.overlay.subviews)
+                    {
+                        // Do a non-recursive hit-test
+                        if ([view pointInside:touchLoc withEvent:event])
+                        {
+                            markerForTappedLabel = [contents.markerManager markerForLabelView:view];
+                            
+                            if (markerForTappedLabel)
+                            {
+                                [delegate tapOnLabelForMarker:markerForTappedLabel onMap:self];
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                if ( (!markerForTappedLabel) && delegateHasSingleTapOnMap) {
+                    [delegate singleTapOnMap: self At: [touch locationInView:self]];
+                }
 			}
 		}
+        
+        
 		
 	}
 

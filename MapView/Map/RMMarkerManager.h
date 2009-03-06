@@ -64,5 +64,6 @@
 - (void) moveMarker:(RMMarker *)marker AtXY:(CGPoint)point;
 
 - (RMMarker*) markerTouchableHitTest:(CGPoint)point;
+- (RMMarker*) markerForLabelView:(UIView*)view;
 
 @end
