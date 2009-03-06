@@ -50,7 +50,8 @@ extern NSString * const RMMarkerRedKey;
 @interface RMMarker : RMMapLayer <RMMovingMapLayer,RMScalingMapLayer> {
 	RMXYPoint location;
     RMMarkerManager *manager;
-	NSObject* data;
+
+	NSObject* data; // provided for storage of arbitrary user data
     id<RMMarkerChangeDelegate> markerChangeDelegate;
     CALayer *imageLayer;
     RMRadiusLayer *radiusLayer;
