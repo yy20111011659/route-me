@@ -20,7 +20,7 @@ By GeoTaging the location an image was taken, the site can reverse GeoTag the im
 
 [http://route-me-map.googlegroups.com/web/SML_detail.jpg?gda=r-ka1UAAAAAyi1FSti3u_TbV4V5gAsxowSWEYnqMGP22vc86xnpY8T9Ab4szRFd6XZUOGTNvL6JtxVPdW1gYotyj7-X7wDON&gsc=vfabXQsAAAD2u4UiE8ZwGGxcHKKqAUb9]
 
-All of this allows us to have a map view with pins showing images taken in the displayed area. If a user touches a pin a semi transparent detail view will appear with more information about the image. The transparent map detail view also has a button that will navigate to the main detail view for the image. There is also a sliding window of thumbnails across the top of the view corresponding to the pins in the map view.
+All of this allows us to have a map view with pins showing images taken in the displayed area. The view across the top is a scrollable view of thumbnails corresponding to pins in the map view. If a user touches a pin a semi transparent detail view will appear with more information about the image.
 
 [http://route-me-map.googlegroups.com/web/SML_map.jpg?gda=_RJRjD0AAAAyi1FSti3u_TbV4V5gAsxowSWEYnqMGP22vc86xnpY8ZY_qPMWta-RDiqQScIyyoLlNv--OykrTYJH3lVGu2Z5&gsc=vfabXQsAAAD2u4UiE8ZwGGxcHKKqAUb9]
 
