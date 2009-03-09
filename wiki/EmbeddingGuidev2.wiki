@@ -28,9 +28,15 @@ Checked out revision n.
 == Adding the route-me project reference to your own project ==
 
 Open up your own project, and click on the root element of the "Group & Files" sidebar (there should be a blue compass icon next to it).
-Then in the main Xcode menu, choose "Project"->"Add to Project..." and then select the route-me MapView.xcodeproj file from where the route-me project is installed on the file system. Do not copy items. Make the reference type "Relative to Project".
-As a result, the MapView.xcodeproj (with the same blue icon than the root element of your project) should appear just under the root element of your project.
-If you expand the MapView.xcodeproj, you will see 2 files: MapView.app and libMapView.a
+Then in the main Xcode menu, choose "Project"->"Add to Project..." and then select the route-me MapView.xcodeproj file from where the route-me project is installed on the file system. 
+
+Do not copy items. Make the reference type "Relative to Project".
+
+As a result, the MapView.xcodeproj (with the same blue icon than the root element of your project) will appear just under the root element of your project.
+
+If you expand the MapView.xcodeproj, you will see 2 files: MapView.app and libMapView.a. 
+
+You do not need a reference to Proj4. As long as the proj4 project folder is sitting next to the mapview project folder, it will work fine.
 
 Note that this method is described in the "Xcode Project Management Guide", p.37 Referencing Other Projects.
 
