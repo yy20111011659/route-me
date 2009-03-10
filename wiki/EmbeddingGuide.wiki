@@ -52,15 +52,19 @@ In the Groups & Files sidebar, open Targets and double-click on your application
 ===General tab===
 In the general tab, we will add MapView as a direct dependency.
 
-Assuming you correctly added libMapView.a to the target, it should currently be listed as a linked library.
+If you correctly added libMapView.a to the target, it is listed in the lower pane as a linked library. Now you're going to work with the upper pane, though.
 
-Click the direct dependency '+' and add MapView.xcodeproj->MapView. This causes MapView to be compiled when your project is compiled (if necessary).
+Click the Direct Dependencies '+' (below the upper pane, above the lower pane) and add MapView.xcodeproj->MapView. This causes MapView to be compiled when your project is compiled (if changes have been made in the MapView project).
 
-We also need to add a couple other linked libraries. Click the linked libraries '+' and add CoreGraphics, CoreLocation (obrand: that may not be needed, I will confirm), QuartzCore and libsqlite3.dylib
+We also need to add a couple other linked libraries. Click the Linked Libraries pane's '+' and add CoreGraphics, CoreLocation (obrand: that may not be needed, I will confirm), QuartzCore and libsqlite3.dylib
 
 ===Build Tab===
-Find "Header Search Paths" under "Search Paths". Double-click on the 'Header Search Paths' text and add the path to the MapView directory contained in the route-me project located on your file system. (Note that if there are any spaces in the path, enclose the entire entry with "". 
-If route-me is placed next to your project on the file system, you would have the following in the path: "../route-me/trunk/MapView".
+Click on the "Build" tab in your target's info window. 
+
+Change the Configuration popup to read "All Configurations", so that your changes can be made just once.
+
+Find "Header Search Paths" under "Search Paths" (shortcut: type "header" in the search box at upper right of the target info window). Double-click on the 'Header Search Paths' text and add the path to the MapView directory contained in the route-me project located on your file system. (Note that if there are any spaces in the path, enclose the entire entry with "". 
+If the MapView project folder is placed next to your project's project folder on the file system, you would have the following in the path: "../MapView".
 
 Check the 'Recursive' box and click Ok.
 
@@ -69,7 +73,7 @@ Identifier will currently be: com.yourcompany.${PRODUCT_NAME:identifier}
 If you have a code signing identity, change yourcompany appropriately so you can deploy & test on the iphone.
 
 ----
-Build the project. If all goes to plan, it should compile ~143 files (Proj4), then ~26 files (MapView) then ~6 files (your application). Successive compilations will be much faster.
+Build the project. If you have done everything right, it will compile about 143 files in Proj4, then about 26 files in MapView, and  then about 6 files (your application). Successive compilations will be much faster.
 
 You will probably get a few warnings from Proj4 and something about code signing identities in MapView. These warnings are safe to ignore.
 
