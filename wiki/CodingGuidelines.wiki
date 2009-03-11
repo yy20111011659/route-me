@@ -1,0 +1,24 @@
+#summary Guidelines for developers participating in the Route-Me project.
+#labels Phase-Implementation
+
+= Code Repository =
+
+Don't break the trunk. Before you commit code to the trunk, please test it against samples/SampleMap in both Release and Build configurations. 
+
+Before adding or removing substantial functionality, lay out your idea on the mailing list. Open a bugtracker ticket, and assign yourself as owner.
+
+If your work might break the trunk, then just use a branch for your intermediate commits, and we'll merge it over when you're finished. By convention, we label branches after the bugtracker Issue Number. The code for Issue 59 is in branches/issue59.
+
+= Design Notes =
+
+Route-Me is single-threaded by design. All external calls should come from your main (UI) thread.
+
+= Coding Style =
+
+Use RMLog() where you might normally want to use NSLog(). RMLog is defined as a macro, so that it works as NSLog in Debug builds, and disappears in Release builds. You may also use LogMethod() if you simply want a method trace logged to the console.
+
+Adhere to Apple Cocoa naming conventions. Camel case the parameter names, with initial letter lowercase. The preposition "with" should appear at most once in a method name.
+
+Class names are always uppercase, and are always defined in files with the same name as the class. 
+
+Use bindings-compatible accessors. If the "setXyzzy" method exists, it must modify the "xyzzy" instance variable of its class.
