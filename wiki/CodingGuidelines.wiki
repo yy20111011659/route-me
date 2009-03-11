@@ -9,6 +9,10 @@ Before adding or removing substantial functionality, lay out your idea on the ma
 
 If your work might break the trunk, then just use a branch for your intermediate commits, and we'll merge it over when you're finished. By convention, we label branches after the bugtracker Issue Number. The code for Issue 59 is in branches/issue59.
 
+Long, descriptive commit messages are welcome. If your commit message summarizes what you did, it saves everyone from having to look at the code diffs, or at the Issue Tracker. "consolidated ivars foo, bar, and plugh into xyzzy in class RMContents, closes issue 982" is much better than "fixed issue 982".
+
+The issue tracker and source code control system know about each other. If you refer to "r250" or "issue 29" in the issue tracker, commit message, or comments, a hyperlink is set up automatically.
+
 = Design Notes =
 
 Route-Me is single-threaded by design. All external calls should come from your main (UI) thread.
