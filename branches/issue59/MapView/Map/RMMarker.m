@@ -264,7 +264,7 @@ static CGImageRef _markerBlue = nil;
         CGPoint position = CGPointMake([self bounds].size.width / 2 - [text sizeWithFont:font].width / 2, 4);
 	[self setTextForegroundColor:textColor];
 	[self setTextBackgroundColor:backgroundColor];
-	[self setTextLabel:text  toPosition:position withFont:font withTextColor:textColor withBackgroundColor:backgroundColor];
+	[self setTextLabel:text atPosition:position withFont:font withTextColor:textColor withBackgroundColor:backgroundColor];
 }
 
 - (void) setTextLabel: (NSString*)text atPosition:(CGPoint)position withFont:(UIFont*)font withTextColor:(UIColor*)textColor withBackgroundColor:(UIColor*)backgroundColor
@@ -464,5 +464,5 @@ static CGImageRef _markerBlue = nil;
 {
     return (self.zPosition > 0.5);
 }
-
+@end
 

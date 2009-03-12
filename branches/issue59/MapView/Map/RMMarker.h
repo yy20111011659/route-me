@@ -66,6 +66,10 @@ extern NSString * const RMMarkerRedKey;
 @property (assign, nonatomic) RMXYPoint location;
 @property (nonatomic, retain) NSObject* data;
 @property (nonatomic, retain) UIView* labelView;
+@property (nonatomic,assign,setter=setMarkerManager:) RMMarkerManager *manager;
+@property (nonatomic,assign) id<RMMarkerChangeDelegate> markerChangeDelegate;
+@property (assign,nonatomic) CLLocationDistance radius;
+@property (nonatomic,readonly) RMRadiusLayer *radiusLayer;
 @property(nonatomic,retain) UIColor *textForegroundColor;
 @property(nonatomic,retain) UIColor *textBackgroundColor;
 
@@ -104,13 +108,6 @@ extern NSString * const RMMarkerRedKey;
 - (void) replaceImage:(CGImageRef)image anchorPoint:(CGPoint)_anchorPoint;
 - (void) replaceKey: (NSString*) key;
 
-@property (assign, nonatomic) RMXYPoint location;
-@property (retain) NSObject* data;
-@property (nonatomic, retain) UIView* labelView;
-@property (nonatomic,assign,setter=setMarkerManager:) RMMarkerManager *manager;
-@property (nonatomic,assign) id<RMMarkerChangeDelegate> markerChangeDelegate;
-@property (assign,nonatomic) CLLocationDistance radius;
-@property (nonatomic,readonly) RMRadiusLayer *radiusLayer;
 
 
 @end
