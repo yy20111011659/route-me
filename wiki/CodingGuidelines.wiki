@@ -1,5 +1,5 @@
 #summary Guidelines for developers participating in the Route-Me project.
-#labels Phase-Implementation
+#labels Phase-Implementation,Featured
 
 = Code Repository =
 
