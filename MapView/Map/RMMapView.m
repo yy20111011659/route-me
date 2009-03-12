@@ -309,7 +309,7 @@
     draggable = draggableObject;
     if ([draggable isKindOfClass:[RMMarker class]])
     {
-        if (delegateHasShouldDragMarker)
+        if (_delegateHasShouldDragMarker)
         {
             if (! [delegate mapView:self shouldDragMarker:(RMMarker*)draggable])
             {
@@ -323,7 +323,7 @@
             draggable = nil;
             return;
         }
-        if (delegateHasDragMarkerPosition) {
+        if (_delegateHasDragMarkerPosition) {
             [delegate dragMarkerPosition:(RMMarker*)draggable onMap:self position:lastGesture.center];
             return;
         }
@@ -353,7 +353,7 @@
             if (realTouchedMarker != oldFocus)
             {
                 [realTouchedMarker setFocused:YES];
-                if (delegateHasFocusChangedToMarker)
+                if (_delegateHasFocusChangedToMarker)
                 {
                     [delegate mapView:self focusChangedToMarker:realTouchedMarker fromMarker:oldFocus];
                 }
@@ -433,7 +433,7 @@
     
     if (draggable)
     {
-        if (delegateHasDidDragMarker)
+        if (_delegateHasDidDragMarker)
         {
             [delegate mapView:self didDragMarker:(RMMarker*)draggable];
         }
