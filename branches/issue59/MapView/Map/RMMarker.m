@@ -46,10 +46,23 @@ static CGImageRef _markerBlue = nil;
 @synthesize manager;
 @synthesize markerChangeDelegate;
 @synthesize radiusLayer;
+@synthesize textForegroundColor;
+@synthesize textBackgroundColor;
 
 + (RMMarker*) markerWithNamedStyle: (NSString*) styleName
 {
 	return [[[RMMarker alloc] initWithNamedStyle: styleName] autorelease];
+}
+
+// init
+- (id)init
+{
+    if (self = [super init]) {
+        labelView = nil;
+        textForegroundColor = [UIColor blackColor];
+        textBackgroundColor = [UIColor clearColor];
+    }
+    return self;
 }
 
 - (id) initWithCGImage: (CGImageRef) image
@@ -59,7 +72,7 @@ static CGImageRef _markerBlue = nil;
 
 - (id) initWithCGImage: (CGImageRef) image anchorPoint: (CGPoint) _anchorPoint
 {
-	if (![super init])
+	if (![self init])
 		return nil;
 	
     radius = 0.0;
@@ -184,7 +197,7 @@ static CGImageRef _markerBlue = nil;
 	RMMarkerStyle* style = [[RMMarkerStyles styles] styleNamed: styleName];
 	
 	if (style==nil) {
-		NSLog(@"problem creating marker: style '%@' not found", styleName);
+		RMLog(@"problem creating marker: style '%@' not found", styleName);
 		return [self initWithCGImage: [RMMarker markerImage: RMMarkerRedKey]];
 	}
 	return [self initWithStyle: style];
@@ -238,18 +251,20 @@ static CGImageRef _markerBlue = nil;
     CGPoint pos = bds.origin;
     pos.x += bds.size.width/2 - [text sizeWithFont:[UIFont systemFontOfSize:15]].width / 2;
     pos.y += 4;
-    [self setTextLabel:text atPosition:pos withFont:[UIFont systemFontOfSize:15] withTextColor:[UIColor blackColor] withBackgroundColor:[UIColor clearColor]];
+    [self setTextLabel:text atPosition:pos withFont:[UIFont systemFontOfSize:15] withTextColor:[self textForegroundColor] withBackgroundColor:[self textBackgroundColor]];
 }
 
 - (void) setTextLabel: (NSString*)text atPosition:(CGPoint)position
 {
-	[self setTextLabel:text atPosition:position withFont:[UIFont systemFontOfSize:15] withTextColor:[UIColor blackColor] withBackgroundColor:[UIColor clearColor]];
+	[self setTextLabel:text atPosition:position withFont:[UIFont systemFontOfSize:15] withTextColor:[self textForegroundColor] withBackgroundColor:[self textBackgroundColor]];
 }
 
 - (void) setTextLabel: (NSString*)text withFont:(UIFont*)font withTextColor:(UIColor*)textColor withBackgroundColor:(UIColor*)backgroundColor
 {
         CGPoint position = CGPointMake([self bounds].size.width / 2 - [text sizeWithFont:font].width / 2, 4);
-	[self setTextLabel:text  atPosition:position withFont:font withTextColor:textColor withBackgroundColor:backgroundColor];
+	[self setTextForegroundColor:textColor];
+	[self setTextBackgroundColor:backgroundColor];
+	[self setTextLabel:text  toPosition:position withFont:font withTextColor:textColor withBackgroundColor:backgroundColor];
 }
 
 - (void) setTextLabel: (NSString*)text atPosition:(CGPoint)position withFont:(UIFont*)font withTextColor:(UIColor*)textColor withBackgroundColor:(UIColor*)backgroundColor
@@ -261,6 +276,8 @@ static CGImageRef _markerBlue = nil;
 							  textSize.height+4);
 	
 	UILabel *aLabel = [[UILabel alloc] initWithFrame:frame];
+	[self setTextForegroundColor:textColor];
+	[self setTextBackgroundColor:backgroundColor];
 	[aLabel setNumberOfLines:0];
 	[aLabel setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
 	[aLabel setBackgroundColor:backgroundColor];
@@ -338,8 +355,10 @@ static CGImageRef _markerBlue = nil;
 {
     [imageLayer release];
     [radiusLayer release];
-	self.labelView = nil;
-	self.data = nil;
+    self.data = nil;
+    self.labelView = nil;
+    self.textForegroundColor = nil;
+    self.textBackgroundColor = nil;
 
      if (_markerBlue && ([(id)_markerBlue retainCount] == 1))
      {
@@ -394,7 +413,7 @@ static CGImageRef _markerBlue = nil;
 
 + (CGImageRef) loadPNGFromBundle: (NSString *)filename
 {
-	NSString *path = [[NSBundle mainBundle] pathForResource:filename ofType:@"png"];
+	NSString *path = [[NSBundle bundleForClass:@"RMMarker"] pathForResource:filename ofType:@"png"];
 	CGDataProviderRef dataProvider = CGDataProviderCreateWithFilename([path UTF8String]);
 	CGImageRef image = CGImageCreateWithPNGDataProvider(dataProvider, NULL, FALSE, kCGRenderingIntentDefault);
 	[NSMakeCollectable(image) autorelease];
@@ -447,4 +466,3 @@ static CGImageRef _markerBlue = nil;
 }
 
 
-@end
