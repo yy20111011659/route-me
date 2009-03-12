@@ -96,18 +96,8 @@
 
 }
 
-- (BOOL)mapView:(RMMapView *)map shouldDragMarker:(RMMarker *)marker withEvent:(UIEvent *)event
+- (void) dragMarkerPosition: (RMMarker*) marker onMap: (RMMapView*)map position:(CGPoint)position;
 {
-   //If you do not implement this function, then all drags on markers will be sent to the didDragMarker function.
-   //If you always return YES you will get the same result
-   //If you always return NO you will never get a call to the didDragMarker function
-   return YES;
-}
-
-- (void)mapView:(RMMapView *)map didDragMarker:(RMMarker *)marker withEvent:(UIEvent *)event 
-{
-   CGPoint position = [[[event allTouches] anyObject] locationInView:mapView];
-   
 	RMMarkerManager *markerManager = [mapView markerManager];
 
 	NSLog(@"New location: X:%lf Y:%lf", [marker location].x, [marker location].y);
@@ -165,6 +155,7 @@
 //	[markerManager addDefaultMarkerAt:coolPlace];
 	
 	RMMarker *marker = [[RMMarker alloc]initWithKey:RMMarkerBlueKey];
+	[marker setTextForegroundColor:[UIColor blueColor]];
 	[marker setTextLabel:@"Hello"];
 	[markerManager addMarker:marker AtLatLong:[[mapView contents] mapCenter]];
 	[marker release];
@@ -176,8 +167,7 @@
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    return YES;
 }
 
 

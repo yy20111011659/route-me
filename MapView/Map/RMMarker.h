@@ -59,8 +59,15 @@ extern NSString * const RMMarkerRedKey;
     CLLocationDistance radius;
     
 	// A label which comes up when you tap the marker
-	UIView* labelView;
+	UIView *labelView;
+	UIColor *textForegroundColor;
+	UIColor *textBackgroundColor;
 }
+@property (assign, nonatomic) RMXYPoint location;
+@property (nonatomic, retain) NSObject* data;
+@property (nonatomic, retain) UIView* labelView;
+@property(nonatomic,retain) UIColor *textForegroundColor;
+@property(nonatomic,retain) UIColor *textBackgroundColor;
 
 + (RMMarker*) markerWithNamedStyle: (NSString*) styleName;
 + (CGImageRef) markerImage: (NSString *) key;

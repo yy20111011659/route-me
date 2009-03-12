@@ -75,6 +75,8 @@
 	[marker release];
 }
 
+// FIXME: (not really): see http://code.google.com/p/route-me/issues/detail?id=75
+// (halmueller): I am skeptical about interactions of this code with paths
 - (void) removeMarkers
 {
     for (RMMarker *marker in [[contents overlay].markerLayer sublayers])

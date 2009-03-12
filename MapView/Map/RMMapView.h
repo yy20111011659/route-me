@@ -57,6 +57,23 @@ typedef struct {
 	float decelerationFactor;
 	BOOL deceleration;
     CALayer *draggable;
+   
+   @private
+   	BOOL _delegateHasBeforeMapMove;
+      BOOL _delegateHasAfterMapMove;
+      BOOL _delegateHasBeforeMapZoomByFactor;
+      BOOL _delegateHasAfterMapZoomByFactor;
+      BOOL _delegateHasDoubleTapOnMap;
+      BOOL _delegateHasSingleTapOnMap;
+      BOOL _delegateHasTapOnMarker;
+      BOOL _delegateHasTapOnLabelForMarker;
+      BOOL _delegateHasAfterMapTouch;
+      BOOL _delegateHasDragMarkerPosition;
+      BOOL _delegateHasFocusChangedToMarker;
+      BOOL _delegateHasShouldDragMarker;
+      BOOL _delegateHasDidDragMarker;
+      NSTimer *_decelerationTimer;
+      CGSize _decelerationDelta;
 }
 
 // Any other functions you need to manipulate the mapyou can access through this

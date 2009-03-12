@@ -25,7 +25,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import "RMAbstractMecatorWebSource.h"
+#import "RMAbstractMercatorWebSource.h"
 #import "RMTransform.h"
 #import "RMTileImage.h"
 #import "RMTileLoader.h"
@@ -33,7 +33,7 @@
 #import "RMTiledLayerController.h"
 #import "RMProjection.h"
 
-@implementation RMAbstractMecatorWebSource
+@implementation RMAbstractMercatorWebSource
 
 -(id) init
 {

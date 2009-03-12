@@ -44,24 +44,6 @@
 - (void)stopDeceleration;
 @end
 
-@implementation RMMapView (Internal)
-	BOOL delegateHasBeforeMapMove;
-	BOOL delegateHasAfterMapMove;
-	BOOL delegateHasBeforeMapZoomByFactor;
-	BOOL delegateHasAfterMapZoomByFactor;
-	BOOL delegateHasDoubleTapOnMap;
-	BOOL delegateHasSingleTapOnMap;
-	BOOL delegateHasTapOnMarker;
-	BOOL delegateHasTapOnLabelForMarker;
-	BOOL delegateHasAfterMapTouch;
-	BOOL delegateHasDragMarkerPosition;
-    BOOL delegateHasFocusChangedToMarker;
-    BOOL delegateHasShouldDragMarker;
-    BOOL delegateHasDidDragMarker;
-	NSTimer *decelerationTimer;
-	CGSize decelerationDelta;
-@end
-
 @implementation RMMapView
 @synthesize decelerationFactor;
 @synthesize deceleration;
@@ -173,25 +155,25 @@
 	if (delegate == _delegate) return;
 	delegate = _delegate;
 	
-	delegateHasBeforeMapMove = [(NSObject*) delegate respondsToSelector: @selector(beforeMapMove:)];
-	delegateHasAfterMapMove  = [(NSObject*) delegate respondsToSelector: @selector(afterMapMove:)];
+	_delegateHasBeforeMapMove = [(NSObject*) delegate respondsToSelector: @selector(beforeMapMove:)];
+	_delegateHasAfterMapMove  = [(NSObject*) delegate respondsToSelector: @selector(afterMapMove:)];
 	
-	delegateHasBeforeMapZoomByFactor = [(NSObject*) delegate respondsToSelector: @selector(beforeMapZoom: byFactor: near:)];
-	delegateHasAfterMapZoomByFactor  = [(NSObject*) delegate respondsToSelector: @selector(afterMapZoom: byFactor: near:)];
+	_delegateHasBeforeMapZoomByFactor = [(NSObject*) delegate respondsToSelector: @selector(beforeMapZoom: byFactor: near:)];
+	_delegateHasAfterMapZoomByFactor  = [(NSObject*) delegate respondsToSelector: @selector(afterMapZoom: byFactor: near:)];
 
-	delegateHasDoubleTapOnMap = [(NSObject*) delegate respondsToSelector: @selector(doubleTapOnMap:At:)];
-	delegateHasSingleTapOnMap = [(NSObject*) delegate respondsToSelector: @selector(singleTapOnMap:At:)];
+	_delegateHasDoubleTapOnMap = [(NSObject*) delegate respondsToSelector: @selector(doubleTapOnMap:At:)];
+	_delegateHasSingleTapOnMap = [(NSObject*) delegate respondsToSelector: @selector(singleTapOnMap:At:)];
 	
-	delegateHasTapOnMarker = [(NSObject*) delegate respondsToSelector:@selector(tapOnMarker:onMap:)];
-    delegateHasTapOnLabelForMarker = [(NSObject*) delegate respondsToSelector:@selector(tapOnLabelForMarker:onMap:withTouch:)];
+	_delegateHasTapOnMarker = [(NSObject*) delegate respondsToSelector:@selector(tapOnMarker:onMap:)];
+    _delegateHasTapOnLabelForMarker = [(NSObject*) delegate respondsToSelector:@selector(tapOnLabelForMarker:onMap:withTouch:)];
     
-    delegateHasFocusChangedToMarker = [(NSObject*) delegate respondsToSelector:@selector(mapView:focusChangedToMarker:fromMarker:)];
-	delegateHasShouldDragMarker = [(NSObject*) delegate respondsToSelector:@selector(mapView:shouldDragMarker:)];
-	delegateHasDidDragMarker = [(NSObject*) delegate respondsToSelector:@selector(mapView:didDragMarker:)];
+    _delegateHasFocusChangedToMarker = [(NSObject*) delegate respondsToSelector:@selector(mapView:focusChangedToMarker:fromMarker:)];
+	_delegateHasShouldDragMarker = [(NSObject*) delegate respondsToSelector:@selector(mapView:shouldDragMarker:)];
+	_delegateHasDidDragMarker = [(NSObject*) delegate respondsToSelector:@selector(mapView:didDragMarker:)];
     
-	delegateHasAfterMapTouch  = [(NSObject*) delegate respondsToSelector: @selector(afterMapTouch:)];
+	_delegateHasAfterMapTouch  = [(NSObject*) delegate respondsToSelector: @selector(afterMapTouch:)];
 	
-	delegateHasDragMarkerPosition = [(NSObject*) delegate respondsToSelector: @selector(dragMarkerPosition: onMap: position:)];
+	_delegateHasDragMarkerPosition = [(NSObject*) delegate respondsToSelector: @selector(dragMarkerPosition: onMap: position:)];
 }
 
 - (id<RMMapViewDelegate>) delegate
@@ -203,22 +185,22 @@
 
 -(void) moveToXYPoint: (RMXYPoint) aPoint
 {
-	if (delegateHasBeforeMapMove) [delegate beforeMapMove: self];
+	if (_delegateHasBeforeMapMove) [delegate beforeMapMove: self];
 	[contents moveToXYPoint:aPoint];
-	if (delegateHasAfterMapMove) [delegate afterMapMove: self];
+	if (_delegateHasAfterMapMove) [delegate afterMapMove: self];
 }
 -(void) moveToLatLong: (CLLocationCoordinate2D) point
 {
-	if (delegateHasBeforeMapMove) [delegate beforeMapMove: self];
+	if (_delegateHasBeforeMapMove) [delegate beforeMapMove: self];
 	[contents moveToLatLong:point];
-	if (delegateHasAfterMapMove) [delegate afterMapMove: self];
+	if (_delegateHasAfterMapMove) [delegate afterMapMove: self];
 }
 
 - (void)moveBy: (CGSize) delta
 {
-	if (delegateHasBeforeMapMove) [delegate beforeMapMove: self];
+	if (_delegateHasBeforeMapMove) [delegate beforeMapMove: self];
 	[contents moveBy:delta];
-	if (delegateHasAfterMapMove) [delegate afterMapMove: self];
+	if (_delegateHasAfterMapMove) [delegate afterMapMove: self];
 }
 - (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center
 {
@@ -226,10 +208,10 @@
 }
 - (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center animated:(BOOL)animated
 {
-	if (delegateHasBeforeMapZoomByFactor) [delegate beforeMapZoom: self byFactor: zoomFactor near: center];
-	[contents zoomByFactor:zoomFactor near:center animated:animated withCallback:(animated && delegateHasAfterMapZoomByFactor)?self:nil];
+	if (_delegateHasBeforeMapZoomByFactor) [delegate beforeMapZoom: self byFactor: zoomFactor near: center];
+	[contents zoomByFactor:zoomFactor near:center animated:animated withCallback:(animated && _delegateHasAfterMapZoomByFactor)?self:nil];
 	if (!animated)
-		if (delegateHasAfterMapZoomByFactor) [delegate afterMapZoom: self byFactor: zoomFactor near: center];
+		if (_delegateHasAfterMapZoomByFactor) [delegate afterMapZoom: self byFactor: zoomFactor near: center];
 }
 
 
@@ -237,7 +219,7 @@
 
 - (void)animationFinishedWithZoomFactor:(float)zoomFactor near:(CGPoint)p
 {
-	if (delegateHasAfterMapZoomByFactor)
+	if (_delegateHasAfterMapZoomByFactor)
 		[delegate afterMapZoom: self byFactor: zoomFactor near: p];
 }
 
@@ -258,7 +240,7 @@
 			&& [touch phase] != UITouchPhaseMoved
 			&& [touch phase] != UITouchPhaseStationary)
 			continue;
-		//		NSLog(@"phase = %d", [touch phase]);
+		//		RMLog(@"phase = %d", [touch phase]);
 		
 		interestingTouches++;
 		
@@ -276,7 +258,7 @@
 		return gesture;
 	}
 	
-	//	NSLog(@"interestingTouches = %d", interestingTouches);
+	//	RMLog(@"interestingTouches = %d", interestingTouches);
 	
 	gesture.center.x /= interestingTouches;
 	gesture.center.y /= interestingTouches;
@@ -290,10 +272,10 @@
 		
 		CGPoint location = [touch locationInView: self];
 		
-		//		NSLog(@"For touch at %.0f, %.0f:", location.x, location.y);
+		//		RMLog(@"For touch at %.0f, %.0f:", location.x, location.y);
 		float dx = location.x - gesture.center.x;
 		float dy = location.y - gesture.center.y;
-		//		NSLog(@"delta = %.0f, %.0f  distance = %f", dx, dy, sqrtf((dx*dx) + (dy*dy)));
+		//		RMLog(@"delta = %.0f, %.0f  distance = %f", dx, dy, sqrtf((dx*dx) + (dy*dy)));
 		gesture.averageDistanceFromCenter += sqrtf((dx*dx) + (dy*dy));
 	}
 	
@@ -301,7 +283,7 @@
 	
 	gesture.numTouches = interestingTouches;
 	
-	//	NSLog(@"center = %.0f,%.0f dist = %f", gesture.center.x, gesture.center.y, gesture.averageDistanceFromCenter);
+	//	RMLog(@"center = %.0f,%.0f dist = %f", gesture.center.x, gesture.center.y, gesture.averageDistanceFromCenter);
 	
 	return gesture;
 }
@@ -393,12 +375,12 @@
 		[RMMapContents setPerformExpensiveOperations:NO];
 	}
 	
-	//	NSLog(@"touchesBegan %d", [[event allTouches] count]);
+	//	RMLog(@"touchesBegan %d", [[event allTouches] count]);
 	lastGesture = [self getGestureDetails:[event allTouches]];
 
 	if(deceleration)
 	{
-		if (decelerationTimer != nil) {
+		if (_decelerationTimer != nil) {
 			[self stopDeceleration];
 		}
 	}
@@ -472,7 +454,7 @@
 
 	if (touch.tapCount >= 2)
 	{
-		if (delegateHasDoubleTapOnMap) {
+		if (_delegateHasDoubleTapOnMap) {
 			[delegate doubleTapOnMap: self At: lastGesture.center];
 		} else {
 			// Default behaviour matches built in maps.app
@@ -495,7 +477,7 @@
 	if (touch.tapCount == 1) 
 	{
 		CALayer* hit = (CALayer*)furthestLayerDown;
-//		NSLog(@"LAYER of type %@",[hit description]);
+//		RMLog(@"LAYER of type %@",[hit description]);
 		
 		if (hit) {
 			
@@ -503,7 +485,7 @@
 			if ([hit isKindOfClass: [RMMarker class]]) {
                 if ([ (RMMarker*)hit canAcceptTouchWithPoint:[hit convertPoint:[touch locationInView:self] fromLayer:self.layer]])
                 {
-                    if (delegateHasTapOnMarker) {
+                    if (_delegateHasTapOnMarker) {
                         [delegate tapOnMarker:(RMMarker*)hit onMap:self];
                     }
                 }
@@ -512,7 +494,7 @@
             {
                 // Pursuant to comments on r227, have included an implementation for tapOnLabelForMarker.
                 RMMarker *markerForTappedLabel = nil;
-                if (delegateHasTapOnLabelForMarker)
+                if (_delegateHasTapOnLabelForMarker)
                 {
                     CGPoint touchLoc = [touch locationInView:contents.overlay];
                     for (UIView *view in contents.overlay.subviews)
@@ -531,7 +513,7 @@
                     }
                 }
                 
-                if ( (!markerForTappedLabel) && delegateHasSingleTapOnMap) {
+                if ( (!markerForTappedLabel) && _delegateHasSingleTapOnMap) {
                     [delegate singleTapOnMap: self At: [touch locationInView:self]];
                 }
 			}
@@ -541,7 +523,7 @@
 		
 	}
 
-	if (delegateHasAfterMapTouch) [delegate afterMapTouch: self];
+	if (_delegateHasAfterMapTouch) [delegate afterMapTouch: self];
 
 //		[contents recalculateImageSet];
 }
@@ -567,7 +549,7 @@
 	if (draggable) {
         if ([[event allTouches] count] != 1)
         {
-            if (delegateHasDidDragMarker)
+            if (_delegateHasDidDragMarker)
             {
                 [delegate mapView:self didDragMarker:(RMMarker*)draggable];
             }
@@ -575,7 +557,7 @@
         }
         
 		if ([draggable isKindOfClass: [RMMarker class]]) {
-			if (delegateHasDragMarkerPosition) {
+			if (_delegateHasDragMarkerPosition) {
 				[delegate dragMarkerPosition:(RMMarker*)draggable onMap:self position:[touch locationInView:self]];
                 return;
 			}
@@ -617,8 +599,8 @@
 
 - (void)startDecelerationWithDelta:(CGSize)delta {
 	if (ABS(delta.width) >= 1.0f && ABS(delta.height) >= 1.0f) {
-		decelerationDelta = delta;
-		decelerationTimer = [NSTimer scheduledTimerWithTimeInterval:0.01f 
+		_decelerationDelta = delta;
+		_decelerationTimer = [NSTimer scheduledTimerWithTimeInterval:0.01f 
 															 target:self
 														   selector:@selector(incrementDeceleration:) 
 														   userInfo:nil 
@@ -627,23 +609,23 @@
 }
 
 - (void)incrementDeceleration:(NSTimer *)timer {
-	if (ABS(decelerationDelta.width) < 0.01f && ABS(decelerationDelta.height) < 0.01f) {
+	if (ABS(_decelerationDelta.width) < 0.01f && ABS(_decelerationDelta.height) < 0.01f) {
 		[self stopDeceleration];
 		return;
 	}
 
 	// avoid calling delegate methods? design call here
-	[contents moveBy:decelerationDelta];
+	[contents moveBy:_decelerationDelta];
 
-	decelerationDelta.width *= [self decelerationFactor];
-	decelerationDelta.height *= [self decelerationFactor];
+	_decelerationDelta.width *= [self decelerationFactor];
+	_decelerationDelta.height *= [self decelerationFactor];
 }
 
 - (void)stopDeceleration {
-	if (decelerationTimer != nil) {
-		[decelerationTimer invalidate];
-		decelerationTimer = nil;
-		decelerationDelta = CGSizeZero;
+	if (_decelerationTimer != nil) {
+		[_decelerationTimer invalidate];
+		_decelerationTimer = nil;
+		_decelerationDelta = CGSizeZero;
 
 		// call delegate methods; design call (see above)
 		[self moveBy:CGSizeZero];
@@ -652,7 +634,7 @@
 
 - (void)didReceiveMemoryWarning
 {
-	NSLog(@"MEMORY WARNING IN RMMAPView");
+	RMLog(@"MEMORY WARNING IN RMMAPView");
   CLLocationCoordinate2D coord = contents.mapCenter;
   [contents release];
   [self initValues:coord];

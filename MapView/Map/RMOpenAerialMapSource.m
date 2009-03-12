@@ -1,5 +1,5 @@
 //
-//  RMMercatorWebSource.h
+//  OpenStreetMapsSource.m
 //
 // Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
@@ -25,23 +25,14 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import "RMTileSource.h"
+#import "RMOpenAerialMapSource.h"
 
-@protocol RMAbstractMecatorWebSource
+@implementation RMOpenAerialMapSource
 
--(NSString*) tileURL: (RMTile) tile;
-
-@end
-
-@class RMFractalTileProjection;
-
-@interface RMAbstractMecatorWebSource : NSObject <RMTileSource> {
-	RMFractalTileProjection *tileProjection;
+-(NSString*) tileURL: (RMTile) tile
+{
+	return [NSString stringWithFormat:@"http://tile.openaerialmap.org/tiles/1.0.0/openaerialmap-900913/%d/%d/%d.png", tile.zoom, tile.x, tile.y];
 }
 
-+(int)tileSideLength;
-
--(float) minZoom;
--(float) maxZoom;
 
 @end
