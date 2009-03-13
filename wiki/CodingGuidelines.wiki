@@ -33,6 +33,8 @@ It is preferable to refer to latitude and longitude, fully spelled out, within y
 
 = Coding Style =
 
+Use properties and accessors whenever possible, especially when setting a instance variable's value. If you're directly calling release on an ivar, you should almost certainly be using the setter/property instead. In your -dealloc method, use your accessors to set each instance variable to nil (that is, "self.foo = nil" or "[self setFoo:nil]", not simply "foo = nil").
+
 Use RMLog() where you might normally want to use NSLog(). RMLog is defined as a macro, so that it works as NSLog in Debug builds, and disappears in Release builds. You may also use LogMethod() if you simply want a method trace logged to the console.
 
 Adhere to Apple Cocoa naming conventions. Camel case the parameter names, with initial letter lowercase. The preposition "with" should appear at most once in a method name.
