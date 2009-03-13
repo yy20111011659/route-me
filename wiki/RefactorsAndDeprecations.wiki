@@ -12,3 +12,7 @@ Excessive prepositions in method names will be removed. For instance, -initWithF
 Designated initializers will be indicated for classes that need them. Any method name beginning with -init that is not actually an initializer will be renamed. For instance, RMMapView's -initValues method will be renamed to -performInitializations. Any method names beginning with -set that are not Cocoa Bindings compatible setters will be renamed. Any methods whose names beging with -get but that do not return values by reference will be renamed (e.g. -getScreenCoordinateBounds).
 
 The -description method, used in the tile caches for determining the tile source, will be renamed to -uniqueTilecacheIdentificationKey, because -description has a special meaning in Objective-C.
+
+Functionality that rely on retrieving an image with a particular name from the application's main bundle will be removed. It will be replaced by functionality to set that image directly from the client app. The default background image for tile loading, RMMarkerStyles, and RMMarkerBlueKey andd RMMarkerRedKey, will be removed. Cocoa Touch does not provide the hooks needed for the library to guarantee this functionality always works.
+
+dragMarkerPosition:onMap:position: will be removed from the RMMapViewDelegate protocol. Use mapView:did/shouldDragMarker:withEvent: instead.
