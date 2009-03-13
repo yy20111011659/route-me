@@ -69,6 +69,9 @@
 	enableZoom = YES;
 	decelerationFactor = 0.88f;
 	deceleration = NO;
+    
+    // Number of pixels that the contact point can move before the touch is regarded as having moved
+    markerDragPermittedDrift = 10.0;
 	
 	//	[self recalculateImageSet];
 	
@@ -309,6 +312,12 @@
     draggable = draggableObject;
     if ([draggable isKindOfClass:[RMMarker class]])
     {
+        // Only drag markers with a single touch
+        if (lastGesture.numTouches != 1)
+        {
+            draggable = nil;
+            return;
+        }
         if (_delegateHasShouldDragMarker)
         {
             if (! [delegate mapView:self shouldDragMarker:(RMMarker*)draggable])
@@ -317,11 +326,6 @@
                 draggable = nil;
                 return;
             }
-        }
-        if (lastGesture.numTouches != 1)
-        {
-            draggable = nil;
-            return;
         }
         if (_delegateHasDragMarkerPosition) {
             [delegate dragMarkerPosition:(RMMarker*)draggable onMap:self position:lastGesture.center];
@@ -377,7 +381,8 @@
 	
 	//	RMLog(@"touchesBegan %d", [[event allTouches] count]);
 	lastGesture = [self getGestureDetails:[event allTouches]];
-
+    startGesture = lastGesture;
+    
 	if(deceleration)
 	{
 		if (_decelerationTimer != nil) {
@@ -590,8 +595,16 @@
 	}
 	
 	lastGesture = newGesture;
-	
-	[NSObject cancelPreviousPerformRequestsWithTarget:self];
+    
+    // Cancel draggable being set, only if the gesture has moved from the start position by more than markerDragPermittedDrift
+    CGSize deltaFromStart = CGSizeMake(newGesture.center.x - startGesture.center.x,
+                                       newGesture.center.y - startGesture.center.y);
+    CGFloat sqrDistFromStart = deltaFromStart.width *deltaFromStart.width + deltaFromStart.height*deltaFromStart.height;
+    
+    if ((newGesture.numTouches != 1) || (sqrDistFromStart > markerDragPermittedDrift*markerDragPermittedDrift))
+    {
+        [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    }
 	[self registerPausedDraggingDispatcher];
 }
 

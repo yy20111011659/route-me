@@ -120,7 +120,7 @@ static CGImageRef _markerBlue = nil;
         // Lazily create the radius layer, in case it is not needed
         radiusLayer = [[RMRadiusLayer alloc] init];
         radiusLayer.hidden = YES;
-        [self insertSublayer:radiusLayer below:imageLayer];
+        [self insertSublayer:radiusLayer atIndex:0];
     }
     
     CGSize radiusLayerSize = radiusLayer.bounds.size;

@@ -53,8 +53,10 @@ typedef struct {
 	id<RMMapViewDelegate> delegate;
 	BOOL enableDragging;
 	BOOL enableZoom;
+    RMGestureDetails startGesture;
 	RMGestureDetails lastGesture;
 	float decelerationFactor;
+    float markerDragPermittedDrift;
 	BOOL deceleration;
     CALayer *draggable;
    
