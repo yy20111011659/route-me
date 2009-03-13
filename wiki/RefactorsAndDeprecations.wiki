@@ -3,7 +3,7 @@
 
 Method names containing LatLng, LatLong, LatLon, or Location, operating on CLLocationCoordinate2D types, will be standardized to LatLon spelling.
 
-The "scale" instance variable is, as of version 0.4, actually "meters per pixel". Cartographic scale is a pure number, the ratio of a unit on the map to a unit in the real world. For instance, USGS topographic quads are published at 1/24000 scale, often written 1:24000. "scale" will be refactored to "metersPerPixel".
+The "scale" instance variable and method in various projection-related code actually means, as of version 0.4,  "meters per pixel". Cartographic scale is a pure, dimensionless number, the ratio of a unit on the map to a unit in the real world. For instance, USGS topographic quads are published at 1/24000 scale, often written 1:24000 and colloquially referred to by just the denominator, e.g. "a 24K map" or "the 50K Ordnance Survey maps". "scale" will be refactored to "metersPerPixel".
 
 Route-me is single threaded, from the app developer standpoint (although threads are used internally for image loading). Properties will be checked to correspond to this design.
 
@@ -13,6 +13,6 @@ Designated initializers will be indicated for classes that need them. Any method
 
 The -description method, used in the tile caches for determining the tile source, will be renamed to -uniqueTilecacheIdentificationKey, because -description has a special meaning in Objective-C.
 
-Functionality that rely on retrieving an image with a particular name from the application's main bundle will be removed. It will be replaced by functionality to set that image directly from the client app. The default background image for tile loading, RMMarkerStyles, and RMMarkerBlueKey andd RMMarkerRedKey, will be removed. Cocoa Touch does not provide the hooks needed for the library to guarantee this functionality always works.
+Functionality that relies on retrieving an image with a particular name from the application's main bundle will be removed. It will be replaced by functionality to set that image directly from the client app. The default background image for tile loading, RMMarkerStyles, and RMMarkerBlueKey andd RMMarkerRedKey, will be removed. Cocoa Touch does not provide the hooks needed for the library to guarantee this functionality always works.
 
 dragMarkerPosition:onMap:position: will be removed from the RMMapViewDelegate protocol. Use mapView:did/shouldDragMarker:withEvent: instead. Other delegate names in this and other delegate protocols will be renamed to follow the standard Cocoa willSwizzle/shouldSwizzle/didSwizzle convention.
