@@ -1,0 +1,14 @@
+#summary Explanation of pending and proposed refactors, method renaming, and deprecations.
+#labels Phase-Implementation
+
+Method names containing LatLng, LatLong, LatLon, or Location, operating on CLLocationCoordinate2D types, will be standardized to LatLon spelling.
+
+The "scale" instance variable is, as of version 0.4, actually "meters per pixel". Cartographic scale is a pure number, the ratio of a unit on the map to a unit in the real world. For instance, USGS topographic quads are published at 1/24000 scale, often written 1:24000. "scale" will be refactored to "metersPerPixel".
+
+Route-me is single threaded, from the app developer standpoint (although threads are used internally for image loading). Properties will be checked to correspond to this design.
+
+Excessive prepositions in method names will be removed. For instance, -initWithFrame:WithLocation becomes (based on two different changes) -initWithFrame:latLon:.
+
+Designated initializers will be indicated for classes that need them. Any method name beginning with -init that is not actually an initializer will be renamed. For instance, RMMapView's -initValues method will be renamed to -performInitializations. Any method names beginning with -set that are not Cocoa Bindings compatible setters will be renamed. Any methods whose names beging with -get but that do not return values by reference will be renamed (e.g. -getScreenCoordinateBounds).
+
+The -description method, used in the tile caches for determining the tile source, will be renamed to -uniqueTilecacheIdentificationKey, because -description has a special meaning in Objective-C.
