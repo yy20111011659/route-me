@@ -1,4 +1,4 @@
-#summary Explanation of pending and proposed refactors, method renaming, and deprecations.
+#summary Explanation of pending and proposed refactors, method renaming, and deprecations. These changes will not happen before Route-Me 0.5 is released, but may happen at any time after that.
 #labels Phase-Implementation
 
 Method names containing LatLng, LatLong, LatLon, or Location, operating on CLLocationCoordinate2D types, will be standardized to LatLon spelling.
