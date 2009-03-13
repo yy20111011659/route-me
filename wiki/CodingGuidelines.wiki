@@ -19,6 +19,18 @@ Before adding or removing substantial functionality, lay out your idea on the ma
 
 Route-Me is single-threaded by design. All external calls should come from your main (UI) thread.
 
+= Naming Conventions =
+
+At any moment, you might be referring to a location (on earth, or on your map) by unprojected latitude/longitude, by projected coordinates (generally in meters), or by screen coordinates (in pixels).
+
+Method names and parameters containing LatLng, LatLong, or LatLon refer to an unprojected latitude/longitude, as a CLLocationCoordinate2D type. For future work, use xxxxLatLon. Other forms will be refactored to this spelling shortly after Route-Me 0.5 is released.
+
+Method names and parameters containing XY refer to projected coordinates. As of version 0.4, these are always in meters.
+
+References to screen coordinates use CGPoint types, and generally have the word Screen or Point in the method name.
+
+It is preferable to refer to latitude and longitude, fully spelled out, within your code. Avoid "latlong" because of the possible ambiguity with the long int type.
+
 = Coding Style =
 
 Use RMLog() where you might normally want to use NSLog(). RMLog is defined as a macro, so that it works as NSLog in Debug builds, and disappears in Release builds. You may also use LogMethod() if you simply want a method trace logged to the console.
