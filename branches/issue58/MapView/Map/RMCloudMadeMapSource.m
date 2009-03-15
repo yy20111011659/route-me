@@ -35,14 +35,18 @@
 
 - (id) init
 {
-	return [self initWithStyleNumber:kDefaultCloudMadeStyleNumber];
+	return [self initWithAccessKey:@""
+					   StyleNumber:kDefaultCloudMadeStyleNumber];
 }
 
 /// designated initializer
-- (id) initWithStyleNumber:(NSUInteger)styleNumber
+- (id) initWithAccessKey:(NSString *)developerAccessKey
+			 StyleNumber:(NSUInteger)styleNumber;
 {
 	NSAssert((styleNumber > 0), @"CloudMade style number must be positive");
+	NSAssert(([developerAccessKey length] > 0), @"CloudMade access key must be non-empty");
 	if (self = [super init]) {
+		accessKey = developerAccessKey;
 		if (styleNumber > 0)
 			cloudmadeStyleNumber = styleNumber;
 		else

@@ -51,7 +51,8 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     CLLocationCoordinate2D newMapCenter;
-    
+    NSAssert((nil!=contents), @"flipsideViewController shouldn't have null contents");
+	
     newMapCenter.latitude = [[centerLatitude text] doubleValue];
     newMapCenter.longitude = [[centerLongitude text] doubleValue];
     [contents moveToLatLong:newMapCenter];

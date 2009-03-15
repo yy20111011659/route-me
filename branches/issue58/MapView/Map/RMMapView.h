@@ -76,7 +76,7 @@ typedef struct {
 
 // Any other functions you need to manipulate the mapyou can access through this
 // property. The contents structure holds the actual map bits.
-@property (readonly) RMMapContents *contents;
+@property (nonatomic, retain) RMMapContents *contents;
 
 @property (retain, readonly) RMMarkerManager *markerManager;
 
@@ -85,9 +85,6 @@ typedef struct {
 @property (assign) id<RMMapViewDelegate> delegate;
 @property (readwrite) float decelerationFactor;
 @property (readwrite) BOOL deceleration;
-
-
-- (id)initWithFrame:(CGRect)frame WithLocation:(CLLocationCoordinate2D)latlong;
 
 - (void)moveToLatLong: (CLLocationCoordinate2D)latlong;
 - (void)moveToXYPoint: (RMXYPoint)aPoint;

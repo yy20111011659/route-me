@@ -7,6 +7,7 @@
 #import "SampleMapAppDelegate.h"
 
 #import "MainView.h"
+#import "RMMapView.h"
 
 @implementation MainViewController
 
@@ -16,19 +17,24 @@
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
         // Custom initialization
-		NSLog(@"initWithNibName");
+		LogMethod();
+		NSLog(@"mapView now %@ contents %@", mapView, [mapView contents]);
     }
     return self;
 }
 
+- (void)awakeFromNib
+{
+	LogMethod();
+}
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
-	NSLog(@"viewDidLoad");
+	LogMethod();
     [super viewDidLoad];
     [mapView setDelegate:self];
+	mapView.contents = [[RMMapContents alloc] initForView:mapView];
     [(SampleMapAppDelegate *)[[UIApplication sharedApplication] delegate] setMapContents:[mapView contents]];
-    contents = [mapView contents];
     [self updateInfo];
 }
 
@@ -58,18 +64,23 @@
 }
 
 - (void)updateInfo {
-    CLLocationCoordinate2D mapCenter = [contents mapCenter];
+    CLLocationCoordinate2D mapCenter = [self.contents mapCenter];
     
-    float routemeMetersPerPixel = [contents scale]; // really meters/pixel
+    float routemeMetersPerPixel = [self.contents scale]; // really meters/pixel
     float iphoneMillimetersPerPixel = .1543;
 	float truescaleDenominator =  routemeMetersPerPixel / (0.001 * iphoneMillimetersPerPixel) ;
     
     [infoTextView setText:[NSString stringWithFormat:@"Latitude : %f\nLongitude : %f\nZoom level : %.2f\nMeter per pixel : %.1f\nTrue scale : 1:%.0f", 
                            mapCenter.latitude, 
                            mapCenter.longitude, 
-                           contents.zoom, 
+                           self.contents.zoom, 
                            routemeMetersPerPixel,
                            truescaleDenominator]];
+}
+
+- (RMMapContents *)contents
+{
+	return self.mapView.contents;
 }
 
 #pragma mark -

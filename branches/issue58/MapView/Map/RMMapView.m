@@ -46,13 +46,14 @@
 @implementation RMMapView
 @synthesize decelerationFactor;
 @synthesize deceleration;
+@synthesize contents;
 
 - (RMMarkerManager*)markerManager
 {
   return contents.markerManager;
 }
 
--(void) initValues:(CLLocationCoordinate2D)latlong
+-(void) performInitializationsWithCenterLatLon:(CLLocationCoordinate2D)latlong
 {
 	LogMethod();
 	if(round(latlong.latitude) != 0 && round(latlong.longitude) != 0)
@@ -78,34 +79,7 @@
 //	[[NSURLCache sharedURLCache] removeAllCachedResponses];
 }
 
-- (id)initWithFrame:(CGRect)frame
-{
-	LogMethod();
-	CLLocationCoordinate2D latlong = { 0, 0};
-	if (self = [super initWithFrame:frame]) {
-		[self initValues:latlong];
-	}
-	return self;
-}
-
-- (id)initWithFrame:(CGRect)frame WithLocation:(CLLocationCoordinate2D)latlong
-{
-	LogMethod();
-	if (self = [super initWithFrame:frame]) {
-		[self initValues:latlong];
-	}
-	return self;
-}
-
-- (void)awakeFromNib
-{
-	LogMethod();
-	CLLocationCoordinate2D latlong = {0, 0};
-	[super awakeFromNib];
-	[self initValues:latlong];
-}
-
--(void) dealloc
+-(void)dealloc
 {
 	LogMethod();
 	[contents release];
@@ -114,6 +88,10 @@
 
 -(void) drawRect: (CGRect) rect
 {
+	if (!self.contents) {
+		RMLog(@"creating a new contents");
+		self.contents = [[RMMapContents alloc] initForView:self]; 
+	}
 	[contents drawRect:rect];
 }
 
@@ -121,11 +99,6 @@
 {
 	CGRect bounds = [self bounds];
 	return [NSString stringWithFormat:@"MapView at %.0f,%.0f-%.0f,%.0f", bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height];
-}
-
--(RMMapContents*) contents
-{
-	return [[contents retain] autorelease];
 }
 
 // Forward invocations to RMMapContents
@@ -549,7 +522,7 @@
   float maxZoom = contents.maxZoom;
 
   [contents release];
-  [self initValues:coord];
+  [self performInitializationsWithCenterLatLon:coord];
 
   [contents setZoom:zoom];
   [contents setMinZoom:minZoom];

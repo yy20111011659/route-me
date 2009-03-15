@@ -89,6 +89,7 @@
 - (id) initForView: (UIView*) view WithTileSource: (id<RMTileSource>)_tileSource WithRenderer: (RMMapRenderer*)_renderer LookingAt:(CLLocationCoordinate2D)latlong
 {
 	LogMethod();
+	NSAssert((nil != view), @"RMMapContents initForView:WithTileSource: etc. received null RMMapView");
 	if (![super init])
 		return nil;
 	
@@ -133,7 +134,7 @@
 	markerManager = [[RMMarkerManager alloc] initWithContents:self];
 	
 	[view setNeedsDisplay];
-	
+
 	RMLog(@"Map contents initialised. view: %@ tileSource %@ renderer %@", view, tileSource, renderer);
 	
 	return self;
