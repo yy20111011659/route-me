@@ -29,11 +29,12 @@
 
 @interface RMVirtualEarthSource : RMAbstractMercatorWebSource <RMAbstractMercatorWebSource> {
 	NSString *maptypeFlag;
+	NSString *accessKey;
 }
 
-- (id) initAsAerial;
-- (id) initAsRoad;
-- (id) initAsHybrid;
+- (id) initWithAerialThemeUsingAccessKey:(NSString *)developerAccessKey;
+- (id) initWithRoadThemeUsingAccessKey:(NSString *)developerAccessKey;
+- (id) initWithHybridThemeUsingAccessKey:(NSString *)developerAccessKey;
 
 -(NSString*) quadKeyForTile: (RMTile) tile;
 -(NSString*) urlForQuadKey: (NSString*) quadKey;
