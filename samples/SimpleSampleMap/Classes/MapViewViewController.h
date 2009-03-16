@@ -27,18 +27,26 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import <UIKit/UIKit.h>
+#import <CoreLocation/CoreLocation.h>
+
 #import "RMMapView.h"
 
-@interface MapViewViewController : UIViewController <RMMapViewDelegate> 
+@interface MapViewViewController : UIViewController 
+			<RMMapViewDelegate, CLLocationManagerDelegate> 
 {
-	IBOutlet RMMapView * mapView;
-	BOOL tap;
-	NSInteger tapCount;
+	IBOutlet RMMapView		*mapView;
+	BOOL					tap;
+	NSInteger				tapCount;
+	CLLocationManager		*locationManager;
+	CLLocationCoordinate2D	currentLocation;
 }
 
-@property (nonatomic, retain) IBOutlet RMMapView * mapView;
+@property (nonatomic, retain) IBOutlet RMMapView	*mapView;
+@property (nonatomic, retain) CLLocationManager		*locationManager;
 
-@property BOOL tap;
-@property NSInteger tapCount;
+@property (nonatomic) CLLocationCoordinate2D		currentLocation;
+
+@property BOOL				tap;
+@property NSInteger			tapCount;
 @end
 
