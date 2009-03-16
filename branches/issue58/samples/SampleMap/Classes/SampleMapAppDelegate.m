@@ -15,7 +15,8 @@
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
     
-    [window addSubview:[rootViewController view]];
+    NSLog(@"mapView in applicationDidFinishLaunching: %@", [rootViewController view]);
+	[window addSubview:[rootViewController view]];
     [window makeKeyAndVisible];
 }
 

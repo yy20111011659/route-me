@@ -40,12 +40,13 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     CLLocationCoordinate2D mapCenter = [contents mapCenter];
+    NSAssert((nil!=contents), @"flipsideViewController shouldn't have null contents");
 
     [centerLatitude setText:[NSString stringWithFormat:@"%f", mapCenter.latitude]];
     [centerLongitude setText:[NSString stringWithFormat:@"%f", mapCenter.longitude]];
-    [zoomLevel setText:[NSString stringWithFormat:@"%f", contents.zoom]];
-    [maxZoom setText:[NSString stringWithFormat:@"%f", contents.maxZoom]];
-    [minZoom setText:[NSString stringWithFormat:@"%f", contents.minZoom]];
+    [zoomLevel setText:[NSString stringWithFormat:@"%.1f", contents.zoom]];
+    [maxZoom setText:[NSString stringWithFormat:@"%.1f", contents.maxZoom]];
+    [minZoom setText:[NSString stringWithFormat:@"%.1f", contents.minZoom]];
 
 }
 

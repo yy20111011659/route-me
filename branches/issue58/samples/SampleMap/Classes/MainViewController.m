@@ -17,15 +17,9 @@
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
         // Custom initialization
-		LogMethod();
-		NSLog(@"mapView now %@ contents %@", mapView, [mapView contents]);
+		NSLog(@"initWithNibName: mapView now %@ contents %@", mapView, [mapView contents]);
     }
     return self;
-}
-
-- (void)awakeFromNib
-{
-	LogMethod();
 }
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
@@ -33,8 +27,8 @@
 	LogMethod();
     [super viewDidLoad];
     [mapView setDelegate:self];
-	mapView.contents = [[RMMapContents alloc] initForView:mapView];
     [(SampleMapAppDelegate *)[[UIApplication sharedApplication] delegate] setMapContents:[mapView contents]];
+	contents = [mapView contents];
     [self updateInfo];
 }
 

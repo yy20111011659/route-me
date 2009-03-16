@@ -53,7 +53,7 @@
   return contents.markerManager;
 }
 
--(void) performInitializationsWithCenterLatLon:(CLLocationCoordinate2D)latlong
+-(void) doInitWithCenterLatLon:(CLLocationCoordinate2D)latlong
 {
 	LogMethod();
 	if(round(latlong.latitude) != 0 && round(latlong.longitude) != 0)
@@ -79,7 +79,32 @@
 //	[[NSURLCache sharedURLCache] removeAllCachedResponses];
 }
 
--(void)dealloc
+- (id)initWithFrame:(CGRect)frame
+{
+	LogMethod();
+	CLLocationCoordinate2D latlong = { 0, 0};
+	if (self = [super initWithFrame:frame]) {
+		[self doInitWithCenterLatLon:latlong];
+	}
+	return self;
+}
+
+- (id)initWithFrame:(CGRect)frame WithLocation:(CLLocationCoordinate2D)latlong
+{
+	LogMethod();
+	if (self = [super initWithFrame:frame]) {
+		[self doInitWithCenterLatLon:latlong];
+	}
+	return self;
+}
+
+- (void)awakeFromNib
+{
+	LogMethod();
+	[super awakeFromNib];
+}
+
+-(void) dealloc
 {
 	LogMethod();
 	[contents release];
@@ -88,10 +113,8 @@
 
 -(void) drawRect: (CGRect) rect
 {
-	if (!self.contents) {
-		RMLog(@"creating a new contents");
-		self.contents = [[RMMapContents alloc] initForView:self]; 
-	}
+	CLLocationCoordinate2D latlong = {0, 0};
+	[self doInitWithCenterLatLon:latlong];
 	[contents drawRect:rect];
 }
 
@@ -522,7 +545,7 @@
   float maxZoom = contents.maxZoom;
 
   [contents release];
-  [self performInitializationsWithCenterLatLon:coord];
+  [self doInitWithCenterLatLon:coord];
 
   [contents setZoom:zoom];
   [contents setMinZoom:minZoom];
