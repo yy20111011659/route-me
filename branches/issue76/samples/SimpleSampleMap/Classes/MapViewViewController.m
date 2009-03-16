@@ -35,6 +35,8 @@
 @implementation MapViewViewController
 
 @synthesize mapView;
+@synthesize locationManager;
+@synthesize currentLocation;
 
 // Override initWithNibName:bundle: to load the view using a nib file then perform additional customization that is not appropriate for viewDidLoad.
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -42,10 +44,6 @@
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) 
 	{
         // Custom initialization
-		mapView = [[[RMMapView alloc]initWithFrame:CGRectMake(0.0, 
-															  0.0, 
-															  320.0, 
-															  460.0)]autorelease]; 
     }
 	
     return self;
@@ -170,26 +168,46 @@ shouldDragMarker:(RMMarker *)marker
 {
     [super viewDidLoad];
 	
+	mapView = [[[RMMapView alloc]initWithFrame:CGRectMake(0.0, 
+														  0.0, 
+														  320.0, 
+														  460.0)] autorelease]; 
+	locationManager	= [[[CLLocationManager alloc] init] autorelease];
+	locationManager.delegate		= self;
+	locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+	[locationManager startUpdatingLocation];
+
 	tap = NO;
 	RMMarkerManager *markerManager = [mapView markerManager];
 
 	[mapView setDelegate:self];
 	[mapView setBackgroundColor:[UIColor grayColor]];  //or clear etc 
 
-	CLLocationCoordinate2D coolPlace; 
-	coolPlace.latitude = 33.413286; 
-	coolPlace.longitude = -111.907403; 
+	if (locationManager.location == nil)
+	{
+		CLLocationCoordinate2D coolPlace; 
+		coolPlace.latitude = 33.413286; 
+		coolPlace.longitude = -111.907403; 
+		
+		currentLocation = coolPlace;
+	}
+	else
+	{
+		currentLocation = locationManager.location.coordinate;
+	}
 	
-	[mapView moveToLatLong:coolPlace]; 
+	NSLog(@"Location: Lat: %lf Lon: %lf", currentLocation.latitude, currentLocation.longitude);
+	
+	[mapView moveToLatLong:currentLocation]; 
 	[self.view addSubview:mapView]; 
 	
-	[markerManager addDefaultMarkerAt:coolPlace];
+	[markerManager addDefaultMarkerAt:currentLocation];
 	
 	RMMarker *marker = [[RMMarker alloc]initWithKey:RMMarkerBlueKey];
 	[marker setTextForegroundColor:[UIColor blueColor]];
 	[marker setTextLabel:@"Hello"];
 	[markerManager addMarker:marker 
-				   AtLatLong:coolPlace];
+				   AtLatLong:currentLocation];
 	[marker release];
 }
 
@@ -212,6 +230,21 @@ shouldDragMarker:(RMMarker *)marker
 {
 	[mapView release];
     [super dealloc];
+}
+
+#pragma mark --
+#pragma mark locationManagerDelegate Methods
+
+- (void)locationManager: (CLLocationManager *)manager 
+	didUpdateToLocation: (CLLocation *)newLocation
+		   fromLocation: (CLLocation *)oldLocation
+{
+	NSLog(@"Moving from lat: %lf lon: %lf to lat: %lf lon: %lf", 
+		  oldLocation.coordinate.latitude, oldLocation.coordinate.longitude,
+		  newLocation.coordinate.latitude, newLocation.coordinate.longitude);
+	
+	currentLocation = newLocation.coordinate;
+	[mapView moveToLatLong:currentLocation]; 
 }
 
 @synthesize tap;
