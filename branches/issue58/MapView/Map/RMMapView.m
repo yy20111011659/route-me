@@ -92,11 +92,23 @@
 	return self;
 }
 
-- (void)changeContentsTo:(RMMapContents *)theContents
+//=========================================================== 
+//  contents 
+//=========================================================== 
+- (RMMapContents *)contents
 {
-    if (!contents && (contents != theContents)) {
+    if (!_contentsIsSet) {
+		self.contents = [[RMMapContents alloc] initForView:self];
+		_contentsIsSet = YES;
+	}
+	return contents; 
+}
+- (void)setContents:(RMMapContents *)theContents
+{
+    if (contents != theContents) {
         [contents release];
         contents = [theContents retain];
+		_contentsIsSet = YES;
 		[self performInitialSetup];
     }
 }
@@ -111,11 +123,6 @@
 
 -(void) drawRect: (CGRect) rect
 {
-	if (!contents) {
-		contents = [[RMMapContents alloc] initForView:self];
-		[self performInitialSetup];
-	}
-	
 	[self.contents drawRect:rect];
 }
 

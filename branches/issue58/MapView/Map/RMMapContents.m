@@ -110,7 +110,7 @@
 		return nil;
 
 	NSAssert1([newView isKindOfClass:[RMMapView class]], @"view %@ must be a subclass of RMMapView", newView);
-	[(RMMapView *)newView changeContentsTo:self];
+	[(RMMapView *)newView setContents:self];
 
 	renderer = [[RMCoreAnimationRenderer alloc] initWithContent:self];
 	boundingMask = RMMapMinWidthBound;

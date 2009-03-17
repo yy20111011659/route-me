@@ -8,6 +8,8 @@
 
 #import "MainView.h"
 
+#import "RMCloudMadeMapSource.h"
+
 @implementation MainViewController
 
 @synthesize mapView;
@@ -27,7 +29,11 @@
 	NSLog(@"viewDidLoad");
     [super viewDidLoad];
     [mapView setDelegate:self];
-    [(SampleMapAppDelegate *)[[UIApplication sharedApplication] delegate] setMapContents:[mapView contents]];
+	id myTilesource = [[[RMCloudMadeMapSource alloc] initWithAccessKey:@"0199bdee456e59ce950b0156029d6934" StyleNumber:999] autorelease];
+	RMMapContents *myContents = [[[RMMapContents alloc] initWithView:mapView 
+														 tilesource:myTilesource] autorelease];
+	[mapView setContents:myContents];
+	[(SampleMapAppDelegate *)[[UIApplication sharedApplication] delegate] setMapContents:[mapView contents]];
     contents = [mapView contents];
     [self updateInfo];
 }

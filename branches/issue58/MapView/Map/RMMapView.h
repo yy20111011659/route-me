@@ -73,11 +73,13 @@ typedef struct {
 	
 	NSTimer *_decelerationTimer;
 	CGSize _decelerationDelta;
+	
+	BOOL _contentsIsSet; // "contents" must be set, but is initialized lazily to allow apps to override defaults in -awakeFromNib
 }
 
 // Any other functionality you need to manipulate the map you can access through this
 // property. The RMMapContents class holds the actual map bits.
-@property (nonatomic, readonly) RMMapContents *contents;
+@property (nonatomic, retain) RMMapContents *contents;
 
 @property (nonatomic, retain, readonly) RMMarkerManager *markerManager;
 
@@ -89,7 +91,6 @@ typedef struct {
 
 
 - (id)initWithFrame:(CGRect)frame WithLocation:(CLLocationCoordinate2D)latlong;
-- (void)changeContentsTo:(RMMapContents *)theContents;
 
 - (void)moveToLatLong: (CLLocationCoordinate2D)latlong;
 - (void)moveToXYPoint: (RMXYPoint)aPoint;
