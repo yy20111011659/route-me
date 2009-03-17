@@ -346,16 +346,7 @@
 	}
 	else
 	{
-		//bools for syntactical sugar to understand the logic in the if statement below
-		BOOL zoomAtMax = ([self zoom] == [self maxZoom]);
-		BOOL zoomAtMin = ([self zoom] == [self minZoom]);
-		BOOL zoomGreaterMin = ([self zoom] > [self minZoom]);
-		BOOL zoomLessMax = ([self zoom] < [self maxZoom]);
-		
-		//zooming in zoomFactor > 1
-		//zooming out zoomFactor < 1
-		
-		if ((zoomGreaterMin && zoomLessMax) || (zoomAtMax && zoomFactor<1) || (zoomAtMin && zoomFactor>1))
+		if(([self zoom] >= [self minZoom]) && ([self zoom] <= [self maxZoom]))
 		{
 			[mercatorToScreenProjection zoomScreenByFactor:zoomFactor near:pivot];
 			[imagesOnScreen zoomByFactor:zoomFactor near:pivot];
