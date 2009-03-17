@@ -56,22 +56,23 @@ typedef struct {
 	RMGestureDetails lastGesture;
 	float decelerationFactor;
 	BOOL deceleration;
-   
-   @private
+	
+@private
    	BOOL _delegateHasBeforeMapMove;
-      BOOL _delegateHasAfterMapMove;
-      BOOL _delegateHasBeforeMapZoomByFactor;
-      BOOL _delegateHasAfterMapZoomByFactor;
-      BOOL _delegateHasDoubleTapOnMap;
-      BOOL _delegateHasSingleTapOnMap;
-      BOOL _delegateHasTapOnMarker;
-      BOOL _delegateHasTapOnLabelForMarker;
-      BOOL _delegateHasAfterMapTouch;
-      BOOL _delegateHasShouldDragMarker;
-      BOOL _delegateHasDidDragMarker;
-      BOOL _delegateHasDragMarkerPosition;
-      NSTimer *_decelerationTimer;
-      CGSize _decelerationDelta;
+	BOOL _delegateHasAfterMapMove;
+	BOOL _delegateHasBeforeMapZoomByFactor;
+	BOOL _delegateHasAfterMapZoomByFactor;
+	BOOL _delegateHasDoubleTapOnMap;
+	BOOL _delegateHasSingleTapOnMap;
+	BOOL _delegateHasTapOnMarker;
+	BOOL _delegateHasTapOnLabelForMarker;
+	BOOL _delegateHasAfterMapTouch;
+	BOOL _delegateHasShouldDragMarker;
+	BOOL _delegateHasDidDragMarker;
+	BOOL _delegateHasDragMarkerPosition;
+	
+	NSTimer *_decelerationTimer;
+	CGSize _decelerationDelta;
 }
 
 // Any other functions you need to manipulate the mapyou can access through this

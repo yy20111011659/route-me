@@ -33,7 +33,7 @@
 	
     [upperMapView setDelegate:self];
     upperMapContents = [upperMapView contents];
-	[upperMapContents setTileSource:[[[RMVirtualEarthSource alloc] init] autorelease]];
+	[upperMapContents setTileSource:[[[RMVirtualEarthSource alloc] initWithHybridThemeUsingAccessKey:@"invalidKey"] autorelease]];
     [(MapTestbedTwoMapsAppDelegate *)[[UIApplication sharedApplication] delegate] setUpperMapContents:[upperMapView contents]];
 	[upperMapView setNeedsLayout];
 	[upperMapView setNeedsDisplay];
@@ -41,7 +41,7 @@
 	
     [lowerMapView setDelegate:self];
     lowerMapContents = [lowerMapView contents];
-	[lowerMapContents setTileSource:[[[RMCloudMadeMapSource alloc] init] autorelease]];
+	[lowerMapContents setTileSource:[[[RMCloudMadeMapSource alloc] initWithAccessKey:@"0199bdee456e59ce950b0156029d6934" StyleNumber:7] autorelease]];
     [(MapTestbedTwoMapsAppDelegate *)[[UIApplication sharedApplication] delegate] setLowerMapContents:[lowerMapView contents]];
 	[lowerMapView setNeedsDisplay];
 	[lowerMapView moveToLatLong:center];

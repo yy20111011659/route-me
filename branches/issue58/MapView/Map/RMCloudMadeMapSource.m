@@ -60,7 +60,8 @@
 	NSAssert4(((tile.zoom >= self.minZoom) && (tile.zoom <= self.maxZoom)),
 			  @"%@ tried to retrieve tile with zoomLevel %d, outside source's defined range %f to %f", 
 			  self, tile.zoom, self.minZoom, self.maxZoom);
-	return [NSString stringWithFormat:@"http://tile.cloudmade.com/0199bdee456e59ce950b0156029d6934/%d/%d/%d/%d/%d.png",
+	return [NSString stringWithFormat:@"http://tile.cloudmade.com/%@/%d/%d/%d/%d/%d.png",
+			accessKey,
 			cloudmadeStyleNumber,
 			[RMCloudMadeMapSource tileSideLength], tile.zoom, tile.x, tile.y];
 }

@@ -26,6 +26,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 #import "RMMapContents.h"
 
+#import "RMMapView.h"
+
 #import "RMFoundation.h"
 #import "RMProjection.h"
 #import "RMMercatorToScreenProjection.h"
@@ -62,16 +64,42 @@
 
 #pragma mark Initialisation
 
-- (id) initForView: (UIView*) view
+- (id)initWithView: (UIView*) view
 {	
 	LogMethod();
 	CLLocationCoordinate2D here;
 	here.latitude = -33.858771;
 	here.longitude = 151.201596;
 
-	return [self initForView:view WithLocation: here];
+	return [self initWithView:view
+				   tilesource:[[RMOpenStreetMapsSource alloc] init];
+				 centerLatLon:here
+					zoomLevel:13.0
+				 maxZoomLevel:25.0
+				 minZoomLevel:0.0
+			  backgroundImage:nil];
 }
 
+- (id)initWithView:(UIView*)view
+		tilesource:(id<RMTileSource>)tilesource
+	  centerLatLon:(CLLocationCoordinate2D)initialCenter
+		 zoomLevel:(float)initialZoomLevel
+	  maxZoomLevel:(float)maxZoomLevel
+	  minZoomLevel:(float)minZoomLevel
+   backgroundImage:(UIImage *)backgroundImage
+{
+	NSAssert1([view isKindOfClass:[RMMapView class]], @"view %@ must be a subclass of RMMapView", view);
+	
+}
+
+
+/// deprecated at any moment after release 0.5
+- (id) initForView: (UIView*) view
+{
+	return [self initWithView:view];
+}
+
+/// deprecated at any moment after release 0.5
 - (id) initForView: (UIView*) view WithLocation:(CLLocationCoordinate2D)latlong
 {
 	LogMethod();
@@ -86,11 +114,14 @@
 }
 
 
+/// deprecated at any moment after release 0.5
 - (id) initForView: (UIView*) view WithTileSource: (id<RMTileSource>)_tileSource WithRenderer: (RMMapRenderer*)_renderer LookingAt:(CLLocationCoordinate2D)latlong
 {
 	LogMethod();
 	if (![super init])
 		return nil;
+	
+	NSAssert1([view isKindOfClass:[RMMapView class]], @"view %@ must be a subclass of RMMapView", view);
 	
 	[self setMaxZoom:50.0];
 	
