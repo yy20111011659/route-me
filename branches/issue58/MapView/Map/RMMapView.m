@@ -92,11 +92,13 @@
 	return self;
 }
 
-- (void)awakeFromNib
+- (void)changeContentsTo:(RMMapContents *)theContents
 {
-	LogMethod();
-	[super awakeFromNib];
-	[self performInitialSetup];
+    if (!contents && (contents != theContents)) {
+        [contents release];
+        contents = [theContents retain];
+		[self performInitialSetup];
+    }
 }
 
 -(void) dealloc
@@ -109,8 +111,10 @@
 
 -(void) drawRect: (CGRect) rect
 {
-	if (!contents)
+	if (!contents) {
 		contents = [[RMMapContents alloc] initForView:self];
+		[self performInitialSetup];
+	}
 	
 	[self.contents drawRect:rect];
 }

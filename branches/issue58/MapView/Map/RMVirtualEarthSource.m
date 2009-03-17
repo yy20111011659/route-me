@@ -36,6 +36,7 @@
 
 - (id) initWithAerialThemeUsingAccessKey:(NSString *)developerAccessKey
 {
+	RMLog(@"please see comments in RMVirtualEarthSource.h");
 	NSAssert(([developerAccessKey length] > 0), @"Virtual Earth access key must be non-empty");
 	if (self = [super init]) {
 		maptypeFlag = @"a";
@@ -46,6 +47,7 @@
 
 - (id) initWithRoadThemeUsingAccessKey:(NSString *)developerAccessKey
 {
+	RMLog(@"please see comments in RMVirtualEarthSource.h");
 	NSAssert(([developerAccessKey length] > 0), @"Virtual Earth access key must be non-empty");
 	if (self = [super init]) {
 		maptypeFlag = @"r";
@@ -54,6 +56,7 @@
 }
 - (id) initWithHybridThemeUsingAccessKey:(NSString *)developerAccessKey
 {
+	RMLog(@"please see comments in RMVirtualEarthSource.h");
 	NSAssert(([developerAccessKey length] > 0), @"Virtual Earth access key must be non-empty");
 	if (self = [super init]) {
 		maptypeFlag = @"h";

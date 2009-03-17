@@ -75,11 +75,11 @@ typedef struct {
 	CGSize _decelerationDelta;
 }
 
-// Any other functions you need to manipulate the mapyou can access through this
-// property. The contents structure holds the actual map bits.
-@property (readonly) RMMapContents *contents;
+// Any other functionality you need to manipulate the map you can access through this
+// property. The RMMapContents class holds the actual map bits.
+@property (nonatomic, readonly) RMMapContents *contents;
 
-@property (retain, readonly) RMMarkerManager *markerManager;
+@property (nonatomic, retain, readonly) RMMarkerManager *markerManager;
 
 // do not retain the delegate so you can let the corresponding controller implement the
 // delegate without circular references
@@ -89,6 +89,7 @@ typedef struct {
 
 
 - (id)initWithFrame:(CGRect)frame WithLocation:(CLLocationCoordinate2D)latlong;
+- (void)changeContentsTo:(RMMapContents *)theContents;
 
 - (void)moveToLatLong: (CLLocationCoordinate2D)latlong;
 - (void)moveToXYPoint: (RMXYPoint)aPoint;
