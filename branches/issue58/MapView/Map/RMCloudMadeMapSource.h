@@ -36,6 +36,6 @@
 
 /// designated initializer
 - (id) initWithAccessKey:(NSString *)developerAccessKey
-			 StyleNumber:(NSUInteger)styleNumber;
+			 styleNumber:(NSUInteger)styleNumber;
 
 @end

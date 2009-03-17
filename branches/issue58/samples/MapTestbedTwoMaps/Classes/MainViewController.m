@@ -43,7 +43,7 @@
 	
     [lowerMapView setDelegate:self];
     lowerMapContents =  [[RMMapContents alloc] initWithView:lowerMapView
-												 tilesource:[[[RMCloudMadeMapSource alloc] initWithAccessKey:@"0199bdee456e59ce950b0156029d6934" StyleNumber:7] autorelease]];
+												 tilesource:[[[RMCloudMadeMapSource alloc] initWithAccessKey:@"0199bdee456e59ce950b0156029d6934" styleNumber:7] autorelease]];
     [(MapTestbedTwoMapsAppDelegate *)[[UIApplication sharedApplication] delegate] setLowerMapContents:[lowerMapView contents]];
 	[lowerMapView setNeedsDisplay];
 	[lowerMapView moveToLatLong:center];

@@ -14,6 +14,7 @@
 
 @synthesize mapView;
 @synthesize infoTextView;
+@synthesize contents;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
@@ -29,12 +30,13 @@
 	NSLog(@"viewDidLoad");
     [super viewDidLoad];
     [mapView setDelegate:self];
-	id myTilesource = [[[RMCloudMadeMapSource alloc] initWithAccessKey:@"0199bdee456e59ce950b0156029d6934" StyleNumber:999] autorelease];
+	id myTilesource = [[[RMCloudMadeMapSource alloc] initWithAccessKey:@"0199bdee456e59ce950b0156029d6934" styleNumber:999] autorelease];
+    
 	RMMapContents *myContents = [[[RMMapContents alloc] initWithView:mapView 
-														 tilesource:myTilesource] autorelease];
-	[mapView setContents:myContents];
-	[(SampleMapAppDelegate *)[[UIApplication sharedApplication] delegate] setMapContents:[mapView contents]];
-    contents = [mapView contents];
+														  tilesource:myTilesource] autorelease];
+	self.contents = myContents;
+	self.mapView.contents = myContents;
+	[(SampleMapAppDelegate *)[[UIApplication sharedApplication] delegate] setMapContents:myContents];
     [self updateInfo];
 }
 
@@ -60,6 +62,7 @@
 - (void)dealloc {
     self.infoTextView = nil; 
     self.mapView = nil; 
+	self.contents = nil;
     [super dealloc];
 }
 
