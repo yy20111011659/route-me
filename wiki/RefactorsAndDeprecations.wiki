@@ -15,6 +15,8 @@ The -description method in tile sources, used in the tile caches for determining
 
 Functionality that relies on retrieving an image with a particular name from the application's main bundle will be removed. It will be replaced by functionality to set that image directly from the client app. The default background image for tile loading, RMMarkerStyles, and RMMarkerBlueKey andd RMMarkerRedKey, will be removed. Cocoa Touch does not provide the hooks needed for the library to guarantee this functionality always works.
 
+Info.plist dependencies will be eliminated, and replaced by methods for run-time configuration of parameters that currently appear there: background image name, tile cache, etc.
+
 ===Delegates===
 dragMarkerPosition:onMap:position: will be removed from the RMMapViewDelegate protocol. Use mapView:did/shouldDragMarker:withEvent: instead. Other delegate names in this and other delegate protocols will be renamed to follow the standard Cocoa willSwizzle/shouldSwizzle/didSwizzle convention.
 
@@ -24,5 +26,3 @@ The mere presence of a delegate method will not eliminate the default behavior, 
 All WithLocation: parameters in the various -initWith methods on these two classes will be removed.
 
 Improved initializers for these two classes are present for testing purposes in branches/issue58 and will be merged into the trunk between 0.4 and 0.5 tags.
-
-
