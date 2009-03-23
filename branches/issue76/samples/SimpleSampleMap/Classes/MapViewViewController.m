@@ -168,13 +168,19 @@ shouldDragMarker:(RMMarker *)marker
 {
     [super viewDidLoad];
 	
-	mapView = [[[RMMapView alloc]initWithFrame:CGRectMake(0.0, 
+	mapView = [[RMMapView alloc]initWithFrame:CGRectMake(0.0, 
 														  0.0, 
 														  320.0, 
-														  460.0)] autorelease]; 
-	locationManager	= [[[CLLocationManager alloc] init] autorelease];
+														  460.0)]; 
+	locationManager	= [[CLLocationManager alloc] init];
 	locationManager.delegate		= self;
 	locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+	if (locationManager.locationServicesEnabled == NO)
+	{
+		NSLog(@"Services not enabled");
+		return;
+	}
+	
 	[locationManager startUpdatingLocation];
 
 	tap = NO;
@@ -183,24 +189,17 @@ shouldDragMarker:(RMMarker *)marker
 	[mapView setDelegate:self];
 	[mapView setBackgroundColor:[UIColor grayColor]];  //or clear etc 
 
-	if (locationManager.location == nil)
-	{
-		CLLocationCoordinate2D coolPlace; 
-		coolPlace.latitude = 33.413286; 
-		coolPlace.longitude = -111.907403; 
-		
-		currentLocation = coolPlace;
-	}
-	else
+	if (locationManager.location != nil)
 	{
 		currentLocation = locationManager.location.coordinate;
+		
+		NSLog(@"Location: Lat: %lf Lon: %lf", currentLocation.latitude, currentLocation.longitude);
+		
+		[mapView moveToLatLong:currentLocation]; 
 	}
 	
-	NSLog(@"Location: Lat: %lf Lon: %lf", currentLocation.latitude, currentLocation.longitude);
-	
-	[mapView moveToLatLong:currentLocation]; 
 	[self.view addSubview:mapView]; 
-	
+
 	[markerManager addDefaultMarkerAt:currentLocation];
 	
 	RMMarker *marker = [[RMMarker alloc]initWithKey:RMMarkerBlueKey];
@@ -229,6 +228,9 @@ shouldDragMarker:(RMMarker *)marker
 - (void)dealloc 
 {
 	[mapView release];
+	[locationManager stopUpdatingLocation];
+	[locationManager release];
+	
     [super dealloc];
 }
 
@@ -245,6 +247,12 @@ shouldDragMarker:(RMMarker *)marker
 	
 	currentLocation = newLocation.coordinate;
 	[mapView moveToLatLong:currentLocation]; 
+}
+
+- (void)locationManager: (CLLocationManager *)manager
+	   didFailWithError: (NSError *)error
+{
+	NSLog(@"Location Manager error: %@", [error localizedDescription]);
 }
 
 @synthesize tap;
