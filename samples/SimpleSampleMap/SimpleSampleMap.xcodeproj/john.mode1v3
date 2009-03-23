@@ -318,7 +318,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>MapViewViewController.m</string>
+								<string>MapViewViewController.h</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -326,11 +326,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>MapViewViewController.m</string>
+										<string>MapViewViewController.h</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>5201D7AB0F6DEF620016DEE5</string>
+										<string>52677EEE0F76F3570070737E</string>
 										<key>history</key>
 										<array>
 											<string>52C469390F6CA0C800E99EC4</string>
@@ -343,8 +343,8 @@
 											<string>52C469400F6CA0C800E99EC4</string>
 											<string>52C469D20F6CAE5900E99EC4</string>
 											<string>52C469D30F6CAE5900E99EC4</string>
-											<string>5201D7A50F6DEED40016DEE5</string>
-											<string>5201D7A60F6DEED40016DEE5</string>
+											<string>5201D7D90F6E08380016DEE5</string>
+											<string>52E8646E0F7608C400DC0C4A</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -360,10 +360,6 @@
 											<string>52C4694E0F6CA0C800E99EC4</string>
 											<string>52C469520F6CA0C800E99EC4</string>
 											<string>52C469540F6CA0C800E99EC4</string>
-											<string>5201D7A00F6DEA910016DEE5</string>
-											<string>5201D7A10F6DEA910016DEE5</string>
-											<string>5201D7A70F6DEED40016DEE5</string>
-											<string>5201D7A80F6DEED40016DEE5</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -421,9 +417,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>5201D7810F6DC6AA0016DEE5</string>
+				<string>52677EEF0F76F3570070737E</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>5201D7820F6DC6AA0016DEE5</string>
+				<string>52677EF00F76F3570070737E</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -557,12 +553,8 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>5201D78B0F6DC7960016DEE5</string>
-		<string>5201D7860F6DC6AA0016DEE5</string>
-		<string>52C468730F6C6A5300E99EC4</string>
 		<string>1CD10A99069EF8BA00B06720</string>
 		<string>/Users/john/Documents/Projects/route-meIssue76/route-me/samples/SimpleSampleMap/SimpleSampleMap.xcodeproj</string>
-		<string>1C78EAAD065D492600B07095</string>
 	</array>
 	<key>WindowString</key>
 	<string>582 246 852 631 0 0 1440 878 </string>
@@ -686,8 +678,8 @@
 										<string>yes</string>
 										<key>sizes</key>
 										<array>
-											<string>{{0, 0}, {316, 198}}</string>
-											<string>{{316, 0}, {378, 198}}</string>
+											<string>{{0, 0}, {316, 201}}</string>
+											<string>{{316, 0}, {378, 201}}</string>
 										</array>
 									</dict>
 									<key>VerticalSplitView</key>
@@ -702,8 +694,8 @@
 										<string>yes</string>
 										<key>sizes</key>
 										<array>
-											<string>{{0, 0}, {694, 198}}</string>
-											<string>{{0, 198}, {694, 183}}</string>
+											<string>{{0, 0}, {694, 201}}</string>
+											<string>{{0, 201}, {694, 180}}</string>
 										</array>
 									</dict>
 								</dict>
@@ -736,12 +728,12 @@
 										<real>109</real>
 									</array>
 									<key>Frame</key>
-									<string>{{316, 0}, {378, 198}}</string>
+									<string>{{316, 0}, {378, 201}}</string>
 									<key>RubberWindowFrame</key>
-									<string>206 456 694 422 0 0 1440 878 </string>
+									<string>120 456 694 422 0 0 1440 878 </string>
 								</dict>
 								<key>RubberWindowFrame</key>
-								<string>206 456 694 422 0 0 1440 878 </string>
+								<string>120 456 694 422 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXDebugSessionModule</string>
@@ -764,18 +756,18 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1CD10A99069EF8BA00B06720</string>
-				<string>5201D7780F6DC6730016DEE5</string>
+				<string>52677EF10F76F3570070737E</string>
 				<string>1C162984064C10D400B95A72</string>
-				<string>5201D7790F6DC6730016DEE5</string>
-				<string>5201D77A0F6DC6730016DEE5</string>
-				<string>5201D77B0F6DC6730016DEE5</string>
-				<string>5201D77C0F6DC6730016DEE5</string>
-				<string>5201D77D0F6DC6730016DEE5</string>
+				<string>52677EF20F76F3570070737E</string>
+				<string>52677EF30F76F3570070737E</string>
+				<string>52677EF40F76F3570070737E</string>
+				<string>52677EF50F76F3570070737E</string>
+				<string>52677EF60F76F3570070737E</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.debugV3</string>
 			<key>WindowString</key>
-			<string>206 456 694 422 0 0 1440 878 </string>
+			<string>120 456 694 422 0 0 1440 878 </string>
 			<key>WindowToolGUID</key>
 			<string>1CD10A99069EF8BA00B06720</string>
 			<key>WindowToolIsVisible</key>
