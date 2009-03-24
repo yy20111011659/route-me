@@ -34,9 +34,44 @@
 
 @implementation MapViewViewController
 
+@synthesize mapViewPortrait;
+@synthesize mapViewLandscape;
 @synthesize mapView;
 @synthesize locationManager;
 @synthesize currentLocation;
+
+- (void)willAnimateFirstHalfOfRotationToInterfaceOrientation: (UIInterfaceOrientation)toOrientation
+													duration: (NSTimeInterval)duration
+{
+	if (toOrientation == UIInterfaceOrientationPortrait)
+	{
+		self.mapView		= self.mapViewPortrait;
+		self.view.transform = CGAffineTransformIdentity;
+		self.view.transform = CGAffineTransformMakeRotation(degreesToRadian(0.0));
+		self.view.bounds	= CGRectMake(0.0, 0.0, 460.0, 320.0);
+	}
+	else if (toOrientation == UIInterfaceOrientationLandscapeLeft)
+	{
+		self.mapView		= self.mapViewLandscape;
+		self.view.transform	= CGAffineTransformIdentity;
+		self.view.transform = CGAffineTransformMakeRotation(degreesToRadian(-90));
+		self.view.bounds	= CGRectMake(0.0, 0.0, 300.0, 480.0);
+	}
+	else if (toOrientation == UIInterfaceOrientationPortraitUpsideDown)
+	{
+		self.mapView		= self.mapViewPortrait;
+		self.view.transform = CGAffineTransformIdentity;
+		self.view.transform = CGAffineTransformMakeRotation(degreesToRadian(180.0));
+		self.view.bounds	= CGRectMake(0.0, 0.0, 460.0, 320.0);
+	}
+	else if (toOrientation == UIInterfaceOrientationLandscapeRight)
+	{
+		self.mapView		= self.mapViewLandscape;
+		self.view.transform	= CGAffineTransformIdentity;
+		self.view.transform = CGAffineTransformMakeRotation(degreesToRadian(90));
+		self.view.bounds	= CGRectMake(0.0, 0.0, 300.0, 480.0);
+	}
+}
 
 // Override initWithNibName:bundle: to load the view using a nib file then perform additional customization that is not appropriate for viewDidLoad.
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -168,10 +203,14 @@ shouldDragMarker:(RMMarker *)marker
 {
     [super viewDidLoad];
 	
-	mapView = [[RMMapView alloc]initWithFrame:CGRectMake(0.0, 
+	mapViewPortrait = [[RMMapView alloc]initWithFrame:CGRectMake(0.0, 
 														  0.0, 
 														  320.0, 
 														  460.0)]; 
+	mapViewLandscape = [[RMMapView alloc]initWithFrame:CGRectMake(0.0, 
+																 0.0, 
+																 480.0, 
+																 300.0)]; 
 	locationManager	= [[CLLocationManager alloc] init];
 	locationManager.delegate		= self;
 	locationManager.desiredAccuracy = kCLLocationAccuracyBest;
