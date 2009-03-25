@@ -280,6 +280,7 @@
 				INFOPLIST_FILE = Info.plist;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = SimpleMap;
+				"PROVISIONING_PROFILE[sdk=iphoneos2.2.1]" = "69D30FE2-7E33-4452-9FC8-A4E18A3E529E";
 			};
 			name = Debug;
 		};
@@ -294,6 +295,7 @@
 				INFOPLIST_FILE = Info.plist;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = SimpleMap;
+				"PROVISIONING_PROFILE[sdk=iphoneos2.2.1]" = "69D30FE2-7E33-4452-9FC8-A4E18A3E529E";
 			};
 			name = Release;
 		};
@@ -301,13 +303,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos2.2.1]" = "iPhone Developer: John Ahrens";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				SDKROOT = iphonesimulator2.2;
+				"PROVISIONING_PROFILE[sdk=iphoneos2.2.1]" = "69D30FE2-7E33-4452-9FC8-A4E18A3E529E";
+				SDKROOT = iphoneos2.2.1;
 			};
 			name = Debug;
 		};
@@ -315,12 +318,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos2.2.1]" = "iPhone Developer: John Ahrens";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
-				SDKROOT = iphonesimulator2.2;
+				"PROVISIONING_PROFILE[sdk=iphoneos2.2.1]" = "69D30FE2-7E33-4452-9FC8-A4E18A3E529E";
+				SDKROOT = iphoneos2.2.1;
 			};
 			name = Release;
 		};

@@ -62,7 +62,6 @@
 	RMMarker *aMarker;
 	
 	while (aMarker = (RMMarker *)[markerEnumerator nextObject])
-		
 	{
 		RMXYPoint point = [aMarker location];
 		NSLog(@"Marker mercator location: X:%lf, Y:%lf", point.x, point.y);
@@ -92,8 +91,6 @@
 	
 	[markerManager hideAllMarkers];
 	[markerManager unhideAllMarkers];
-	
-
 }
 
 - (BOOL)mapView:(RMMapView *)map shouldDragMarker:(RMMarker *)marker withEvent:(UIEvent *)event
@@ -104,7 +101,9 @@
    return YES;
 }
 
-- (void)mapView:(RMMapView *)map didDragMarker:(RMMarker *)marker withEvent:(UIEvent *)event 
+- (void)mapView:(RMMapView *)map 
+  didDragMarker:(RMMarker *)marker 
+	  withEvent:(UIEvent *)event 
 {
    CGPoint position = [[[event allTouches] anyObject] locationInView:mapView];
    
@@ -113,7 +112,8 @@
 	NSLog(@"New location: X:%lf Y:%lf", [marker location].x, [marker location].y);
 	CGRect rect = [marker bounds];
 	
-	[markerManager moveMarker:marker AtXY:CGPointMake(position.x,position.y +rect.size.height/3)];
+	[markerManager moveMarker:marker 
+						 AtXY:CGPointMake(position.x,position.y +rect.size.height/3)];
 
 }
 
@@ -129,16 +129,20 @@
 	[marker removeLabel];
 	if(!tap)
 	{
-		[marker replaceImage:[[UIImage imageNamed:@"marker-red.png"] CGImage]   anchorPoint:CGPointMake(0.5,1.0)];
+		[marker replaceImage:[[UIImage imageNamed:@"marker-red.png"] CGImage]  
+				 anchorPoint:CGPointMake(0.5,1.0)];
 		[marker setTextLabel:@"World"];
 		tap=YES;
-		[markerManager moveMarker:marker AtXY:CGPointMake([marker position].x,[marker position].y + 20.0)];
+		[markerManager moveMarker:marker 
+							 AtXY:CGPointMake([marker position].x,[marker position].y + 20.0)];
 		[mapView setDeceleration:YES];
 	}else
 	{
-		[marker replaceImage:[[UIImage imageNamed:@"marker-blue.png"] CGImage]   anchorPoint:CGPointMake(0.5,1.0)];
+		[marker replaceImage:[[UIImage imageNamed:@"marker-blue.png"] CGImage]   
+				 anchorPoint:CGPointMake(0.5,1.0)];
 		[marker setTextLabel:@"Hello"];
-		[markerManager moveMarker:marker AtXY:CGPointMake([marker position].x,[marker position].y - 20.0)];
+		[markerManager moveMarker:marker 
+							 AtXY:CGPointMake([marker position].x,[marker position].y - 20.0)];
 		tap=NO;
 		[mapView setDeceleration:NO];
 	}
@@ -152,7 +156,8 @@
 }
 
 // Implement viewDidLoad to do additional setup after loading the view.
-- (void)viewDidLoad {
+- (void)viewDidLoad 
+{
 	NSLog(@"%@ viewDidLoad", self);
     [super viewDidLoad];
 	tap=NO;
@@ -160,15 +165,16 @@
 	[mapView setDelegate:self];
 	
 	CLLocationCoordinate2D coolPlace;
-	coolPlace.latitude = -33.9464;
-	coolPlace.longitude = 151.2381;
+	coolPlace.latitude = 33.9464;
+	coolPlace.longitude = -111.2381;
 	
-//	[markerManager addDefaultMarkerAt:coolPlace];
+	[markerManager addDefaultMarkerAt:coolPlace];
 	
 	RMMarker *marker = [[RMMarker alloc]initWithKey:RMMarkerBlueKey];
 	[marker setTextForegroundColor:[UIColor blueColor]];
 	[marker setTextLabel:@"Hello"];
-	[markerManager addMarker:marker AtLatLong:[[mapView contents] mapCenter]];
+	[markerManager addMarker:marker 
+				   AtLatLong:[[mapView contents] mapCenter]];
 	[marker release];
 	NSLog(@"Center: Lat: %lf Lon: %lf", mapView.contents.mapCenter.latitude, mapView.contents.mapCenter.longitude);
 	
@@ -182,7 +188,8 @@
 }
 
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning 
+{
 	// due to a bug, RMMapView should never be released, as it causes the application to crash
     //[super didReceiveMemoryWarning]; // Releases the view if it doesn't have a superview
 
@@ -190,9 +197,12 @@
 }
 
 
-- (void)dealloc {
+- (void)dealloc 
+{
 	[mapView release];
     [super dealloc];
 }
 
+@synthesize tap;
+@synthesize tapCount;
 @end

@@ -28,7 +28,8 @@
 #import <UIKit/UIKit.h>
 #import "RMMapView.h"
 
-@interface MapViewViewController : UIViewController <RMMapViewDelegate> {
+@interface MapViewViewController : UIViewController <RMMapViewDelegate> 
+{
 	IBOutlet RMMapView * mapView;
 	BOOL tap;
 	NSInteger tapCount;
@@ -36,5 +37,7 @@
 
 @property (nonatomic, retain) IBOutlet RMMapView * mapView;
 
+@property BOOL tap;
+@property NSInteger tapCount;
 @end
 

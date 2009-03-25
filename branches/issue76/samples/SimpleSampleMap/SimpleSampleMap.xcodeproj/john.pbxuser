@@ -65,27 +65,16 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 259555408;
-			PBXWorkspaceStateSaveDate = 259555408;
+			PBXPerProjectTemplateStateSaveDate = 259640826;
+			PBXWorkspaceStateSaveDate = 259640826;
 		};
 		perUserProjectItems = {
 			526D50F90F7716FA00112148 = 526D50F90F7716FA00112148 /* PBXTextBookmark */;
-			526D50FC0F7716FA00112148 = 526D50FC0F7716FA00112148 /* PBXTextBookmark */;
-			526D50FD0F7716FA00112148 = 526D50FD0F7716FA00112148 /* PBXTextBookmark */;
-			526D50FE0F7716FA00112148 = 526D50FE0F7716FA00112148 /* PBXTextBookmark */;
-			526D50FF0F7716FA00112148 = 526D50FF0F7716FA00112148 /* PBXTextBookmark */;
-			526D512B0F77310D00112148 = 526D512B0F77310D00112148 /* PBXTextBookmark */;
 			526D512E0F77312500112148 = 526D512E0F77312500112148 /* PBXTextBookmark */;
-			526D512F0F77312500112148 = 526D512F0F77312500112148 /* PBXTextBookmark */;
-			526D51300F77312500112148 = 526D51300F77312500112148 /* PBXTextBookmark */;
-			526D51310F77312500112148 = 526D51310F77312500112148 /* PBXTextBookmark */;
-			526D51320F77312500112148 = 526D51320F77312500112148 /* PBXTextBookmark */;
-			526D51330F77312500112148 = 526D51330F77312500112148 /* PBXTextBookmark */;
-			526D51340F77312500112148 = 526D51340F77312500112148 /* PBXTextBookmark */;
-			526D51350F77312500112148 = 526D51350F77312500112148 /* PBXTextBookmark */;
-			526D51360F77312500112148 = 526D51360F77312500112148 /* PBXTextBookmark */;
 			526D51370F77312500112148 = 526D51370F77312500112148 /* PBXTextBookmark */;
-			526D513A0F77312500112148 = 526D513A0F77312500112148 /* PBXTextBookmark */;
+			5280C7180F79CE1600D34A75 /* PBXTextBookmark */ = 5280C7180F79CE1600D34A75 /* PBXTextBookmark */;
+			5280C7190F79CE1600D34A75 /* PBXTextBookmark */ = 5280C7190F79CE1600D34A75 /* PBXTextBookmark */;
+			5280C71A0F79CE1600D34A75 /* PBXTextBookmark */ = 5280C71A0F79CE1600D34A75 /* PBXTextBookmark */;
 			52C469390F6CA0C800E99EC4 = 52C469390F6CA0C800E99EC4 /* PBXTextBookmark */;
 			52C4693A0F6CA0C800E99EC4 = 52C4693A0F6CA0C800E99EC4 /* PBXTextBookmark */;
 			52C4693B0F6CA0C800E99EC4 = 52C4693B0F6CA0C800E99EC4 /* PBXBookmark */;
@@ -107,6 +96,7 @@
 			52C469520F6CA0C800E99EC4 = 52C469520F6CA0C800E99EC4 /* PBXTextBookmark */;
 			52C469540F6CA0C800E99EC4 = 52C469540F6CA0C800E99EC4 /* PBXTextBookmark */;
 			52C469D20F6CAE5900E99EC4 = 52C469D20F6CAE5900E99EC4 /* PBXTextBookmark */;
+			52D1EF450F78AC0A001F6E02 = 52D1EF450F78AC0A001F6E02 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 52C468590F6C68B300E99EC4 /* Source Control */;
 		userBuildSettings = {
@@ -137,133 +127,7 @@
 		vrLen = 1592;
 		vrLoc = 0;
 	};
-	526D50FC0F7716FA00112148 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 52C468CD0F6C71EE00E99EC4 /* MapViewViewController.h */;
-		name = "MapViewViewController.h: 22";
-		rLen = 0;
-		rLoc = 1050;
-		rType = 0;
-		vrLen = 1385;
-		vrLoc = 615;
-	};
-	526D50FD0F7716FA00112148 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 52C468CE0F6C71EE00E99EC4 /* MapViewViewController.m */;
-		name = "MapViewViewController.m: 234";
-		rLen = 0;
-		rLoc = 8681;
-		rType = 0;
-		vrLen = 914;
-		vrLoc = 6640;
-	};
-	526D50FE0F7716FA00112148 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 52C468CB0F6C71EE00E99EC4 /* MapViewAppDelegate.h */;
-		name = "MapViewAppDelegate.h: 33";
-		rLen = 0;
-		rLoc = 1522;
-		rType = 0;
-		vrLen = 1592;
-		vrLoc = 0;
-	};
-	526D50FF0F7716FA00112148 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 52C468CD0F6C71EE00E99EC4 /* MapViewViewController.h */;
-		name = "MapViewViewController.h: 25";
-		rLen = 0;
-		rLoc = 1235;
-		rType = 0;
-		vrLen = 1388;
-		vrLoc = 612;
-	};
-	526D512B0F77310D00112148 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		comments = "error: statically allocated instance of Objective-C class 'RMMapView'";
-		fRef = 52C468CD0F6C71EE00E99EC4 /* MapViewViewController.h */;
-		rLen = 1;
-		rLoc = 40;
-		rType = 1;
-	};
 	526D512E0F77312500112148 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 52C468CE0F6C71EE00E99EC4 /* MapViewViewController.m */;
-		name = "MapViewViewController.m: 60";
-		rLen = 0;
-		rLoc = 2505;
-		rType = 0;
-		vrLen = 955;
-		vrLoc = 3281;
-	};
-	526D512F0F77312500112148 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		comments = "error: statically allocated instance of Objective-C class 'RMMapView'";
-		fRef = 52C468CD0F6C71EE00E99EC4 /* MapViewViewController.h */;
-		rLen = 1;
-		rLoc = 40;
-		rType = 1;
-	};
-	526D51300F77312500112148 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 52C468CE0F6C71EE00E99EC4 /* MapViewViewController.m */;
-		name = "MapViewViewController.m: 177";
-		rLen = 0;
-		rLoc = 7319;
-		rType = 0;
-		vrLen = 1117;
-		vrLoc = 5016;
-	};
-	526D51310F77312500112148 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 52C468CD0F6C71EE00E99EC4 /* MapViewViewController.h */;
-		name = "MapViewViewController.h: 46";
-		rLen = 0;
-		rLoc = 2067;
-		rType = 0;
-		vrLen = 1572;
-		vrLoc = 552;
-	};
-	526D51320F77312500112148 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 52C468CE0F6C71EE00E99EC4 /* MapViewViewController.m */;
-		name = "MapViewViewController.m: 177";
-		rLen = 19;
-		rLoc = 6840;
-		rType = 0;
-		vrLen = 1270;
-		vrLoc = 5325;
-	};
-	526D51330F77312500112148 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 52C468CD0F6C71EE00E99EC4 /* MapViewViewController.h */;
-		name = "MapViewViewController.h: 48";
-		rLen = 0;
-		rLoc = 2067;
-		rType = 0;
-		vrLen = 1623;
-		vrLoc = 552;
-	};
-	526D51340F77312500112148 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 52C468CE0F6C71EE00E99EC4 /* MapViewViewController.m */;
-		name = "MapViewViewController.m: 41";
-		rLen = 0;
-		rLoc = 1715;
-		rType = 0;
-		vrLen = 1407;
-		vrLoc = 1218;
-	};
-	526D51350F77312500112148 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 52C468CD0F6C71EE00E99EC4 /* MapViewViewController.h */;
-		name = "MapViewViewController.h: 34";
-		rLen = 0;
-		rLoc = 1535;
-		rType = 0;
-		vrLen = 1646;
-		vrLoc = 552;
-	};
-	526D51360F77312500112148 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 52C468CE0F6C71EE00E99EC4 /* MapViewViewController.m */;
 		name = "MapViewViewController.m: 60";
@@ -283,15 +147,35 @@
 		vrLen = 1588;
 		vrLoc = 612;
 	};
-	526D513A0F77312500112148 /* PBXTextBookmark */ = {
+	5280C7180F79CE1600D34A75 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 52C468CD0F6C71EE00E99EC4 /* MapViewViewController.h */;
-		name = "MapViewViewController.h: 41";
-		rLen = 31;
-		rLoc = 1722;
+		name = "MapViewViewController.h: 20";
+		rLen = 0;
+		rLoc = 908;
 		rType = 0;
-		vrLen = 1238;
-		vrLoc = 771;
+		vrLen = 1647;
+		vrLoc = 552;
+	};
+	5280C7190F79CE1600D34A75 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 52C468CD0F6C71EE00E99EC4 /* MapViewViewController.h */;
+		name = "MapViewViewController.h: 20";
+		rLen = 0;
+		rLoc = 908;
+		rType = 0;
+		vrLen = 1647;
+		vrLoc = 552;
+	};
+	5280C71A0F79CE1600D34A75 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 52C468CE0F6C71EE00E99EC4 /* MapViewViewController.m */;
+		name = "MapViewViewController.m: 252";
+		rLen = 91;
+		rLoc = 8300;
+		rType = 0;
+		vrLen = 1176;
+		vrLoc = 4638;
 	};
 	52C468530F6C68A400E99EC4 /* SimpleSampleMap */ = {
 		isa = PBXExecutable;
@@ -354,18 +238,18 @@
 	};
 	52C468CD0F6C71EE00E99EC4 /* MapViewViewController.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {691, 826}}";
-			sepNavSelRange = "{1722, 31}";
-			sepNavVisRange = "{771, 1238}";
+			sepNavIntBoundsRect = "{{0, 0}, {583, 798}}";
+			sepNavSelRange = "{908, 0}";
+			sepNavVisRange = "{552, 1647}";
 			sepNavWindowFrame = "{{15, 315}, {750, 558}}";
 		};
 	};
 	52C468CE0F6C71EE00E99EC4 /* MapViewViewController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {900, 4088}}";
-			sepNavSelRange = "{2505, 0}";
-			sepNavVisRange = "{3401, 1014}";
-			sepNavWindowFrame = "{{38, 294}, {750, 558}}";
+			sepNavIntBoundsRect = "{{0, 0}, {894, 4340}}";
+			sepNavSelRange = "{7465, 0}";
+			sepNavVisRange = "{6507, 1214}";
+			sepNavWindowFrame = "{{15, 315}, {750, 558}}";
 		};
 	};
 	52C469390F6CA0C800E99EC4 /* PBXTextBookmark */ = {
@@ -519,5 +403,15 @@
 		rType = 0;
 		vrLen = 947;
 		vrLoc = 1544;
+	};
+	52D1EF450F78AC0A001F6E02 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 52C468CD0F6C71EE00E99EC4 /* MapViewViewController.h */;
+		name = "MapViewViewController.h: 20";
+		rLen = 0;
+		rLoc = 908;
+		rType = 0;
+		vrLen = 1648;
+		vrLoc = 552;
 	};
 }

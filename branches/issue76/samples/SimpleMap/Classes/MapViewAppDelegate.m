@@ -36,13 +36,17 @@
 
 -(id)init
 {
-	if (self = [super init]) {
+	if (self = [super init]) 
+	{
 		//Notifications for tile requests.  This code allows for a class to know when a tile is requested and retrieved
 		[[NSNotificationCenter defaultCenter] addObserver:self
-												 selector:@selector(tileRequested:) name:@"RMTileRequested" object:nil ];
+												 selector:@selector(tileRequested:) 
+													 name:@"RMTileRequested" object:nil];
 		[[NSNotificationCenter defaultCenter] addObserver:self
-												 selector:@selector(tileRetrieved:) name:@"RMTileRetrieved" object:nil ]; 
+												 selector:@selector(tileRetrieved:) 
+													 name:@"RMTileRetrieved" object:nil]; 
 	}
+	
 	NSLog(@"%@ init", self);
 	return self;
 }
@@ -57,15 +61,16 @@
 	NSLog(@"Tile request ended.");
 }
 
-- (void)applicationDidFinishLaunching:(UIApplication *)application {    
-
+- (void)applicationDidFinishLaunching:(UIApplication *)application
+{    
 	// Override point for customization after app launch    
     [window addSubview:viewController.view];
     [window makeKeyAndVisible];
 }
 
 
-- (void)dealloc {
+- (void)dealloc
+{
     [viewController release];
     [window release];
     [super dealloc];

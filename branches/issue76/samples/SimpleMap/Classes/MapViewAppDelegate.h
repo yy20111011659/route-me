@@ -29,7 +29,8 @@
 
 @class MapViewViewController;
 
-@interface MapViewAppDelegate : NSObject <UIApplicationDelegate> {
+@interface MapViewAppDelegate : NSObject <UIApplicationDelegate> 
+{
     UIWindow *window;
     MapViewViewController *viewController;
 }
