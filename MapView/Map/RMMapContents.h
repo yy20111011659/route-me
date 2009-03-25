@@ -66,6 +66,8 @@ enum {
 {
 	// TODO: Also support NSView.
 	
+	CLLocationCoordinate2D *mapCenter;
+	
 	// This is the underlying UIView's layer.
 	CALayer *layer;
 	

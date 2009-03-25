@@ -220,6 +220,9 @@ shouldDragMarker:(RMMarker *)marker
 		return;
 	}
 	
+	currentLocation. latitude = 33.413313;
+	currentLocation.longitude = -111.907326;
+	
 	[locationManager startUpdatingLocation];
 
 	tap = NO;
@@ -233,10 +236,9 @@ shouldDragMarker:(RMMarker *)marker
 		currentLocation = locationManager.location.coordinate;
 		
 		NSLog(@"Location: Lat: %lf Lon: %lf", currentLocation.latitude, currentLocation.longitude);
-		
-		[mapView moveToLatLong:currentLocation]; 
 	}
 	
+	[mapView moveToLatLong:currentLocation]; 
 	[self.view addSubview:mapView]; 
 
 	[markerManager addDefaultMarkerAt:currentLocation];

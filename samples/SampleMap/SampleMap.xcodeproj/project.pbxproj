@@ -20,6 +20,7 @@
 		289233AE0DB2D0DB0083E9F9 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 289233A90DB2D0DB0083E9F9 /* MainViewController.m */; };
 		289233AF0DB2D0DB0083E9F9 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 289233AB0DB2D0DB0083E9F9 /* RootViewController.m */; };
 		289233B00DB2D0DB0083E9F9 /* FlipsideViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 289233AD0DB2D0DB0083E9F9 /* FlipsideViewController.m */; };
+		52D2212E0F6C3BF200BD1566 /* libMapView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 52D2212D0F6C3BE800BD1566 /* libMapView.a */; };
 		EBDDE0E00F649CE100377FFE /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBDDE0DF0F649CE100377FFE /* CoreLocation.framework */; };
 		EBDDE0E20F649CE100377FFE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBDDE0E10F649CE100377FFE /* QuartzCore.framework */; };
 		EBDDE0E40F649CE100377FFE /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = EBDDE0E30F649CE100377FFE /* libsqlite3.dylib */; };
@@ -32,6 +33,13 @@
 			containerPortal = EBE3696D0F673B95003DC21C /* MapView.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = B8C974130E8A19B2007D16AD;
+			remoteInfo = MapView;
+		};
+		52D2212C0F6C3BE800BD1566 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 52D221280F6C3BE800BD1566 /* MapView.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B8C974590E8A19B2007D16AD /* libMapView.a */;
 			remoteInfo = MapView;
 		};
 		EBE3697C0F673B95003DC21C /* PBXContainerItemProxy */ = {
@@ -65,6 +73,7 @@
 		289233AD0DB2D0DB0083E9F9 /* FlipsideViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FlipsideViewController.m; path = Classes/FlipsideViewController.m; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* SampleMap_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleMap_Prefix.pch; sourceTree = "<group>"; };
+		52D221280F6C3BE800BD1566 /* MapView.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MapView.xcodeproj; path = ../../MapView/MapView.xcodeproj; sourceTree = SOURCE_ROOT; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EBDDE0DF0F649CE100377FFE /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		EBDDE0E10F649CE100377FFE /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -84,6 +93,7 @@
 				EBDDE0E20F649CE100377FFE /* QuartzCore.framework in Frameworks */,
 				EBDDE0E40F649CE100377FFE /* libsqlite3.dylib in Frameworks */,
 				EBE3697E0F673B9A003DC21C /* libMapView.a in Frameworks */,
+				52D2212E0F6C3BF200BD1566 /* libMapView.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -170,6 +180,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				52D221280F6C3BE800BD1566 /* MapView.xcodeproj */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 				288765580DF743DE002DB57D /* CoreGraphics.framework */,
@@ -178,6 +189,14 @@
 				EBDDE0E30F649CE100377FFE /* libsqlite3.dylib */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		52D221290F6C3BE800BD1566 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				52D2212D0F6C3BE800BD1566 /* libMapView.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		EBE3696E0F673B95003DC21C /* Products */ = {
@@ -231,6 +250,10 @@
 					ProductGroup = EBE3696E0F673B95003DC21C /* Products */;
 					ProjectRef = EBE3696D0F673B95003DC21C /* MapView.xcodeproj */;
 				},
+				{
+					ProductGroup = 52D221290F6C3BE800BD1566 /* Products */;
+					ProjectRef = 52D221280F6C3BE800BD1566 /* MapView.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -240,6 +263,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		52D2212D0F6C3BE800BD1566 /* libMapView.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libMapView.a;
+			remoteRef = 52D2212C0F6C3BE800BD1566 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		EBE3697D0F673B95003DC21C /* libMapView.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -326,6 +356,8 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "../../MapView/**";
+				LIBRARY_SEARCH_PATHS = "";
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 				SDKROOT = iphonesimulator2.2;
