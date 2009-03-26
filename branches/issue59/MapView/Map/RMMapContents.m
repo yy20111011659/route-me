@@ -113,6 +113,7 @@
 
 	NSAssert1([newView isKindOfClass:[RMMapView class]], @"view %@ must be a subclass of RMMapView", newView);
 	[(RMMapView *)newView setContents:self];
+    parentMapView = newView;
 
 	renderer = [[RMCoreAnimationRenderer alloc] initWithContent:self];
 	boundingMask = RMMapMinWidthBound;
@@ -149,7 +150,7 @@
 	[self setBackground:theBackground];
 	[theBackground release];
 	
-	RMLayerSet *theOverlay = [[RMLayerSet alloc] initForContents:self];
+    RMOverlayView *theOverlay = [[RMOverlayView alloc] initWithContents:self andFrame:[newView bounds]];
 	[self setOverlay:theOverlay];
 	[theOverlay release];
 	

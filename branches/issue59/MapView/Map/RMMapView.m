@@ -48,6 +48,8 @@
 @synthesize decelerationFactor;
 @synthesize deceleration;
 @synthesize contents;
+@synthesize enableDragging;
+@synthesize enableZoom;
 
 - (RMMarkerManager*)markerManager
 {
