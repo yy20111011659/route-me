@@ -1,5 +1,17 @@
-#summary Explanation of pending and proposed refactors, method renaming, and deprecations. API changes that require modification of client programs will not happen before Route-Me 0.5 is released, but may happen at any time after that.
+#summary Explanation of pending, past, and proposed refactors, method renaming, breakages, and deprecations.
 #labels Phase-Implementation
+===Things that break applications===
+If you have shipped an app using Route-Me, pay special attention to this section.
+
+The -description method in tile sources, used in the tile caches for determining the tile source, has been renamed as of r341 to -uniqueTilecacheKey, because the 0.4 usage conflicts with the special meaning of -description in Objective-C. Along with that change, mods were made to various tile sources to reflect various sub-types in the tile sources. For instance, Microsoft Virtual Earth can return three different styles of images, but the -uniqueTilecacheKey did not reflect that, so it was possible to have a mixture of satellite and roadmap images in the same tile cache. If you have two app versions that straddle r341, you must clear your tile cache the first time the new version is run. You might also have leftover tiles in the cache in a directory that will never be cleared.
+
+The hash function used for tile caches was changed in r398. Prior to this, there was the possibility of hash collision between two different tile numbers. If you have two app versions that straddle r398, you must clear your tile cache the first time the new version is run.
+
+
+
+===API revisions===
+
+API changes that require modification of client programs will not happen before Route-Me 0.5 is released, but may happen at any time after that.
 
 Method names containing LatLng, LatLong, LatLon, or Location, operating on CLLocationCoordinate2D types, will be standardized to LatLon spelling.
 
@@ -10,8 +22,6 @@ Route-me is single threaded, from the app developer standpoint (although threads
 Excessive prepositions in method names will be removed. 
 
 Designated initializers will be indicated for classes that need them. Any method name beginning with -init that is not actually an initializer will be renamed. For instance, RMMapView's -initValues method will be renamed to -performInitializations. Any method names beginning with -set that are not Cocoa Bindings compatible setters will be renamed. Any methods whose names begin with -get but that do not return values by reference will be renamed (e.g. -getScreenCoordinateBounds).
-
-The -description method in tile sources, used in the tile caches for determining the tile source, has been renamed to -uniqueTilecacheKey, because the 0.4 usage conflicts with the special meaning of -description in Objective-C.
 
 Functionality that relies on retrieving an image with a particular name from the application's main bundle will be removed. It will be replaced by functionality to set that image directly from the client app. The default background image for tile loading, RMMarkerStyles, and RMMarkerBlueKey andd RMMarkerRedKey, will be removed. Cocoa Touch does not provide the hooks needed for the library to guarantee this functionality always works.
 
