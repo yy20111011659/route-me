@@ -13,7 +13,7 @@ The hash function used for tile caches was changed in r398. Prior to this, there
 
 API changes that require modification of client programs will not happen before Route-Me 0.5 is released, but may happen at any time after that.
 
-Method names containing LatLng, LatLong, LatLon, or Location, operating on CLLocationCoordinate2D types, will be standardized to LatLon spelling.
+Method names containing LatLng, LatLong, LatLon, or Location, operating on CLLocationCoordinate2D types, will be standardized to LatitudeLongitude spelling.
 
 The "scale" instance variable and method in various projection-related code actually means, as of version 0.4,  "meters per pixel". Cartographic scale is a pure, dimensionless number, the ratio of a unit on the map to a unit in the real world. For instance, USGS topographic quads are published at 1/24000 scale, often written 1:24000 and colloquially referred to by just the denominator, e.g. "a 24K map" or "the 50K Ordnance Survey maps". "scale" will be refactored to "metersPerPixel".
 
