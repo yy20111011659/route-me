@@ -31,6 +31,7 @@
     [self updateInfo];
     
     RMMarkerManager *markerManager = [mapView markerManager];
+	NSAssert(markerManager, @"null markerManager returned");
     RMMarker *marker = [[RMMarker alloc]initWithKey:RMMarkerBlueKey];
 	[marker setTextForegroundColor:[UIColor blueColor]];
 	[marker setTextLabel:@"Hello"];
@@ -81,8 +82,10 @@
 #pragma mark -
 #pragma mark Delegate methods
 
-- (void) dragMarkerPosition: (RMMarker*) marker onMap: (RMMapView*)map position:(CGPoint)position;
+- (void)mapView:(RMMapView *)map didDragMarker:(RMMarker *)marker withEvent:(UIEvent *)event 
 {
+   CGPoint position = [[[event allTouches] anyObject] locationInView:mapView];
+   
 	RMMarkerManager *markerManager = [mapView markerManager];
 
 	NSLog(@"New location: X:%lf Y:%lf", [marker location].x, [marker location].y);

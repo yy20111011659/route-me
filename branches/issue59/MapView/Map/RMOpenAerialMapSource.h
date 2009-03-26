@@ -27,6 +27,11 @@
 
 #import "RMAbstractMercatorWebSource.h"
 
+/*! 
+ \brief Subclass of RMAbstractMercatorWebSource for access to the Open Aerial Map project's development server.
+ 
+ Provides access to tiles from the Open Aerial Map project. 
+ */
 @interface RMOpenAerialMapSource : RMAbstractMercatorWebSource <RMAbstractMercatorWebSource>{
 }
 

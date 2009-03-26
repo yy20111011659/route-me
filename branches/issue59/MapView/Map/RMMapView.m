@@ -47,24 +47,17 @@
 @implementation RMMapView
 @synthesize decelerationFactor;
 @synthesize deceleration;
-@synthesize enableDragging;
-@synthesize enableZoom;
+@synthesize contents;
 
 - (RMMarkerManager*)markerManager
 {
-  return contents.markerManager;
+  return self.contents.markerManager;
 }
 
--(void) initValues:(CLLocationCoordinate2D)latlong
+-(void) performInitialSetup
 {
-	if(round(latlong.latitude) != 0 && round(latlong.longitude) != 0)
-	{
-		contents = [[RMMapContents alloc] initForView:self WithLocation:latlong];
-	}else
-	{
-		contents = [[RMMapContents alloc] initForView:self];
-	}
-	
+	LogMethod();
+
 	enableDragging = YES;
 	enableZoom = YES;
 	decelerationFactor = 0.88f;
@@ -85,38 +78,56 @@
 
 - (id)initWithFrame:(CGRect)frame
 {
-	CLLocationCoordinate2D latlong = { 0, 0};
-	
+	LogMethod();
 	if (self = [super initWithFrame:frame]) {
-		[self initValues:latlong];
+		[self performInitialSetup];
 	}
 	return self;
 }
 
-- (id)initWithFrame:(CGRect)frame WithLocation:(CLLocationCoordinate2D)latlong
+/// deprecated any time after 0.5
+- (id)initWithFrame:(CGRect)frame WithLocation:(CLLocationCoordinate2D)latlon
 {
+	LogMethod();
 	if (self = [super initWithFrame:frame]) {
-		[self initValues:latlong];
+		[self performInitialSetup];
 	}
+	[self moveToLatLong:latlon];
 	return self;
 }
 
-- (void)awakeFromNib
+//=========================================================== 
+//  contents 
+//=========================================================== 
+- (RMMapContents *)contents
 {
-	CLLocationCoordinate2D latlong = {0, 0};
-	[super awakeFromNib];
-	[self initValues:latlong];
+    if (!_contentsIsSet) {
+		self.contents = [[RMMapContents alloc] initForView:self];
+		_contentsIsSet = YES;
+	}
+	return contents; 
+}
+- (void)setContents:(RMMapContents *)theContents
+{
+    if (contents != theContents) {
+        [contents release];
+        contents = [theContents retain];
+		_contentsIsSet = YES;
+		[self performInitialSetup];
+    }
 }
 
 -(void) dealloc
 {
-	[contents release];
+	LogMethod();
+	[self.contents release];
+	contents = nil;
 	[super dealloc];
 }
 
 -(void) drawRect: (CGRect) rect
 {
-	[contents drawRect:rect];
+	[self.contents drawRect:rect];
 }
 
 -(NSString*) description
@@ -125,18 +136,13 @@
 	return [NSString stringWithFormat:@"MapView at %.0f,%.0f-%.0f,%.0f", bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height];
 }
 
--(RMMapContents*) contents
-{
-	return [[contents retain] autorelease];
-}
-
 // Forward invocations to RMMapContents
 - (void)forwardInvocation:(NSInvocation *)invocation
 {
     SEL aSelector = [invocation selector];
 	
-    if ([contents respondsToSelector:aSelector])
-        [invocation invokeWithTarget:contents];
+    if ([self.contents respondsToSelector:aSelector])
+        [invocation invokeWithTarget:self.contents];
     else
         [self doesNotRecognizeSelector:aSelector];
 }
@@ -146,7 +152,7 @@
 	if ([super respondsToSelector:aSelector])
 		return [super methodSignatureForSelector:aSelector];
 	else
-		return [contents methodSignatureForSelector:aSelector];
+		return [self.contents methodSignatureForSelector:aSelector];
 }
 
 #pragma mark Delegate 
@@ -175,6 +181,9 @@
 	_delegateHasDidDragMarker = [(NSObject*) delegate respondsToSelector:@selector(mapView:didDragMarker:)];
     
 	_delegateHasAfterMapTouch  = [(NSObject*) delegate respondsToSelector: @selector(afterMapTouch:)];
+   
+   _delegateHasShouldDragMarker = [(NSObject*) delegate respondsToSelector: @selector(mapView: shouldDragMarker: withEvent:)];
+   _delegateHasDidDragMarker = [(NSObject*) delegate respondsToSelector: @selector(mapView: didDragMarker: withEvent:)];
 	
 	_delegateHasDragMarkerPosition = [(NSObject*) delegate respondsToSelector: @selector(dragMarkerPosition: onMap: position:)];
 }
@@ -189,20 +198,20 @@
 -(void) moveToXYPoint: (RMXYPoint) aPoint
 {
 	if (_delegateHasBeforeMapMove) [delegate beforeMapMove: self];
-	[contents moveToXYPoint:aPoint];
+	[self.contents moveToXYPoint:aPoint];
 	if (_delegateHasAfterMapMove) [delegate afterMapMove: self];
 }
 -(void) moveToLatLong: (CLLocationCoordinate2D) point
 {
 	if (_delegateHasBeforeMapMove) [delegate beforeMapMove: self];
-	[contents moveToLatLong:point];
+	[self.contents moveToLatLong:point];
 	if (_delegateHasAfterMapMove) [delegate afterMapMove: self];
 }
 
 - (void)moveBy: (CGSize) delta
 {
 	if (_delegateHasBeforeMapMove) [delegate beforeMapMove: self];
-	[contents moveBy:delta];
+	[self.contents moveBy:delta];
 	if (_delegateHasAfterMapMove) [delegate afterMapMove: self];
 }
 - (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center
@@ -212,7 +221,7 @@
 - (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center animated:(BOOL)animated
 {
 	if (_delegateHasBeforeMapZoomByFactor) [delegate beforeMapZoom: self byFactor: zoomFactor near: center];
-	[contents zoomByFactor:zoomFactor near:center animated:animated withCallback:(animated && _delegateHasAfterMapZoomByFactor)?self:nil];
+	[self.contents zoomByFactor:zoomFactor near:center animated:animated withCallback:(animated && _delegateHasAfterMapZoomByFactor)?self:nil];
 	if (!animated)
 		if (_delegateHasAfterMapZoomByFactor) [delegate afterMapZoom: self byFactor: zoomFactor near: center];
 }
@@ -463,7 +472,7 @@
 			[delegate doubleTapOnMap: self At: lastGesture.center];
 		} else {
 			// Default behaviour matches built in maps.app
-			float nextZoomFactor = [[self contents] getNextNativeZoomFactor];
+			float nextZoomFactor = [self.contents getNextNativeZoomFactor];
 			if (nextZoomFactor != 0)
 				[self zoomByFactor:nextZoomFactor near:[touch locationInView:self] animated:YES];
 		}
@@ -530,7 +539,7 @@
 
 	if (_delegateHasAfterMapTouch) [delegate afterMapTouch: self];
 
-//		[contents recalculateImageSet];
+//		[self.contents recalculateImageSet];
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
@@ -628,7 +637,7 @@
 	}
 
 	// avoid calling delegate methods? design call here
-	[contents moveBy:_decelerationDelta];
+	[self.contents moveBy:_decelerationDelta];
 
 	_decelerationDelta.width *= [self decelerationFactor];
 	_decelerationDelta.height *= [self decelerationFactor];
@@ -645,12 +654,10 @@
 	}
 }
 
+// Must be called by higher didReceiveMemoryWarning
 - (void)didReceiveMemoryWarning
 {
-	RMLog(@"MEMORY WARNING IN RMMAPView");
-  CLLocationCoordinate2D coord = contents.mapCenter;
-  [contents release];
-  [self initValues:coord];
+        [contents didReceiveMemoryWarning];
 }
 
 - (void)setFrame:(CGRect)frame

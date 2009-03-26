@@ -6,6 +6,31 @@
 	objectVersion = 45;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		2B2BD43A0F79AA1B00B8B9A7 /* Doxygen-Documentation */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 2B2BD4400F79AA3200B8B9A7 /* Build configuration list for PBXAggregateTarget "Doxygen-Documentation" */;
+			buildPhases = (
+				2B2BD4390F79AA1B00B8B9A7 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Doxygen-Documentation";
+			productName = "Doxygen documentation";
+		};
+		386676D40F6B73AC00C56B17 /* MapView-framework */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 386676DE0F6B73D000C56B17 /* Build configuration list for PBXAggregateTarget "MapView-framework" */;
+			buildPhases = (
+				386676E00F6B73DA00C56B17 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "MapView-framework";
+			productName = "MapView-framework";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		090FE3140ECD71A500035FBC /* RMTilesUpdateDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 090FE3130ECD71A500035FBC /* RMTilesUpdateDelegate.h */; };
 		126693040EB76C0B00E002D5 /* RMConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 126692A00EB75C0A00E002D5 /* RMConfiguration.m */; };
@@ -21,6 +46,9 @@
 		B162B5490F5EF743009C70B9 /* RMOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A24D4F0F5EB0E900A7C510 /* RMOverlayView.m */; };
 		B191891D0F61485D00C8613D /* RMRadiusLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = B191891A0F61485D00C8613D /* RMRadiusLayer.h */; };
 		B191891E0F61485D00C8613D /* RMRadiusLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = B191891B0F61485D00C8613D /* RMRadiusLayer.m */; };
+		3849889C0F6F758100496293 /* libProj4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38D818500F6F67B90034598B /* libProj4.a */; };
+		96FE8E360F72D01B00A11CF0 /* RMYahooMapSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 96FE8E340F72D01B00A11CF0 /* RMYahooMapSource.h */; };
+		96FE8E370F72D01B00A11CF0 /* RMYahooMapSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 96FE8E350F72D01B00A11CF0 /* RMYahooMapSource.m */; };
 		B8474B9A0EB40094006A0BC1 /* FMDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = B8474B8D0EB40094006A0BC1 /* FMDatabase.h */; };
 		B8474B9B0EB40094006A0BC1 /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = B8474B8E0EB40094006A0BC1 /* FMDatabase.m */; };
 		B8474B9C0EB40094006A0BC1 /* FMDatabaseAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B8474B8F0EB40094006A0BC1 /* FMDatabaseAdditions.h */; };
@@ -70,7 +98,6 @@
 		B8C974520E8A19B2007D16AD /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B83E65630E80E81C001663B6 /* CoreLocation.framework */; };
 		B8C974530E8A19B2007D16AD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		B8C974540E8A19B2007D16AD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B83E65680E80E830001663B6 /* QuartzCore.framework */; };
-		B8C974550E8A19B2007D16AD /* libProj4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B83E654F0E80E7A8001663B6 /* libProj4.a */; };
 		B8C9745C0E8A19E5007D16AD /* RMTileImageSet.h in Headers */ = {isa = PBXBuildFile; fileRef = B83E64E00E80E73F001663B6 /* RMTileImageSet.h */; };
 		B8C9745D0E8A19E6007D16AD /* RMTileImageSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64E10E80E73F001663B6 /* RMTileImageSet.m */; };
 		B8C9745E0E8A19E6007D16AD /* RMTileLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = B83E64C60E80E73F001663B6 /* RMTileLoader.h */; };
@@ -101,7 +128,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B83E654E0E80E7A8001663B6 /* PBXContainerItemProxy */ = {
+		38D8184F0F6F67B90034598B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B83E654A0E80E7A8001663B6 /* Proj4.xcodeproj */;
 			proxyType = 2;
@@ -134,15 +161,21 @@
 		23A0AAEA0EB90AA6003A4521 /* RMFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMFoundation.h; sourceTree = "<group>"; };
 		23A0ABA90EB923AF003A4521 /* RMLatLong.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMLatLong.h; sourceTree = "<group>"; };
 		288765A40DF7441C002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		2B2BD41D0F79A95500B8B9A7 /* README-static-library-build.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = "README-static-library-build.rtf"; sourceTree = "<group>"; };
+		2B2BD41E0F79A95500B8B9A7 /* routeme.doxygen */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = routeme.doxygen; sourceTree = "<group>"; };
 		2B5682700F68E36000E8DF40 /* RMOpenAerialMapSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMOpenAerialMapSource.h; sourceTree = "<group>"; };
 		2B5682710F68E36000E8DF40 /* RMOpenAerialMapSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMOpenAerialMapSource.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* MapView_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapView_Prefix.pch; sourceTree = "<group>"; };
+		3866784C0F6B9B9200C56B17 /* MapView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapView.framework; path = build/MapView.framework; sourceTree = "<group>"; };
+		38DAD5490F739BAD00D1DF51 /* Canonical.framework.tar */ = {isa = PBXFileReference; lastKnownFileType = archive.tar; path = Canonical.framework.tar; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		966504690F6869810036562A /* loading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = loading.png; sourceTree = "<group>"; };
 		B191891A0F61485D00C8613D /* RMRadiusLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMRadiusLayer.h; sourceTree = "<group>"; };
 		B191891B0F61485D00C8613D /* RMRadiusLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMRadiusLayer.m; sourceTree = "<group>"; };
 		B1A24D4E0F5EB0E900A7C510 /* RMOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMOverlayView.h; sourceTree = "<group>"; };
 		B1A24D4F0F5EB0E900A7C510 /* RMOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMOverlayView.m; sourceTree = "<group>"; };
+		96FE8E340F72D01B00A11CF0 /* RMYahooMapSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMYahooMapSource.h; sourceTree = "<group>"; };
+		96FE8E350F72D01B00A11CF0 /* RMYahooMapSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMYahooMapSource.m; sourceTree = "<group>"; };
 		B83E64B60E80E73F001663B6 /* RMPixel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMPixel.h; sourceTree = "<group>"; };
 		B83E64B70E80E73F001663B6 /* RMPixel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RMPixel.c; sourceTree = "<group>"; };
 		B83E64BD0E80E73F001663B6 /* RMCoreAnimationRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMCoreAnimationRenderer.h; sourceTree = "<group>"; };
@@ -206,7 +239,7 @@
 		B86F26E10E877802007A3773 /* DesktopMapView-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DesktopMapView-Info.plist"; sourceTree = "<group>"; };
 		B885ABB00EBB1332002206AB /* RMCloudMadeMapSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMCloudMadeMapSource.h; sourceTree = "<group>"; };
 		B885ABB10EBB1332002206AB /* RMCloudMadeMapSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMCloudMadeMapSource.m; sourceTree = "<group>"; };
-		B8C9740E0E8A198F007D16AD /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
+		B8C9740E0E8A198F007D16AD /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.txt; path = Map/README.txt; sourceTree = "<group>"; };
 		B8C974590E8A19B2007D16AD /* libMapView.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMapView.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B8C974690E8A1A50007D16AD /* RMMapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMapView.h; sourceTree = "<group>"; };
 		B8C9746A0E8A1A50007D16AD /* RMMapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMapView.m; sourceTree = "<group>"; };
@@ -238,8 +271,8 @@
 				B8C974520E8A19B2007D16AD /* CoreLocation.framework in Frameworks */,
 				B8C974530E8A19B2007D16AD /* UIKit.framework in Frameworks */,
 				B8C974540E8A19B2007D16AD /* QuartzCore.framework in Frameworks */,
-				B8C974550E8A19B2007D16AD /* libProj4.a in Frameworks */,
 				B8474BC10EB4019A006A0BC1 /* libsqlite3.dylib in Frameworks */,
+				3849889C0F6F758100496293 /* libProj4.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -259,6 +292,7 @@
 			isa = PBXGroup;
 			children = (
 				B8C974590E8A19B2007D16AD /* libMapView.a */,
+				3866784C0F6B9B9200C56B17 /* MapView.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -266,11 +300,14 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				2BF0E4540F73119C0095A926 /* Documentation */,
 				B8C9740D0E8A196E007D16AD /* Map */,
 				B83E67570E80F3FB001663B6 /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
+				2B2BD42E0F79A9A500B8B9A7 /* Static Library Build */,
 				B86F26E10E877802007A3773 /* DesktopMapView-Info.plist */,
+				32CA4F630368D1EE00C91783 /* MapView_Prefix.pch */,
 				B8474BC00EB4019A006A0BC1 /* libsqlite3.dylib */,
 			);
 			name = CustomTemplate;
@@ -288,6 +325,32 @@
 				288765A40DF7441C002DB57D /* CoreGraphics.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2B2BD42E0F79A9A500B8B9A7 /* Static Library Build */ = {
+			isa = PBXGroup;
+			children = (
+				2B2BD41D0F79A95500B8B9A7 /* README-static-library-build.rtf */,
+				38DAD5490F739BAD00D1DF51 /* Canonical.framework.tar */,
+			);
+			name = "Static Library Build";
+			sourceTree = "<group>";
+		};
+		2BF0E4540F73119C0095A926 /* Documentation */ = {
+			isa = PBXGroup;
+			children = (
+				B8C9740E0E8A198F007D16AD /* README.txt */,
+				2B2BD41E0F79A95500B8B9A7 /* routeme.doxygen */,
+			);
+			name = Documentation;
+			sourceTree = "<group>";
+		};
+		38D8184C0F6F67B90034598B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				38D818500F6F67B90034598B /* libProj4.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		B83E64B80E80E73F001663B6 /* Renderers */ = {
@@ -369,6 +432,8 @@
 		B83E64EB0E80E73F001663B6 /* Tile Source */ = {
 			isa = PBXGroup;
 			children = (
+				96FE8E340F72D01B00A11CF0 /* RMYahooMapSource.h */,
+				96FE8E350F72D01B00A11CF0 /* RMYahooMapSource.m */,
 				B83E64EC0E80E73F001663B6 /* RMTileSource.h */,
 				C7A967500E8412930031BA75 /* RMAbstractMercatorWebSource.h */,
 				C7A967510E8412930031BA75 /* RMAbstractMercatorWebSource.m */,
@@ -384,18 +449,9 @@
 			name = "Tile Source";
 			sourceTree = "<group>";
 		};
-		B83E654B0E80E7A8001663B6 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B83E654F0E80E7A8001663B6 /* libProj4.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		B83E67570E80F3FB001663B6 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				32CA4F630368D1EE00C91783 /* MapView_Prefix.pch */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 			);
 			name = Resources;
@@ -468,7 +524,6 @@
 			isa = PBXGroup;
 			children = (
 				090FE3130ECD71A500035FBC /* RMTilesUpdateDelegate.h */,
-				B8C9740E0E8A198F007D16AD /* README.txt */,
 				B8C974690E8A1A50007D16AD /* RMMapView.h */,
 				B8C9746A0E8A1A50007D16AD /* RMMapView.m */,
 				B8C974B60E8A280A007D16AD /* RMMapContents.h */,
@@ -564,6 +619,7 @@
 				B8CEB1C50ED5A3480014C431 /* RMPath.h in Headers */,
 				B191891D0F61485D00C8613D /* RMRadiusLayer.h in Headers */,
 				2B5682720F68E36000E8DF40 /* RMOpenAerialMapSource.h in Headers */,
+				96FE8E360F72D01B00A11CF0 /* RMYahooMapSource.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -600,26 +656,57 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = B83E654B0E80E7A8001663B6 /* Products */;
+					ProductGroup = 38D8184C0F6F67B90034598B /* Products */;
 					ProjectRef = B83E654A0E80E7A8001663B6 /* Proj4.xcodeproj */;
 				},
 			);
 			projectRoot = "";
 			targets = (
 				B8C974130E8A19B2007D16AD /* MapView */,
+				386676D40F6B73AC00C56B17 /* MapView-framework */,
+				2B2BD43A0F79AA1B00B8B9A7 /* Doxygen-Documentation */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		B83E654F0E80E7A8001663B6 /* libProj4.a */ = {
+		38D818500F6F67B90034598B /* libProj4.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libProj4.a;
-			remoteRef = B83E654E0E80E7A8001663B6 /* PBXContainerItemProxy */;
+			remoteRef = 38D8184F0F6F67B90034598B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		2B2BD4390F79AA1B00B8B9A7 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here\n#  Append the proper input/output directories and docset info to the config file.\n#  This works even though values are assigned higher up in the file. Easier than sed.\n\ncp $SOURCE_ROOT/routeme.doxygen $TEMP_DIR/doxygen.config\n\necho \"INPUT = $SOURCE_ROOT\" >> $TEMP_DIR/doxygen.config\necho \"OUTPUT_DIRECTORY = $SYMROOT/RouteMeDoxygen\" >> $TEMP_DIR/doxygen.config\n#echo \"GENERATE_DOCSET        = YES\" >> $TEMP_DIR/doxygen.config\n#echo \"DOCSET_BUNDLE_ID       = com.mycompany.DoxygenExample\" >> $TEMP_DIR/doxygen.config\n\n#  Run doxygen on the updated config file.\n\n$DOXYGEN_PATH $TEMP_DIR/doxygen.config\n\nexit 0\n";
+		};
+		386676E00F6B73DA00C56B17 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Script that builds a static framework with debug and release versions\n# The framework works in both the simulator and devices\n# This script does not consider the selected active build. It builds everything!\n#\n# You can just drop the resulting framework in your project and it'll work whatever your build type\n\necho \"Starting build of ${PRODUCT_NAME} framework\"\n\n# set version to svn version if it's not set\nif [ -z \"$VERSION\" ]\nthen\n  VERSION=`svnversion -n \"${SRCROOT}\"`\nfi\nif [ -z \"$VERSION\" ]\nthen\n  echo \"Can't find svn version\"\nelse\n  export VERSION=\"r${VERSION}\"\nfi\n\necho \"Build version is: $VERSION\"\n\nif [ -d \"${SYMROOT}/${PRODUCT_NAME}.framework\" ]\nthen\n  rm -rf \"${SYMROOT}/${PRODUCT_NAME}.framework\"\nfi\n\necho \"Building iphonesimulator2.1 Debug\"\nxcodebuild -target \"${PRODUCT_NAME}\" -configuration Debug -sdk iphonesimulator2.1\necho \"Building iphoneos2.1 Debug\"\nxcodebuild -target \"${PRODUCT_NAME}\" -configuration Debug -sdk iphoneos2.1\necho \"Building iphonesimulator2.1 Release\"\nxcodebuild -target \"${PRODUCT_NAME}\" -configuration Release -sdk iphonesimulator2.1\necho \"Building iphoneos2.1 Release\"\nxcodebuild -target \"${PRODUCT_NAME}\" -configuration Release -sdk iphoneos2.1\n\necho \"Creating skeleton framework\"\ntar xf \"${SRCROOT}/Canonical.framework.tar\" -C \"${SYMROOT}/\"\n\necho \"Creating fat library for Debug\"\nlipo \"${SYMROOT}/Debug-iphoneos/lib${PRODUCT_NAME}.a\" \"${SYMROOT}/Debug-iphonesimulator/lib${PRODUCT_NAME}.a\" -output \"${SYMROOT}/${PRODUCT_NAME}.framework/Versions/A/${PRODUCT_NAME}_debug\" -create\n\necho \"Creating fat library for Release\"\nlipo \"${SYMROOT}/Release-iphoneos/lib${PRODUCT_NAME}.a\" \"${SYMROOT}/Release-iphonesimulator/lib${PRODUCT_NAME}.a\" -output \"${SYMROOT}/${PRODUCT_NAME}.framework/Versions/A/${PRODUCT_NAME}\" -create\n\necho \"Finishing packaging framework\"\nln -s \"Versions/A/${PRODUCT_NAME}\" \"${SYMROOT}/${PRODUCT_NAME}.framework/\"\nln -s \"Versions/A/${PRODUCT_NAME}_debug\" \"${SYMROOT}/${PRODUCT_NAME}.framework/\"\ncp Map/*.h \"${SYMROOT}/${PRODUCT_NAME}.framework/Versions/A/Headers/\"\ncp -R Map/Resources/* \"${SYMROOT}/${PRODUCT_NAME}.framework/Versions/A/Resources/\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion ${VERSION}\" \"${SYMROOT}/${PRODUCT_NAME}.framework/Versions/A/Resources/Info.plist\"\n\necho \"Completed build of ${PRODUCT_NAME} framework\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B8C974340E8A19B2007D16AD /* Sources */ = {
@@ -666,6 +753,7 @@
 				B162B5490F5EF743009C70B9 /* RMOverlayView.m in Sources */,
 				B191891E0F61485D00C8613D /* RMRadiusLayer.m in Sources */,
 				2B5682730F68E36000E8DF40 /* RMOpenAerialMapSource.m in Sources */,
+				96FE8E370F72D01B00A11CF0 /* RMYahooMapSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -680,6 +768,62 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		2B2BD43B0F79AA1C00B8B9A7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DOXYGEN_PATH = /Applications/Doxygen.app/Contents/Resources/doxygen;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = DoxygenDocumentation;
+			};
+			name = Debug;
+		};
+		2B2BD43C0F79AA1C00B8B9A7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DOXYGEN_PATH = /Applications/Doxygen.app/Contents/Resources/doxygen;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = DoxygenDocumentation;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		386676D50F6B73AD00C56B17 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "";
+				"ARCHS[arch=*]" = (
+					i386,
+					armv6,
+				);
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = MapView;
+			};
+			name = Debug;
+		};
+		386676D60F6B73AD00C56B17 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "";
+				"ARCHS[arch=*]" = (
+					i386,
+					armv6,
+				);
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = MapView;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		B8C974570E8A19B2007D16AD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -691,6 +835,8 @@
 				GCC_PREFIX_HEADER = MapView_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				HEADER_SEARCH_PATHS = ../Proj4;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
 				PRODUCT_NAME = MapView;
 			};
@@ -705,8 +851,9 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = MapView_Prefix.pch;
-				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=0";
+				GCC_PREPROCESSOR_DEFINITIONS = "NS_BLOCK_ASSERTIONS=1";
 				HEADER_SEARCH_PATHS = ../Proj4;
+				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
 				PRODUCT_NAME = MapView;
 				ZERO_LINK = NO;
@@ -748,6 +895,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		2B2BD4400F79AA3200B8B9A7 /* Build configuration list for PBXAggregateTarget "Doxygen-Documentation" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2B2BD43B0F79AA1C00B8B9A7 /* Debug */,
+				2B2BD43C0F79AA1C00B8B9A7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		386676DE0F6B73D000C56B17 /* Build configuration list for PBXAggregateTarget "MapView-framework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				386676D50F6B73AD00C56B17 /* Debug */,
+				386676D60F6B73AD00C56B17 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		B8C974560E8A19B2007D16AD /* Build configuration list for PBXNativeTarget "MapView" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

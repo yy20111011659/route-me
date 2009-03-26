@@ -31,8 +31,32 @@
 
 -(NSString*) tileURL: (RMTile) tile
 {
+	NSAssert4(((tile.zoom >= self.minZoom) && (tile.zoom <= self.maxZoom)),
+			  @"%@ tried to retrieve tile with zoomLevel %d, outside source's defined range %f to %f", 
+			  self, tile.zoom, self.minZoom, self.maxZoom);
 	return [NSString stringWithFormat:@"http://tile.openaerialmap.org/tiles/1.0.0/openaerialmap-900913/%d/%d/%d.png", tile.zoom, tile.x, tile.y];
 }
 
+-(NSString*) uniqueTilecacheKey
+{
+	return @"OpenAerialMap";
+}
+
+-(NSString *)shortName
+{
+	return @"Open Aerial Map";
+}
+-(NSString *)longDescription
+{
+	return @"Open Aerial Map, the free wiki world map, provides freely usable map data for all parts of the world, under the Creative Commons Attribution-Share Alike 2.0 license.";
+}
+-(NSString *)shortAttribution
+{
+	return @"© OpenAerialMap CC-BY-SA";
+}
+-(NSString *)longAttribution
+{
+	return @"Map data © OpenAerialMap, licensed under Creative Commons Share Alike By Attribution.";
+}
 
 @end
