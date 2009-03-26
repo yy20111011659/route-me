@@ -31,19 +31,66 @@
 
 @implementation RMCloudMadeMapSource
 
--(NSString*) tileURL: (RMTile) tile
+#define kDefaultCloudMadeStyleNumber 7
+
+- (id) init
 {
-	return [NSString stringWithFormat:@"http://a.tile.cloudmade.com/0199bdee456e59ce950b0156029d6934/2/%d/%d/%d/%d.png",[RMCloudMadeMapSource tileSideLength], tile.zoom, tile.x, tile.y];
+	return [self initWithAccessKey:@""
+					   styleNumber:kDefaultCloudMadeStyleNumber];
 }
 
--(NSString*) description
+/// designated initializer
+- (id) initWithAccessKey:(NSString *)developerAccessKey
+			 styleNumber:(NSUInteger)styleNumber;
 {
-	return @"CloudMadeMaps";
+	NSAssert((styleNumber > 0), @"CloudMade style number must be positive");
+	NSAssert(([developerAccessKey length] > 0), @"CloudMade access key must be non-empty");
+	if (self = [super init]) {
+		accessKey = developerAccessKey;
+		if (styleNumber > 0)
+			cloudmadeStyleNumber = styleNumber;
+		else
+			cloudmadeStyleNumber = kDefaultCloudMadeStyleNumber;
+	}
+		return self;
+}
+
+- (NSString*) tileURL: (RMTile) tile
+{
+	NSAssert4(((tile.zoom >= self.minZoom) && (tile.zoom <= self.maxZoom)),
+			  @"%@ tried to retrieve tile with zoomLevel %d, outside source's defined range %f to %f", 
+			  self, tile.zoom, self.minZoom, self.maxZoom);
+	return [NSString stringWithFormat:@"http://tile.cloudmade.com/%@/%d/%d/%d/%d/%d.png",
+			accessKey,
+			cloudmadeStyleNumber,
+			[RMCloudMadeMapSource tileSideLength], tile.zoom, tile.x, tile.y];
+}
+
+-(NSString*) uniqueTilecacheKey
+{
+	return [NSString stringWithFormat:@"CloudMadeMaps%d", cloudmadeStyleNumber];
 }
 
 +(int)tileSideLength
 {
 	return 256;
+}
+
+-(NSString *)shortName
+{
+	return [NSString stringWithFormat:@"Cloud Made %d", cloudmadeStyleNumber];
+}
+-(NSString *)longDescription
+{
+	return @"CloudMade.com provides high quality renderings of Open Street Map data";
+}
+-(NSString *)shortAttribution
+{
+	return @"© CloudMade.com";
+}
+-(NSString *)longAttribution
+{
+	return @"Map images © CloudMade.com. Original map data © OpenStreetMap, licensed under Creative Commons Share Alike By Attribution.";
 }
 
 @end

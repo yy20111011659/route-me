@@ -108,4 +108,41 @@
 	[cache didReceiveMemoryWarning];
 }
 
+-(NSString*) uniqueTilecacheKey
+{
+	return [tileSource uniqueTilecacheKey];
+}
+
+-(NSString *)shortName
+{
+	return [tileSource shortName];
+}
+-(NSString *)longDescription
+{
+	return [tileSource longDescription];
+}
+-(NSString *)shortAttribution
+{
+	return [tileSource shortAttribution];
+}
+-(NSString *)longAttribution
+{
+	return [tileSource longAttribution];
+}
+
+-(NSString *) tileURL: (RMTile) tile
+{
+  return [tileSource tileURL:tile];
+}
+
+-(NSString *) tileFile: (RMTile) tile
+{
+  return [tileSource tileFile:tile];
+}
+
+-(NSString *) tilePath
+{
+  return [tileSource tilePath];
+}
+
 @end

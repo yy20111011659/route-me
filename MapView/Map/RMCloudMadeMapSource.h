@@ -28,12 +28,24 @@
 
 #import "RMAbstractMercatorWebSource.h"
 
-
+/*! 
+ \brief Subclass of RMAbstractMercatorWebSource  for access to CloudMade's commercial-grade tile servers.
+ 
+ Provides key-based access to tiles from CloudMade's servers. This is Open Street Map data, but 
+ rendered much more nicely, in your choice of stylings. See http://www.cloudmade.com/ for 
+ licensing terms and fees. 
+ */
 @interface RMCloudMadeMapSource : RMAbstractMercatorWebSource <RMAbstractMercatorWebSource>
 {
-
+	/// see http://maps.cloudmade.com/ to sample the various CloudMade image styles
+	NSUInteger cloudmadeStyleNumber; 
+	/// unique key identifying a particular developer/CloudMade licensee. 
+	/// See http://developers.cloudmade.com/projects to obtain a CloudMade API key.
+	NSString *accessKey;
 }
 
-+(int)tileSideLength;
+/// designated initializer
+- (id) initWithAccessKey:(NSString *)developerAccessKey
+			 styleNumber:(NSUInteger)styleNumber;
 
 @end

@@ -46,4 +46,13 @@
 
 - (id<RMTileSource>) underlyingTileSource;
 
+-(NSString *) tileURL: (RMTile) tile;
+-(NSString *) tileFile: (RMTile) tile;
+-(NSString *) tilePath;
+
+-(NSString *)shortName;
+-(NSString *)longDescription;
+-(NSString *)shortAttribution;
+-(NSString *)longAttribution;
+
 @end

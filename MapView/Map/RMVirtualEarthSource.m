@@ -29,6 +29,45 @@
 
 
 @implementation RMVirtualEarthSource
+- (id) init
+{
+	return [self initWithHybridThemeUsingAccessKey:@""];
+}
+
+- (id) initWithAerialThemeUsingAccessKey:(NSString *)developerAccessKey
+{
+	RMLog(@"please see comments in RMVirtualEarthSource.h");
+	NSAssert(([developerAccessKey length] > 0), @"Virtual Earth access key must be non-empty");
+	if (self = [super init]) {
+		maptypeFlag = @"a";
+		accessKey = developerAccessKey;
+		_shortName = @"Microsoft Virtual Earth satellite";
+	}
+	return self;
+}
+
+- (id) initWithRoadThemeUsingAccessKey:(NSString *)developerAccessKey
+{
+	RMLog(@"please see comments in RMVirtualEarthSource.h");
+	NSAssert(([developerAccessKey length] > 0), @"Virtual Earth access key must be non-empty");
+	if (self = [super init]) {
+		maptypeFlag = @"r";
+		accessKey = developerAccessKey;
+		_shortName = @"Microsoft Virtual Earth roads";
+	}
+	return self;
+}
+- (id) initWithHybridThemeUsingAccessKey:(NSString *)developerAccessKey
+{
+	RMLog(@"please see comments in RMVirtualEarthSource.h");
+	NSAssert(([developerAccessKey length] > 0), @"Virtual Earth access key must be non-empty");
+	if (self = [super init]) {
+		maptypeFlag = @"h";
+		accessKey = developerAccessKey;
+		_shortName = @"Microsoft Virtual Earth hybrid";
+	}
+	return self;
+}
 
 -(NSString*) tileURL: (RMTile) tile
 {
@@ -38,6 +77,9 @@
 
 -(NSString*) quadKeyForTile: (RMTile) tile
 {
+	NSAssert4(((tile.zoom >= self.minZoom) && (tile.zoom <= self.maxZoom)),
+			  @"%@ tried to retrieve tile with zoomLevel %d, outside source's defined range %f to %f", 
+			  self, tile.zoom, self.minZoom, self.maxZoom);
 	NSMutableString *quadKey = [NSMutableString string];
 	for (int i = tile.zoom; i > 0; i--)
 	{
@@ -56,18 +98,39 @@
 	return quadKey;
 }
 
+-(float) minZoom
+{
+   return 1;
+}
+
 -(NSString*) urlForQuadKey: (NSString*) quadKey 
 {
-	NSString *mapType = @"r"; //type road
 	NSString *mapExtension = @".png"; //extension
 	
 	//TODO what is the ?g= hanging off the end 1 or 15?
-	return [NSString stringWithFormat:@"http://%@%d.ortho.tiles.virtualearth.net/tiles/%@%@%@?g=15", mapType, 3, mapType, quadKey, mapExtension];
+	return [NSString stringWithFormat:@"http://%@%d.ortho.tiles.virtualearth.net/tiles/%@%@%@?g=15", maptypeFlag, 3, maptypeFlag, quadKey, mapExtension];
 }
 
--(NSString*) description
+-(NSString*) uniqueTilecacheKey
 {
-	return @"Microsoft VirtualEarth";
+	return [NSString stringWithFormat:@"MicrosoftVirtualEarth%@", maptypeFlag];
+}
+
+-(NSString *)shortName
+{
+	return _shortName;
+}
+-(NSString *)longDescription
+{
+	return @"Microsoft Virtual Earth. All data © Microsoft or their licensees.";
+}
+-(NSString *)shortAttribution
+{
+	return @"© Microsoft Virtual Earth";
+}
+-(NSString *)longAttribution
+{
+	return @"Map data © Microsoft Virtual Earth.";
 }
 
 @end

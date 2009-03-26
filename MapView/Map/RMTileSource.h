@@ -40,6 +40,9 @@
 @protocol RMTileSource <NSObject>
 
 -(RMTileImage *) tileImage: (RMTile) tile;
+-(NSString *) tileURL: (RMTile) tile;
+-(NSString *) tileFile: (RMTile) tile;
+-(NSString *) tilePath;
 -(id<RMMercatorToTileProjection>) mercatorToTileProjection;
 -(RMProjection*) projection;
 
@@ -47,5 +50,12 @@
 -(float) maxZoom;
 
 -(void) didReceiveMemoryWarning;
+
+-(NSString *)uniqueTilecacheKey;
+
+-(NSString *)shortName;
+-(NSString *)longDescription;
+-(NSString *)shortAttribution;
+-(NSString *)longAttribution;
 
 @end
