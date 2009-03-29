@@ -268,7 +268,8 @@ shouldDragMarker:(RMMarker *)marker
 
 - (void)dealloc 
 {
-	[mapView release];
+	[mapViewPortrait release];
+	[mapViewLandscape release];
 	[locationManager stopUpdatingLocation];
 	[locationManager release];
 	
@@ -287,6 +288,21 @@ shouldDragMarker:(RMMarker *)marker
 		  newLocation.coordinate.latitude, newLocation.coordinate.longitude);
 	
 	currentLocation = newLocation.coordinate;
+	RMMarkerManager *markerManager = [mapView markerManager];
+	NSArray *markers = [markerManager getMarkers];
+	for (NSInteger i = 0; i < [markers count]; ++i)
+	{
+		RMMarker *marker = [markers objectAtIndex: i];
+		CLLocationCoordinate2D location = [markerManager getMarkerCoordinate2D: marker];
+		if (location.latitude == oldLocation.coordinate.latitude &&
+			location.longitude == oldLocation.coordinate.longitude)
+		{
+			[markerManager moveMarker: marker
+							AtLatLon: newLocation.coordinate];
+			break; // We're done. 
+		}
+	}
+	
 	[mapView moveToLatLong:currentLocation]; 
 }
 
