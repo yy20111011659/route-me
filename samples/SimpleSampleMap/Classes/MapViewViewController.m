@@ -110,7 +110,10 @@
 	}
 	
 	// Put the marker back
-	RMMarker *marker = [[RMMarker alloc]initWithKey:RMMarkerBlueKey];
+	NSString *imagePath = [[NSBundle mainBundle] pathForResource: @"marker-blue" 
+														  ofType: @"png"];
+	RMMarker *marker = 
+			[[RMMarker alloc] initWithUIImage: [UIImage imageWithContentsOfFile: imagePath]];
 	[marker setTextLabel:@"Hello"];
 	
 	[markerManager addMarker:marker 
