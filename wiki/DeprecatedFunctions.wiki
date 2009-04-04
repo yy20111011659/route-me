@@ -1,0 +1,5 @@
+#summary Functions that will be removed soon.
+
+= RMMapView/Delegate =
+*dragMarkerPosition - Will be removed after .5
+
