@@ -1,4 +1,4 @@
 #summary Functions that seem odd or that do nothing and should be cleaned up
 
 = RMMapContents =
-  *correctPositionOfAllSublayers - This is called all the time.  Why do the positions of sublayers need to be corrected?
+  * correctPositionOfAllSublayers - This is called all the time.  Why do the positions of sublayers need to be corrected?
