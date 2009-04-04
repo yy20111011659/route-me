@@ -1,6 +1,13 @@
 #summary How-to guide on making an application containing a map
 #labels Featured
 
+= *Comments and assistance*=
+
+If you have comments or bug reports, please don't leave them here. Nobody checks this page on a regular basis. Please join us on the route-me mailing list, or enter a bug report on the bug tracker.
+
+Mailing list: http://groups.google.com/group/route-me-map
+Bug tracker: http://code.google.com/p/route-me/issues/list
+
 = Introduction =
 
 This guide takes you step-by-step through making an iphone application with an embedded map.
