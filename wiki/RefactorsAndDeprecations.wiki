@@ -19,7 +19,7 @@ The "scale" instance variable and method in various projection-related code actu
 
 Route-me is single threaded, from the app developer standpoint (although threads are used internally for image loading). Properties will be checked to correspond to this design.
 
-Excessive prepositions in method names will be removed. 
+Excessive prepositions in method names will be removed, and method names will be cleaned up to match standard Objective-C usage and comply with KVC rules. Most methods that begin with the word "get", for instance, will be renamed. 
 
 Designated initializers will be indicated for classes that need them. Any method name beginning with -init that is not actually an initializer will be renamed. For instance, RMMapView's -initValues method will be renamed to -performInitializations. Any method names beginning with -set that are not Cocoa Bindings compatible setters will be renamed. Any methods whose names begin with -get but that do not return values by reference will be renamed (e.g. -getScreenCoordinateBounds).
 
