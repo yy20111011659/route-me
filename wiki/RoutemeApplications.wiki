@@ -2,9 +2,7 @@
 
 List your own project here, with a screenshot.
 
-= TalkingWalls =
-
-[http://route-me-map.googlegroups.com/web/Picture%201.png?gda=pms0A0MAAAAyi1FSti3u_TbV4V5gAsxowPWgVB0Wr4PlFpms7aRC6Ae2uMJigcFn8-UEWvVbviAytiJ-HdGYYcPi_09pl8N7FWLveOaWjzbYnpnkpmxcWg]
+= [http://blog.quazie.net/?page_id=159 TalkingWalls] =
 
 Quazie's Senior Design project at the University of Michigan - Still a work in progress, and there is much potential for a complete UI overhaul.
 
