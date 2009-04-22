@@ -6,6 +6,12 @@ A major goal for Route-Me after version 0.5 is to bring consistency and Objectiv
 
 = pending changes =
 (code has been altered but not committed)
+= completed changes =
+
+r497 22 April 2009
+
+== RMOpenStreetMapsSource ==
+Renamed to RMOpenStreetMapSource.
 
 == RMLatLongBounds ==
 Renamed to RMSphericalTrapezium. The use of "bounds" throughout Cocoa implies specifying one corner plus a rectangular size, a convention that this `struct` does not follow.
@@ -22,8 +28,6 @@ Changed corners to northeast, southwest, so that right-hand rule is respected, a
 ||getScreenCoordinateBounds:||latitudeLongitudeBoundingBoxForScreen||
 ||getMarkersForScreenBounds||markersWithinScreenBounds||
 ||getGestureDetails:||gestureDetails: ||
-
-= completed changes =
 
 == RMXYPoint==
 
