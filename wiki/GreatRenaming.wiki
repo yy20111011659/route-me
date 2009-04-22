@@ -1,15 +1,32 @@
 #summary Items renamed or removed in post-0.5 reorganization
 
-= Introduction =
+= The Great Renaming =
 
 A major goal for Route-Me after version 0.5 is to bring consistency and Objective-C style compliance to the namespace. This document lists the changes that have been made so far.
 
+= pending changes =
+(code has been altered but not committed)
 
-= RMXYPoint=
+== RMLatLongBounds ==
+Renamed to RMSphericalTrapezium. The use of "bounds" throughout Cocoa implies specifying one corner plus a rectangular size, a convention that this `struct` does not follow.
+
+== get... style accessors ==
+
+||getMarkers||markers||
+||getMarkerScreenCoordinate:||screenCoordinatesForMarker:||
+||getMarkerCoordinate2D:||latitudeLongitudeForMarker||
+||getNextNativeZoomFactor||nextNativeZoomFactor||
+||
+
+= completed changes =
+
+== RMXYPoint==
 
 r491 22 April 2009
 
-The RMXYPoint struct has been renamed to RMProjectedPoint. Its members x, y are now easting, northing. Most associated structs, functions, and ivars have been renamed appropriately.
+The RMXYPoint struct has been renamed to RMProjectedPoint. Its members x, y are now easting, northing. Most associated structs, functions, and ivars have been renamed appropriately. 
+
+If you see x/y references, those are screen coordinates.
 
 ||RMXYPoint|| RMProjectedPoint||
 ||RMXYSize ||RMProjectedSize||
