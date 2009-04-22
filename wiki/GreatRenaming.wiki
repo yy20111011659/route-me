@@ -20,6 +20,8 @@ Changed corners to northeast, southwest, so that right-hand rule is respected, a
 ||getNextNativeZoomFactor||nextNativeZoomFactor||
 ||getCoordinateBounds:||latitudeLongitudeBoundingBoxFor:||
 ||getScreenCoordinateBounds:||latitudeLongitudeBoundingBoxForScreen||
+||getMarkersForScreenBounds||markersWithinScreenBounds||
+||getGestureDetails:||gestureDetails: ||
 
 = completed changes =
 
