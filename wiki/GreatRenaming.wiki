@@ -8,6 +8,11 @@ A major goal for Route-Me after version 0.5 is to bring consistency and Objectiv
 (code has been altered but not committed)
 = completed changes =
 
+== scale ==
+r500 22 April 2009
+
+Renamed scale to metersPerPixel, trueScaleDenominator to scaleDenominator.
+
 r497 22 April 2009
 
 == RMOpenStreetMapsSource ==
