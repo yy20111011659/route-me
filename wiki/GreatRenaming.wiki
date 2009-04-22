@@ -10,13 +10,16 @@ A major goal for Route-Me after version 0.5 is to bring consistency and Objectiv
 == RMLatLongBounds ==
 Renamed to RMSphericalTrapezium. The use of "bounds" throughout Cocoa implies specifying one corner plus a rectangular size, a convention that this `struct` does not follow.
 
+Changed corners to northeast, southwest, so that right-hand rule is respected, and comparisons of two points' relative latitude and longitude can be made in the same order.
+
 == get... style accessors ==
 
 ||getMarkers||markers||
 ||getMarkerScreenCoordinate:||screenCoordinatesForMarker:||
 ||getMarkerCoordinate2D:||latitudeLongitudeForMarker||
 ||getNextNativeZoomFactor||nextNativeZoomFactor||
-||
+||getCoordinateBounds:||latitudeLongitudeBoundingBoxFor:||
+||getScreenCoordinateBounds:||latitudeLongitudeBoundingBoxForScreen||
 
 = completed changes =
 
