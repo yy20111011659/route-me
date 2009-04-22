@@ -20,7 +20,6 @@ The RMXYPoint struct has been renamed to RMProjectedPoint. Its members x, y are 
 ||RMTranslateXYRectBy || RMTranslateProjectedRectBy()||
 || RMXYMakePoint ()||  RMMakeProjectedPoint () ||
 || RMXYMakeRect ()|| RMMakeProjectedRect () || 
-
 ||RMMapView -moveToXYPoint: ||-moveToProjectedPoint:||
 ||RMFractalTileProjection.bounds || planetBounds||
 ||RMLayerSet -moveToXYPoint:||-moveToProjectedPoint||
@@ -33,4 +32,3 @@ The RMXYPoint struct has been renamed to RMProjectedPoint. Its members x, y are 
 ||RMMercatorToScreenProjection.XYCenter||projectedCenter||
 ||RMMercatorToScreenProjection.bounds||planetBounds||
 ||RMProjection.bounds||planetBounds||
-
