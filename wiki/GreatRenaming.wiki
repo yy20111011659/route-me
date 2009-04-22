@@ -1,0 +1,36 @@
+#summary Items renamed or removed in post-0.5 reorganization
+
+= Introduction =
+
+A major goal for Route-Me after version 0.5 is to bring consistency and Objective-C style compliance to the namespace. This document lists the changes that have been made so far.
+
+
+= RMXYPoint=
+
+r491 22 April 2009
+
+The RMXYPoint struct has been renamed to RMProjectedPoint. Its members x, y are now easting, northing. Most associated structs, functions, and ivars have been renamed appropriately.
+
+||RMXYPoint|| RMProjectedPoint||
+||RMXYSize ||RMProjectedSize||
+||RMXYRect || RMProjectedRect|| 
+|| RMScaleXYPointAboutPoint||RMScaleProjectedPointAboutPoint()||
+|| RMScaleXYRectAboutPoint||RMScaleProjectedRectAboutPoint ()||
+|| RMTranslateXYPointBy||RMTranslateProjectedPointBy ()||
+||RMTranslateXYRectBy || RMTranslateProjectedRectBy()||
+|| RMXYMakePoint ()||  RMMakeProjectedPoint () ||
+|| RMXYMakeRect ()|| RMMakeProjectedRect () || 
+
+||RMMapView -moveToXYPoint: ||-moveToProjectedPoint:||
+||RMFractalTileProjection.bounds || planetBounds||
+||RMLayerSet -moveToXYPoint:||-moveToProjectedPoint||
+||RMMapContents.XYBounds|| projectedBounds||
+||RMMapContents -moveToXYPoint:|| -moveToProjectedPoint:||
+||RMMapContentsFacade -moveToXYPoint:|| -moveToProjectedPoint:||
+||RMMapLayer.location||projectedLocation||
+||RMMarker.location||projectedLocation||
+||RMMercatorToScreenProjection.XYBounds||projectedBounds||
+||RMMercatorToScreenProjection.XYCenter||projectedCenter||
+||RMMercatorToScreenProjection.bounds||planetBounds||
+||RMProjection.bounds||planetBounds||
+
