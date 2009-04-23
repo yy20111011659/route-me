@@ -5,6 +5,8 @@
 A major goal for Route-Me after version 0.5 is to bring consistency and Objective-C style compliance to the namespace. This document lists the changes that have been made so far.
 
 = pending changes =
+All magic numbers will become constants.  Depending on the constant new .h files will be created (likely for strings).
+
 (code has been altered but not committed)
 = completed changes =
 
