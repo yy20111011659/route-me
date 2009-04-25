@@ -7,7 +7,7 @@ A major goal for Route-Me after version 0.5 is to bring consistency and Objectiv
 = pending changes =
 Quazie: All magic numbers will become constants.  Depending on the constant new .h files will be created (likely for strings).
 
-Hal: pruning RMMarker and related classes. Correcting method names in RMMarkerManager.
+Hal: normalizing latLng/latLong etc names.
 
 (code has been altered but not committed)
 = completed changes =
