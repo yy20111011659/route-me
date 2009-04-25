@@ -11,6 +11,19 @@ Hal: pruning RMMarker and related classes. Correcting method names in RMMarkerMa
 
 (code has been altered but not committed)
 = completed changes =
+== RMMarker, RMMarkerStyle, RMMarkerStyles ==
+r504, r505, r506 24 April 2009
+
+Removed: RMMarkerStyle, RMMarkerStyles, -addDefaultMarkerAt:, RMMarkerBlueKey, RMMarkerRedKey, initWithCGImage, initWithCGImage:anchorPoint, initWithKey, initWithStyle, initWithNamedStyle, -hide/-unhide (on RMMarker), markerImage:, loadPNGFromBundle:, replaceImage:anchorPoint:, replaceKey:, dragMarkerPosition:onMap:position.
+
+Added: +defaultFont (on RMMarker), -replaceUIImage:anchorPoint:.
+
+||setTextLabel:||changeLabelUsingText:||
+||setTextLabel:toPosition:||changeLabelUsingText:position:||
+||setTextLabel:withFont:withTextColor:withBackgroundColor||changeLabelUsingText:font:foregroundColor:backgroundColor:||
+||setTextLabel:toPosition:toPosition:withFont:withTextColor:withBackgroundColor||changeLabelUsingText:position:font:foregroundColor:backgroundColor:||
+
+
 
 == scale ==
 r500 22 April 2009
