@@ -2,7 +2,7 @@
 
 List your own project here, with a screenshot.
 
-= [http://blog.quazie.net/?page_id=159 TalkingWalls] =
+= [http://code.quazie.net/talkingwalls/ TalkingWalls] =
 
 Quazie's Senior Design project at the University of Michigan - Still a work in progress, and there is much potential for a complete UI overhaul.
 
