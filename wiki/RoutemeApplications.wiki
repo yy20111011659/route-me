@@ -42,3 +42,7 @@ For more information, visit [http://www.itopomaps.com iTopoMaps.com]
 [http://www.itopomaps.com/pics/photo-2.jpg]
 [http://www.itopomaps.com/pics/photo-1.10a.jpg]
 [http://www.itopomaps.com/pics/photo-1.10b.jpg]
+
+= [http://code.quazie.net/talkingwalls/ Journey Through the Center of the Earth] =
+
+A project designed to allow you to find out whats on the other side of the earth.
