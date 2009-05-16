@@ -1,0 +1,17 @@
+#summary Who's attending Apple WWDC 2009 or will be in the area that week?
+
+= Apple WWDC 2009 =
+
+If you're attending WWDC 2009 (June 8-12) or live in the SF Bay area, and you're interested in getting together with other Route-Me developers or users, fill in your info below. If you have suggestions on day/time to gather, include those too. This might turn into a few people staking out a table for lunch inside Moscone, or meeting for lunch or dinner outside Moscone, or a full-fledged hack session and bug squash.
+
+Note these events. Anything we schedule will conflict with something.
+  * sfMacIndie soiree on Sunday evening
+  * is there a Buzz Andersen party on Monday evening this year?
+  * Apple Design Awards Wednesday evening
+  * closing beer bash on Thursday evening
+
+The detailed schedule for the week is not yet available, and based on past years won't be posted until late May.
+
+||Name||attending?||arrive||depart||notes||
+||Hal Mueller||yes||Sunday afternoon||Saturday afternoon||attending sfMacIndie on Sunday evening||
+||Quazie||yes|| || || attending sfMacIndie on Sunday evening ||
