@@ -9,6 +9,7 @@ Find The Right Place To Park!
 PrimoSpot uses route me to find on-street and garages in the NYC area.  We are using cloudmade tiles.  We have our own custom delegates for reloading markers from our server as the user moves the map.  Also we have implemented the 'mini map' idea from a certain native maps app on the phone.
 
 For more information, check out [http://www.primospot.com/iphone_app]
+Web map is here [http://www.primospot.com/spots/search]
 
 [http://www.primospot.com/images/iphone/med_street_legend.jpg]
 [http://www.primospot.com/images/iphone/med_quikpark.jpg]
