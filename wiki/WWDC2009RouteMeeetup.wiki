@@ -7,7 +7,8 @@ If you're attending WWDC 2009 (June 8-12) or live in the SF Bay area, and you're
 Note these events. Anything we schedule will conflict with something.
   * sfMacIndie soiree on Sunday evening
   * is there a Buzz Andersen party on Monday evening this year?
-  * Apple Design Awards Wednesday evening
+  * Apple Design Awards Tuesday evening
+  * special Cocoaheads meeting at Apple Store Wednesday evening
   * closing beer bash on Thursday evening
 
 The detailed schedule for the week is not yet available, and based on past years won't be posted until late May.
