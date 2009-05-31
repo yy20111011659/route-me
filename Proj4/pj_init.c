@@ -242,7 +242,7 @@ pj_init(int argc, char **argv) {
 	char *s, *name;
         paralist *start = NULL;
 	PJ *(*proj)(PJ *);
-	paralist *curr = 0;
+	paralist *curr;
 	int i;
 	PJ *PIN = 0;
 

@@ -1,7 +1,7 @@
 //
 //  RMCachedTileSource.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -105,51 +105,7 @@
 
 - (void) didReceiveMemoryWarning
 {
-	LogMethod();		
 	[cache didReceiveMemoryWarning];
-	[tileSource didReceiveMemoryWarning];
-}
-
--(NSString*) uniqueTilecacheKey
-{
-	return [tileSource uniqueTilecacheKey];
-}
-
--(NSString *)shortName
-{
-	return [tileSource shortName];
-}
--(NSString *)longDescription
-{
-	return [tileSource longDescription];
-}
--(NSString *)shortAttribution
-{
-	return [tileSource shortAttribution];
-}
--(NSString *)longAttribution
-{
-	return [tileSource longAttribution];
-}
-
--(NSString *) tileURL: (RMTile) tile
-{
-  return [tileSource tileURL:tile];
-}
-
--(NSString *) tileFile: (RMTile) tile
-{
-  return [tileSource tileFile:tile];
-}
-
--(NSString *) tilePath
-{
-  return [tileSource tilePath];
-}
-
--(void) removeAllCachedImages
-{
-	[cache removeAllCachedImages];
 }
 
 @end

@@ -791,7 +791,7 @@
 				GCC_PREFIX_HEADER = Proj4_Prefix.pch;
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				INSTALL_PATH = /usr/local/lib;
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = Proj4;
 				SDKROOT = iphonesimulator2.1;
 			};

@@ -1,7 +1,7 @@
 //
 //  RMTileImageSet.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@
 
 @optional
 
--(void) tileRemoved: (RMTile) tile;
 -(void) tileAdded: (RMTile) tile WithImage: (RMTileImage*) image;
 
 @end
@@ -48,28 +47,28 @@
 @interface RMTileImageSet : NSObject {
 	IBOutlet id delegate;
 	id<RMTileSource> tileSource;
-
 	NSCountedSet *images;
 }
 
 -(id) initWithDelegate: (id) _delegate;
 
--(void) addTile: (RMTile) tile WithImage: (RMTileImage *)image At: (CGRect) screenLocation;
--(void) addTile: (RMTile) tile At: (CGRect) screenLocation;
-/// Add tiles inside rect protected to bounds. Return rectangle containing bounds extended to full tile loading area
+-(void) addTile: (RMTile) tile at: (CGRect) screenLocation;
+// Add tiles inside rect protected to bounds. Return rectangle containing bounds
+// extended to full tile loading area
 -(CGRect) addTiles: (RMTileRect)rect ToDisplayIn:(CGRect)bounds;
 
 -(RMTileImage*) imageWithTile: (RMTile) tile;
 	
 -(void) removeTile: (RMTile) tile;
 -(void) removeTiles: (RMTileRect)rect;
-
+-(void) removeTilesOutsideOf: (RMTileRect)rect;
+-(void) removeCompetingTiles:(RMTile)tile usingZoom:(short)zoom;
 -(void) removeAllTiles;
 
 -(NSUInteger) count;
 
 - (void)moveBy: (CGSize) delta;
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center;
+- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) center;
 
 - (void) drawRect:(CGRect) rect;
 

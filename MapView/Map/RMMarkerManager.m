@@ -1,7 +1,7 @@
 //
 //  RMMarkerManager.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@
 #import "RMMarkerManager.h"
 #import "RMMercatorToScreenProjection.h"
 #import "RMProjection.h"
-#import "RMLayerCollection.h"
+#import "RMLayerSet.h"
 
 @implementation RMMarkerManager
 
@@ -54,30 +54,34 @@
 #pragma mark 
 #pragma mark Adding / Removing / Displaying Markers
 
-/// place the (newly created) marker onto the map and take ownership of it
-/// \bug should return the marker
-- (void) addMarker: (RMMarker*)marker AtLatLong:(CLLocationCoordinate2D)point
+- (void) addMarker: (RMMarker*)marker
 {
-	[marker setProjectedLocation:[[contents projection]latLongToPoint:point]];
 	[[contents overlay] addSublayer:marker];
 }
 
-/// \bug see http://code.google.com/p/route-me/issues/detail?id=75
-/// (halmueller): I am skeptical about interactions of this code with paths
+- (void) addMarker: (RMMarker*)marker AtLatLong:(CLLocationCoordinate2D)point
+{
+	[marker setLocation:[[contents projection]latLongToPoint:point]];
+	[self addMarker: marker];
+}
+
+- (void) addDefaultMarkerAt: (CLLocationCoordinate2D)point
+{
+	RMMarker *marker = [[RMMarker alloc] initWithKey:RMMarkerRedKey];
+	[self addMarker:marker AtLatLong:point];
+	[marker release];
+}
+
 - (void) removeMarkers
 {
 	[[contents overlay] setSublayers:[NSArray arrayWithObjects:nil]]; 
 }
 
-/// \bug this will hide path overlays too?
-/// \deprecated syntactic sugar. Might have a place on RMMapView, but not on RMMarkerManager.
 - (void) hideAllMarkers 
 {
 	[[contents overlay] setHidden:YES];
 }
 
-/// \bug this will hide path overlays too?
-/// \deprecated syntactic sugar. Might have a place on RMMapView, but not on RMMarkerManager.
 - (void) unhideAllMarkers
 {
 	[[contents overlay] setHidden:NO];
@@ -87,7 +91,7 @@
 #pragma mark 
 #pragma mark Marker information
 
-- (NSArray *)markers
+- (NSArray *)getMarkers
 {
 	return [[contents overlay] sublayers];
 }
@@ -102,22 +106,22 @@
 	[[contents overlay] removeSublayers:markers];
 }
 
-- (CGPoint) screenCoordinatesForMarker: (RMMarker *)marker
+- (CGPoint) getMarkerScreenCoordinate: (RMMarker *)marker
 {
-	return [[contents mercatorToScreenProjection] projectXYPoint:[marker projectedLocation]];
+	return [[contents mercatorToScreenProjection] projectXYPoint:[marker location]];
 }
 
-- (CLLocationCoordinate2D) latitudeLongitudeForMarker: (RMMarker *) marker
+- (CLLocationCoordinate2D) getMarkerCoordinate2D: (RMMarker *) marker
 {
-	return [contents pixelToLatLong:[self screenCoordinatesForMarker:marker]];
+	return [contents pixelToLatLong:[self getMarkerScreenCoordinate:marker]];
 }
 
-- (NSArray *) markersWithinScreenBounds
+- (NSArray *) getMarkersForScreenBounds
 {
 	NSMutableArray *markersInScreenBounds = [NSMutableArray array];
 	CGRect rect = [[contents mercatorToScreenProjection] screenBounds];
 	
-	for (RMMarker *marker in [self markers]) {
+	for (RMMarker *marker in [self getMarkers]) {
 		if ([self isMarker:marker withinBounds:rect]) {
 			[markersInScreenBounds addObject:marker];
 		}
@@ -131,14 +135,13 @@
 	return [self isMarker:marker withinBounds:[[contents mercatorToScreenProjection] screenBounds]];
 }
 
-/// \deprecated violates Objective-C naming rules
 - (BOOL) isMarker:(RMMarker*)marker withinBounds:(CGRect)rect
 {
 	if (![self managingMarker:marker]) {
 		return NO;
 	}
 	
-	CGPoint markerCoord = [self screenCoordinatesForMarker:marker];
+	CGPoint markerCoord = [self getMarkerScreenCoordinate:marker];
 	
 	if (   markerCoord.x > rect.origin.x
 		&& markerCoord.x < rect.origin.x + rect.size.width
@@ -150,10 +153,9 @@
 	return NO;
 }
 
-/// \deprecated violates Objective-C naming rules
 - (BOOL) managingMarker:(RMMarker*)marker
 {
-	if (marker != nil && [[self markers] indexOfObject:marker] != NSNotFound) {
+	if (marker != nil && [[self getMarkers] indexOfObject:marker] != NSNotFound) {
 		return YES;
 	}
 	return NO;
@@ -161,13 +163,13 @@
 
 - (void) moveMarker:(RMMarker *)marker AtLatLon:(RMLatLong)point
 {
-	[marker setProjectedLocation:[[contents projection]latLongToPoint:point]];
+	[marker setLocation:[[contents projection]latLongToPoint:point]];
 	[marker setPosition:[[contents mercatorToScreenProjection] projectXYPoint:[[contents projection] latLongToPoint:point]]];
 }
 
 - (void) moveMarker:(RMMarker *)marker AtXY:(CGPoint)point
 {
-	[marker setProjectedLocation:[[contents mercatorToScreenProjection] projectScreenPointToXY:point]];
+	[marker setLocation:[[contents mercatorToScreenProjection] projectScreenPointToXY:point]];
 	[marker setPosition:point];
 }
 

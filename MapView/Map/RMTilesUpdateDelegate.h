@@ -13,6 +13,6 @@
 
 @required
 
-- (void) regionUpdate: (RMSphericalTrapezium) region;
+- (void) regionUpdate: (RMLatLongBounds) region;
 
 @end

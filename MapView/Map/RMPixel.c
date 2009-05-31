@@ -1,7 +1,7 @@
 //
 //  RMPixel.c
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@
 
 #include "RMPixel.h"
 
-CGPoint RMScaleCGPointAboutPoint(CGPoint point, float factor, CGPoint pivot)
+CGPoint RMScaleCGPointAboutPoint(CGPoint point, double factor, CGPoint pivot)
 {
 	point.x = (point.x - pivot.x) * factor + pivot.x;
 	point.y = (point.y - pivot.y) * factor + pivot.y;
@@ -35,7 +35,7 @@ CGPoint RMScaleCGPointAboutPoint(CGPoint point, float factor, CGPoint pivot)
 	return point;
 }
 
-CGRect RMScaleCGRectAboutPoint(CGRect rect, float factor, CGPoint pivot)
+CGRect RMScaleCGRectAboutPoint(CGRect rect, double factor, CGPoint pivot)
 {
 	rect.origin = RMScaleCGPointAboutPoint(rect.origin, factor, pivot);
 	rect.size.width *= factor;

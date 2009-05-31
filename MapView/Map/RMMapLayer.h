@@ -1,7 +1,7 @@
 //
 //  RMMapLayer.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,18 +28,19 @@
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
 
-@interface RMMapLayer : CAScrollLayer
+//#warning changed from CAScrollLayer
+@interface RMMapLayer : CALayer
 {
 }
 
 - (void)moveBy: (CGSize) delta;
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center;
+- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) center;
 
 @end
 
 #import "RMFoundation.h"
 @protocol RMMovingMapLayer
 
-@property (assign, nonatomic) RMProjectedPoint projectedLocation;
+@property (assign, nonatomic) RMXYPoint location;
 
 @end

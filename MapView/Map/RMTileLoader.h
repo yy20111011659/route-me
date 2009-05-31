@@ -1,7 +1,7 @@
 //
 //  RMTimeImageSet.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -34,14 +34,8 @@
 @class RMTileImageSet;
 @class RMMercatorToScreenProjection;
 
-extern NSString * const RMMapImageRemovedFromScreenNotification;
-extern NSString * const RMMapImageAddedToScreenNotification;
+extern NSString * const RMMapImageLoadedNotification ;
 
-extern NSString * const RMSuspendExpensiveOperations;
-extern NSString * const RMResumeExpensiveOperations;
-
-extern NSString * const RMTileRetrieved;
-extern NSString * const RMTileRequested;
 
 @protocol RMTileSource;
 
@@ -49,26 +43,26 @@ extern NSString * const RMTileRequested;
 	RMMapContents *content;
 
 	CGRect loadedBounds;
-	NSUInteger loadedZoom;
+	int loadedZoom;
 	RMTileRect loadedTiles;
 	
 	BOOL suppressLoading;
 }
 
-/// Designated initialiser
+// Designated initialiser
 - (id)initWithContent: (RMMapContents *)contents;
 
 - (void)updateLoadedImages;
 
 - (void)moveBy: (CGSize) delta;
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center;
+- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) center;
 
 - (void)clearLoadedBounds;
 
 - (void)reload;
 
 @property (readonly, nonatomic) CGRect loadedBounds;
-@property (readonly, nonatomic) NSUInteger loadedZoom;
+@property (readonly, nonatomic) int loadedZoom;
 @property (readwrite, assign) BOOL suppressLoading;
 
 //-(BOOL) containsRect: (CGRect)bounds;

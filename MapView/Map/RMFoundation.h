@@ -1,7 +1,7 @@
 //
 //  RMFoundation.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,30 +25,24 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-/*! \struct RMProjectedPoint 
- \brief coordinates, in projected meters, paralleling CGPoint */
 typedef struct {
-	double easting, northing;
-} RMProjectedPoint;
+	double x, y;
+} RMXYPoint;
 
-/*! \struct RMProjectedSize 
- \brief width/height struct, in projected meters, paralleling CGSize */
 typedef struct {
 	double width, height;
-} RMProjectedSize;
+} RMXYSize;
 
-/*! \struct RMProjectedRect 
- \brief location and size, in projected meters, paralleling CGRect */
 typedef struct {
-	RMProjectedPoint origin;
-	RMProjectedSize size;
-} RMProjectedRect;
+	RMXYPoint origin;
+	RMXYSize size;
+} RMXYRect;
 
-RMProjectedPoint RMScaleProjectedPointAboutPoint (RMProjectedPoint point, float factor, RMProjectedPoint pivot);
-RMProjectedRect  RMScaleProjectedRectAboutPoint(RMProjectedRect rect,   float factor, RMProjectedPoint pivot);
-RMProjectedPoint RMTranslateProjectedPointBy (RMProjectedPoint point, RMProjectedSize delta);
-RMProjectedRect  RMTranslateProjectedRectBy (RMProjectedRect rect,   RMProjectedSize delta);
+RMXYPoint RMScaleXYPointAboutPoint(RMXYPoint point, float factor, RMXYPoint pivot);
+RMXYRect  RMScaleXYRectAboutPoint (RMXYRect rect,   float factor, RMXYPoint pivot);
+RMXYPoint RMTranslateXYPointBy    (RMXYPoint point, RMXYSize delta);
+RMXYRect  RMTranslateXYRectBy     (RMXYRect rect,   RMXYSize delta);
 
-RMProjectedPoint  RMMakeProjectedPoint (double easting, double northing);
-RMProjectedRect  RMMakeProjectedRect (double easting, double northing, double width, double height);
+RMXYPoint  RMXYMakePoint (double x, double y);
+RMXYRect  RMXYMakeRect (double x, double y, double width, double height);
 

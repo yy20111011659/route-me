@@ -1,7 +1,7 @@
 //
 //  RMFractalTileProjection.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -32,21 +32,18 @@
 
 @implementation RMFractalTileProjection
 
-@synthesize maxZoom;
-@synthesize tileSideLength;
-@synthesize planetBounds;
+@synthesize maxZoom, tileSideLength, bounds;
 
--(id) initFromProjection:(RMProjection*)projection tileSideLength:(NSUInteger)aTileSideLength maxZoom: (NSUInteger) aMaxZoom
+-(id) initFromProjection:(RMProjection*)projection tileSideLength:(int)aTileSideLength maxZoom: (int) aMaxZoom
 {
 	if (![super init])
 		return nil;
 	
 	// We don't care about the rest of the projection... just the bounds is important.
-	planetBounds = [projection planetBounds];
+	bounds = [projection bounds];
 	
-	if (planetBounds.size.width == 0.0f || planetBounds.size.height == 0.0f)
+	if (bounds.size.width == 0.0f || bounds.size.height == 0.0f)
 	{
-		/// \bug magic string literals
 		@throw [NSException exceptionWithName:@"RMUnknownBoundsException"
 									   reason:@"RMFractalTileProjection was initialised with a projection with unknown bounds"
 									 userInfo:nil];
@@ -55,7 +52,7 @@
 	tileSideLength = aTileSideLength;
 	maxZoom = aMaxZoom;
 	
-	scaleFactor = log2(planetBounds.size.width / tileSideLength);
+	scaleFactor = log2(bounds.size.width / tileSideLength);
 	
 	return self;
 }
@@ -97,72 +94,71 @@
 	return tile;
 }
 
-- (RMProjectedPoint) constrainPointHorizontally: (RMProjectedPoint) aPoint
+- (RMXYPoint) constrainPointHorizontally: (RMXYPoint) aPoint
 {
-	while (aPoint.easting < planetBounds.origin.easting)
-		aPoint.easting += planetBounds.size.width;
-	while (aPoint.easting > (planetBounds.origin.easting + planetBounds.size.width))
-		aPoint.easting -= planetBounds.size.width;
+	while (aPoint.x < bounds.origin.x)
+		aPoint.x += bounds.size.width;
+	while (aPoint.x > (bounds.origin.x + bounds.size.width))
+		aPoint.x -= bounds.size.width;
 	
 	return aPoint;
 }
 
-- (RMTilePoint) projectInternal: (RMProjectedPoint)aPoint normalisedZoom:(float)zoom limit:(float) limit
+- (RMTilePoint) projectInternal: (RMXYPoint)aPoint normalisedZoom:(float)zoom limit:(float) limit
 {
 	RMTilePoint tile;
-	RMProjectedPoint newPoint = [self constrainPointHorizontally:aPoint];
+	RMXYPoint newPoint = [self constrainPointHorizontally:aPoint];
 	
-	double x = (newPoint.easting - planetBounds.origin.easting) / planetBounds.size.width * limit;
+	double x = (newPoint.x - bounds.origin.x) / bounds.size.width * limit;
 	// Unfortunately, y is indexed from the bottom left.. hence we have to translate it.
-	double y = (double)limit * ((planetBounds.origin.northing - newPoint.northing) / planetBounds.size.height + 1);
+	double y = (double)limit * ((bounds.origin.y - newPoint.y) / bounds.size.height + 1.0);
 	
 	tile.tile.x = (uint32_t)x;
 	tile.tile.y = (uint32_t)y;
 	tile.tile.zoom = zoom;
-	tile.offset.x = (float)x - tile.tile.x;
-	tile.offset.y = (float)y - tile.tile.y;
+	tile.offset.x = x - tile.tile.x;
+	tile.offset.y = y - tile.tile.y;
 	
 	return tile;
 }
 
-- (RMTilePoint) project: (RMProjectedPoint)aPoint atZoom:(float)zoom
+- (RMTilePoint) project: (RMXYPoint)aPoint atZoom:(float)zoom
 {
-	float normalised_zoom = [self normaliseZoom:zoom];
-	float limit = [self limitFromNormalisedZoom:normalised_zoom];
+	float nz = [self normaliseZoom:zoom];
+	float limit = [self limitFromNormalisedZoom:nz];
 	
-	return [self projectInternal:aPoint normalisedZoom:normalised_zoom limit:limit];
+	return [self projectInternal:aPoint normalisedZoom:nz limit:limit];
 }
 
-- (RMTileRect) projectRect: (RMProjectedRect)aRect atZoom:(float)zoom
+- (RMTileRect) projectRect: (RMXYRect)aRect atZoom:(float)zoom
 {
-	/// \bug assignment of float to int, WTF?
 	int normalised_zoom = [self normaliseZoom:zoom];
 	float limit = [self limitFromNormalisedZoom:normalised_zoom];
 
 	RMTileRect tileRect;
 	// The origin for projectInternal will have to be the top left instead of the bottom left.
-	RMProjectedPoint topLeft = aRect.origin;
-	topLeft.northing += aRect.size.height;
+	RMXYPoint topLeft = aRect.origin;
+	topLeft.y += aRect.size.height;
 	tileRect.origin = [self projectInternal:topLeft normalisedZoom:normalised_zoom limit:limit];
 
-	tileRect.size.width = aRect.size.width / planetBounds.size.width * limit;
-	tileRect.size.height = aRect.size.height / planetBounds.size.height * limit;
+	tileRect.size.width = aRect.size.width / bounds.size.width * limit;
+	tileRect.size.height = aRect.size.height / bounds.size.height * limit;
 	
 	return tileRect;
 }
 
--(RMTilePoint) project: (RMProjectedPoint)aPoint atScale:(float)scale
+-(RMTilePoint) project: (RMXYPoint)aPoint atScale:(float)scale
 {
 	return [self project:aPoint atZoom:[self calculateZoomFromScale:scale]];
 }
--(RMTileRect) projectRect: (RMProjectedRect)aRect atScale:(float)scale
+-(RMTileRect) projectRect: (RMXYRect)aRect atScale:(float)scale
 {
 	return [self projectRect:aRect atZoom:[self calculateZoomFromScale:scale]];
 }
 
 -(RMTileRect) project: (RMMercatorToScreenProjection*)screen;
 {
-	return [self projectRect:[screen projectedBounds] atScale:[screen metersPerPixel]];
+	return [self projectRect:[screen XYBounds] atScale:[screen scale]];
 }
 
 -(float) calculateZoomFromScale: (float) scale
@@ -177,7 +173,7 @@
 
 -(float) calculateScaleFromZoom: (float) zoom
 {
-	return planetBounds.size.width / tileSideLength / exp2(zoom);	
+	return bounds.size.width / tileSideLength / exp2f(zoom);	
 }
 
 @end

@@ -1,7 +1,7 @@
 //
 //  RMCoreAnimationRenderer.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -24,7 +24,7 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
-#import "RMGlobalConstants.h"
+
 #import "RMCoreAnimationRenderer.h"
 #import <QuartzCore/QuartzCore.h>
 #import "RMTile.h"
@@ -35,86 +35,124 @@
 
 @implementation RMCoreAnimationRenderer
 
+
 - (id) initWithContent: (RMMapContents *)_contents
 {
 	if (![super initWithContent:_contents])
 		return nil;
-	
 	// NOTE: RMMapContents may still be initialising when this function
 	//       is called. Be careful using any of methods - they might return
 	//       strange data.
-
 	layer = [[CAScrollLayer layer] retain];
-	layer.anchorPoint = CGPointZero;
+	layer.anchorPoint = CGPointMake(0.0f, 0.0f);
 	layer.masksToBounds = YES;
 	// If the frame is set incorrectly here, it will be fixed when setRenderer is called in RMMapContents
 	layer.frame = [content screenBounds];
-	
-	NSMutableDictionary *customActions = [NSMutableDictionary dictionaryWithDictionary:[layer actions]];
-	[customActions setObject:[NSNull null] forKey:@"sublayers"];
-	layer.actions = customActions;
-	
 	layer.delegate = self;
+	
+	/*
+#if 0	
+	NSMutableDictionary *customActions = [NSMutableDictionary dictionaryWithDictionary:[layer actions]];
+
+	[customActions setObject: forKey:@"sublayers"];
+	layer.actions = customActions;
+#endif
+	 */
+	
 	
 	return self;
 }
 
 -(void) dealloc
 {
+	[fadein release];
 	[layer release];
 	[super dealloc];
 }
 
-/// \bug this is a no-op
--(void)mapImageLoaded: (NSNotification*)notification
+- (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)flag;
 {
+	animating = NO;
 }
 
+- (void)animationDidStart:(CAAnimation *)animation;
+{
+	animating = YES;
+}
+
+// this method is consulted first ahead of everything
 - (id<CAAction>)actionForLayer:(CALayer *)theLayer
                         forKey:(NSString *)key
 {
-	if (theLayer == layer)
-	{
-//		RMLog(@"base layer key: %@", key);
-		return nil;
+	if (!animating && animate && inserting) {
+		if ([key isEqualToString:@"sublayers"] || 
+			//	[key isEqualToString:kCAOnOrderIn] || 
+			//	[key isEqualToString:kCAOnOrderOut] || 
+			//	([key isEqualToString:@"onLayout"] && theLayer == layer) ||
+			0
+			)
+		{
+		//	NSLog(@"allowed key: %@ for: %@",key,[theLayer description]);
+			if (!fadein) {
+				// this is copied anyway when we hand it in, so a
+				// bit more memory overhead but probably better
+				fadein = [[CATransition alloc] init];
+				fadein.duration = 0.4;
+				fadein.delegate = self;
+				fadein.type = kCATransitionFade;
+			}
+			return fadein;
+		}
 	}
-	
-	//	|| [key isEqualToString:@"onLayout"]
-	if ([key isEqualToString:@"position"]
-		|| [key isEqualToString:@"bounds"])
-		return nil;
-//		return (id<CAAction>)[NSNull null];
-	else
-	{
-//		RMLog(@"key: %@", key);
-		
-		return nil;
-	}
+	// this kills the ongoing search for an animation, we don't want anything
+	return (id)[NSNull null];
+}
+
+- (void)tileImageDidLoad:(RMTileImage *)image;
+{
+	inserting = YES;
+	[layer insertSublayer:image.layer atIndex:0];
+	inserting = NO;
 }
 
 - (void)tileAdded: (RMTile) tile WithImage: (RMTileImage*) image
 {
-//	RMLog(@"tileAdded: %d %d %d at %f %f %f %f", tile.x, tile.y, tile.zoom, image.screenLocation.origin.x, image.screenLocation.origin.y,
+//	NSLog(@"tileAdded: %d %d %d at %f %f %f %f", tile.x, tile.y, tile.zoom, image.screenLocation.origin.x, image.screenLocation.origin.y,
 //		  image.screenLocation.size.width, image.screenLocation.size.height);
 	
-//	RMLog(@"tileAdded");
+//	NSLog(@"tileAdded");
 	[image makeLayer];
-	
 	CALayer *sublayer = [image layer];
-	
 	sublayer.delegate = self;
-	
-	[layer addSublayer:sublayer];
+	if ([image isLoaded]){
+		inserting = YES;
+		[layer insertSublayer:sublayer atIndex:0];
+		inserting = NO;
+	}
+//	[layer addSublayer:sublayer];
 }
 
--(void) tileRemoved: (RMTile) tile
+// this method is gone... its only purpose was to get a call from the TileImageSet
+// saying that the tile was removed... so this method turned around and called 
+// RMMapContents and said "please give me the TileImageSet... and the map contents
+// sent back... the EXACT SAME OBJECT that called this method. Now this method
+// with the object in hand, tells it to remove the image... insanity.
+/*
+ -(void) tileRemoved: (RMTile) tile
+
 {
 	RMTileImage *image = [[content imagesOnScreen] imageWithTile:tile];
 	
-//	RMLog(@"tileRemoved: %d %d %d at %f %f %f %f", tile.x, tile.y, tile.zoom, image.screenLocation.origin.x, image.screenLocation.origin.y,
+//	NSLog(@"tileRemoved: %d %d %d at %f %f %f %f", tile.x, tile.y, tile.zoom, image.screenLocation.origin.x, image.screenLocation.origin.y,
 //		  image.screenLocation.size.width, image.screenLocation.size.height);
-	
+	[image cancelLoading];
 	[[image layer] removeFromSuperlayer];
+ }
+*/
+
+-(NSString*) description
+{
+	return @"CoreAnimation map renderer";
 }
 
 - (void)setFrame:(CGRect)frame
