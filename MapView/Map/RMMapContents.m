@@ -1,7 +1,7 @@
 //
 //  RMMapContents.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -24,10 +24,7 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
-#import "RMGlobalConstants.h"
 #import "RMMapContents.h"
-
-#import "RMMapView.h"
 
 #import "RMFoundation.h"
 #import "RMProjection.h"
@@ -38,16 +35,14 @@
 #import "RMTileLoader.h"
 #import "RMTileImageSet.h"
 
-#import "RMOpenStreetMapSource.h"
+#import "RMOpenStreetMapsSource.h"
 #import "RMCoreAnimationRenderer.h"
 #import "RMCachedTileSource.h"
 
-#import "RMLayerCollection.h"
+#import "RMLayerSet.h"
 #import "RMMarkerManager.h"
 
 #import "RMMarker.h"
-
-
 
 
 @interface RMMapContents (PrivateMethods)
@@ -65,130 +60,22 @@
 @synthesize maxZoom;
 @synthesize markerManager;
 
-#pragma mark --- begin constants ----
-#define kZoomAnimationStepTime 0.03f
-#define kZoomAnimationAnimationTime 0.1f
-#define kiPhoneMilimeteresPerPixel .1543
-#define kZoomRectPixelBuffer 50
-#pragma mark --- end constants ----
-
 #pragma mark Initialisation
 
-- (id)initWithView: (UIView*) view
-{	
-	LogMethod();
-	CLLocationCoordinate2D here;
-	here.latitude = kDefaultInitialLatitude;
-	here.longitude = kDefaultInitialLongitude;
-	
-	return [self initWithView:view
-				   tilesource:[[RMOpenStreetMapSource alloc] init]
-				 centerLatLon:here
-					zoomLevel:kDefaultInitialZoomLevel
-				 maxZoomLevel:kDefaultMaximumZoomLevel
-				 minZoomLevel:kDefaultMinimumZoomLevel
-			  backgroundImage:nil];
-}
-
-- (id)initWithView: (UIView*) view
-		tilesource:(id<RMTileSource>)newTilesource
-{	
-	LogMethod();
-	CLLocationCoordinate2D here;
-	here.latitude = kDefaultInitialLatitude;
-	here.longitude = kDefaultInitialLongitude;
-	
-	return [self initWithView:view
-				   tilesource:newTilesource
-				 centerLatLon:here
-					zoomLevel:kDefaultInitialZoomLevel
-				 maxZoomLevel:kDefaultMaximumZoomLevel
-				 minZoomLevel:kDefaultMinimumZoomLevel
-			  backgroundImage:nil];
-}
-
-- (id)initWithView:(UIView*)newView
-		tilesource:(id<RMTileSource>)newTilesource
-	  centerLatLon:(CLLocationCoordinate2D)initialCenter
-		 zoomLevel:(float)initialZoomLevel
-	  maxZoomLevel:(float)maxZoomLevel
-	  minZoomLevel:(float)minZoomLevel
-   backgroundImage:(UIImage *)backgroundImage
-{
-	LogMethod();
-	if (![super init])
-		return nil;
-
-	NSAssert1([newView isKindOfClass:[RMMapView class]], @"view %@ must be a subclass of RMMapView", newView);
-	[(RMMapView *)newView setContents:self];
-
-	boundingMask = RMMapMinWidthBound;
-	mercatorToScreenProjection = [[RMMercatorToScreenProjection alloc] initFromProjection:[newTilesource projection] ToScreenBounds:[newView bounds]];
-	
-	tileSource = nil;
-	projection = nil;
-	mercatorToTileProjection = nil;
-	renderer = nil;
-	imagesOnScreen = nil;
-	tileLoader = nil;
-	
-	layer = [[newView layer] retain];
-	
-	[self setTileSource:newTilesource];
-	[self setRenderer: [[[RMCoreAnimationRenderer alloc] initWithContent:self] autorelease]];
-	
-	imagesOnScreen = [[RMTileImageSet alloc] initWithDelegate:renderer];
-	[imagesOnScreen setTileSource:tileSource];
-	tileLoader = [[RMTileLoader alloc] initWithContent:self];
-	[tileLoader setSuppressLoading:YES];
-	
-	minZoom = fmax(minZoomLevel, [newTilesource minZoom]);
-	maxZoom = fmin(maxZoomLevel, [newTilesource maxZoom]);
-	NSAssert((minZoom <= initialZoomLevel), @"initial zoom level must be greater than minimum zoom level");
-	NSAssert((maxZoom >= initialZoomLevel), @"initial zoom level must be less than maximum zoom level");
-	[self setZoom:initialZoomLevel];
-	[self moveToLatLong:initialCenter];
-	
-	[tileLoader setSuppressLoading:NO];
-	
-	/// \bug TODO: Make a nice background class
-	RMMapLayer *theBackground = [[RMMapLayer alloc] init];
-	[self setBackground:theBackground];
-	[theBackground release];
-	
-	RMLayerCollection *theOverlay = [[RMLayerCollection alloc] initForContents:self];
-	[self setOverlay:theOverlay];
-	[theOverlay release];
-	
-	markerManager = [[RMMarkerManager alloc] initWithContents:self];
-	
-	[newView setNeedsDisplay];
-	[[NSNotificationCenter defaultCenter] addObserver:self 
-											 selector:@selector(handleMemoryWarningNotification:) 
-												 name:UIApplicationDidReceiveMemoryWarningNotification 
-											   object:nil];
-
-	
-	RMLog(@"Map contents initialised. view: %@ tileSource %@ renderer %@", newView, tileSource, renderer);
-	return self;
-}
-
-
-/// deprecated at any moment after release 0.5	
 - (id) initForView: (UIView*) view
-{
-	WarnDeprecated();
-	return [self initWithView:view];
+{	
+	CLLocationCoordinate2D here;
+	here.latitude = -33.858771;
+	here.longitude = 151.201596;
+
+	return [self initForView:view WithLocation: here];
 }
 
-/// deprecated at any moment after release 0.5
 - (id) initForView: (UIView*) view WithLocation:(CLLocationCoordinate2D)latlong
 {
-	WarnDeprecated();
-	LogMethod();
-	id<RMTileSource> _tileSource = [[RMOpenStreetMapSource alloc] init];
+	id<RMTileSource> _tileSource = [[RMOpenStreetMapsSource alloc] init];
 	RMMapRenderer *_renderer = [[RMCoreAnimationRenderer alloc] initWithContent:self];
-	
+		
 	id mapContents = [self initForView:view WithTileSource:_tileSource WithRenderer:_renderer LookingAt:latlong];
 	[_tileSource release];
 	[_renderer release];
@@ -197,17 +84,12 @@
 }
 
 
-/// deprecated at any moment after release 0.5
 - (id) initForView: (UIView*) view WithTileSource: (id<RMTileSource>)_tileSource WithRenderer: (RMMapRenderer*)_renderer LookingAt:(CLLocationCoordinate2D)latlong
 {
-	WarnDeprecated();
-	LogMethod();
 	if (![super init])
 		return nil;
 	
-	NSAssert1([view isKindOfClass:[RMMapView class]], @"view %@ must be a subclass of RMMapView", view);
-	
-	[self setMaxZoom:kDefaultMaximumZoomLevel];
+	[self setMaxZoom:50.0];
 	
 	self.boundingMask = RMMapMinWidthBound;
 //	targetView = view;
@@ -231,29 +113,25 @@
 	tileLoader = [[RMTileLoader alloc] initWithContent:self];
 	[tileLoader setSuppressLoading:YES];
 	
-	[self setZoom:kDefaultInitialZoomLevel];
+	[self setZoom:13];
 	[self moveToLatLong:latlong];
 	
 	[tileLoader setSuppressLoading:NO];
 	
-	/// \bug TODO: Make a nice background class
+	// TODO: Make a nice background class
 	RMMapLayer *theBackground = [[RMMapLayer alloc] init];
 	[self setBackground:theBackground];
 	[theBackground release];
 	
-	RMLayerCollection *theOverlay = [[RMLayerCollection alloc] initForContents:self];
+	RMLayerSet *theOverlay = [[RMLayerSet alloc] initForContents:self];
 	[self setOverlay:theOverlay];
 	[theOverlay release];
 	
 	markerManager = [[RMMarkerManager alloc] initWithContents:self];
 	
 	[view setNeedsDisplay];
-	[[NSNotificationCenter defaultCenter] addObserver:self 
-											 selector:@selector(handleMemoryWarningNotification:) 
-												 name:UIApplicationDidReceiveMemoryWarningNotification 
-											   object:nil];
 	
-	RMLog(@"Map contents initialised. view: %@ tileSource %@ renderer %@", view, tileSource, renderer);
+	NSLog(@"Map contents initialised. view: %@ tileSource %@ renderer %@", view, tileSource, renderer);
 	
 	return self;
 }
@@ -268,14 +146,11 @@
   [tileLoader clearLoadedBounds];
   [tileLoader updateLoadedImages];
   [renderer setFrame:frame];
-  [overlay correctPositionOfAllSublayers];
 }
 
 -(void) dealloc
 {
-	LogMethod();
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	[imagesOnScreen cancelLoading];
+  [imagesOnScreen cancelLoading];
 	[self setRenderer:nil];
 	[imagesOnScreen release];
 	[tileLoader release];
@@ -287,17 +162,12 @@
 	[self setBackground:nil];
 	[layer release];
 	[markerManager release];
+	NSLog(@"mapcontents dealloced");
 	[super dealloc];
-}
-
-- (void)handleMemoryWarningNotification:(NSNotification *)notification
-{
-	[self didReceiveMemoryWarning];
 }
 
 - (void) didReceiveMemoryWarning
 {
-	LogMethod();
 	[tileSource didReceiveMemoryWarning];
 }
 
@@ -306,12 +176,12 @@
 
 - (void)moveToLatLong: (CLLocationCoordinate2D)latlong
 {
-	RMProjectedPoint aPoint = [[self projection] latLongToPoint:latlong];
-	[self moveToProjectedPoint: aPoint];
+	RMXYPoint aPoint = [projection latLongToPoint:latlong];
+	[self moveToXYPoint: aPoint];
 }
-- (void)moveToProjectedPoint: (RMProjectedPoint)aPoint
+- (void)moveToXYPoint: (RMXYPoint)aPoint
 {
-	[mercatorToScreenProjection setProjectedCenter:aPoint];
+	[mercatorToScreenProjection setXYCenter:aPoint];
 	[overlay correctPositionOfAllSublayers];
 	[tileLoader reload];
 	[renderer setNeedsDisplay];
@@ -323,35 +193,33 @@
 	[imagesOnScreen moveBy:delta];
 	[tileLoader moveBy:delta];
 	[overlay moveBy:delta];
-	[overlay correctPositionOfAllSublayers];
 	[renderer setNeedsDisplay];
 }
 
-/// \bug doesn't really adjust anything, just makes a computation. CLANG flags some dead assignments (write-only variables)
 - (float)adjustZoomForBoundingMask:(float)zoomFactor
 {
 	if ( boundingMask ==  RMMapNoMinBound )
 		return zoomFactor;
 	
-	double newMPP = self.metersPerPixel / zoomFactor;
+	double newScale = self.scale / zoomFactor;
 	
-	RMProjectedRect mercatorBounds = [[tileSource projection] planetBounds];
+	RMXYRect mercatorBounds = [[tileSource projection] bounds];
 	
 	// Check for MinWidthBound
 	if ( boundingMask & RMMapMinWidthBound )
 	{
-		double newMapContentsWidth = mercatorBounds.size.width / newMPP;
+		double newMapContentsWidth = mercatorBounds.size.width / newScale;
 		double screenBoundsWidth = [self screenBounds].size.width;
 		double mapContentWidth;
 		
 		if ( newMapContentsWidth < screenBoundsWidth )
 		{
 			// Calculate new zoom facter so that it does not shrink the map any further. 
-			mapContentWidth = mercatorBounds.size.width / self.metersPerPixel;
+			mapContentWidth = mercatorBounds.size.width / self.scale;
 			zoomFactor = screenBoundsWidth / mapContentWidth;
 			
-			newMPP = self.metersPerPixel / zoomFactor;
-			newMapContentsWidth = mercatorBounds.size.width / newMPP;
+			newScale = self.scale / zoomFactor;
+			newMapContentsWidth = mercatorBounds.size.width / newScale;
 		}
 		
 	}
@@ -359,39 +227,39 @@
 	// Check for MinHeightBound	
 	if ( boundingMask & RMMapMinHeightBound )
 	{
-		double newMapContentsHeight = mercatorBounds.size.height / newMPP;
+		double newMapContentsHeight = mercatorBounds.size.height / newScale;
 		double screenBoundsHeight = [self screenBounds].size.height;
 		double mapContentHeight;
 		
 		if ( newMapContentsHeight < screenBoundsHeight )
 		{
 			// Calculate new zoom facter so that it does not shrink the map any further. 
-			mapContentHeight = mercatorBounds.size.height / self.metersPerPixel;
+			mapContentHeight = mercatorBounds.size.height / self.scale;
 			zoomFactor = screenBoundsHeight / mapContentHeight;
 			
-			newMPP = self.metersPerPixel / zoomFactor;
-			newMapContentsHeight = mercatorBounds.size.height / newMPP;
+			newScale = self.scale / zoomFactor;
+			newMapContentsHeight = mercatorBounds.size.height / newScale;
 		}
 		
 	}
 	
-	//[self adjustMapPlacementWithScale:newMPP];
+	//[self adjustMapPlacementWithScale:newScale];
 	
 	return zoomFactor;
 }
 
-/// This currently is not called because it does not handle the case when the map is continous or not continous.  At a certain scale
-/// you can continuously move to the west or east until you get to a certain scale level that simply shows the entire world.
+// This currently is not called because it does not handle the case when the map is continous or not continous.  At a certain scale
+// you can continuously move to the west or east until you get to a certain scale level that simply shows the entire world.
 - (void)adjustMapPlacementWithScale:(float)aScale
 {
 	CGSize		adjustmentDelta = {0.0, 0.0};
-	RMLatLong	rightEdgeLatLong = {0, kMaxLong};
-	RMLatLong	leftEdgeLatLong = {0,- kMaxLong};
+	RMLatLong	rightEdgeLatLong = {0, 180};
+	RMLatLong	leftEdgeLatLong = {0,- 180};
 	
-	CGPoint		rightEdge = [self latLongToPixel:rightEdgeLatLong withMetersPerPixel:aScale];
-	CGPoint		leftEdge = [self latLongToPixel:leftEdgeLatLong withMetersPerPixel:aScale];
-	//CGPoint		topEdge = [self latLongToPixel:myLatLong withMetersPerPixel:aScale];
-	//CGPoint		bottomEdge = [self latLongToPixel:myLatLong withMetersPerPixel:aScale];
+	CGPoint		rightEdge = [self latLongToPixel:rightEdgeLatLong withScale:aScale];
+	CGPoint		leftEdge = [self latLongToPixel:leftEdgeLatLong withScale:aScale];
+	//CGPoint		topEdge = [self latLongToPixel:myLatLong withScale:aScale];
+	//CGPoint		bottomEdge = [self latLongToPixel:myLatLong withScale:aScale];
 	
 	CGRect		containerBounds = [self screenBounds];
 
@@ -410,17 +278,22 @@
 	
 }
 
-/// \bug this is a no-op, not a clamp, if new zoom would be outside of minzoom/maxzoom range
+- (void)setZoomBounds:(float)aMinZoom maxZoom:(float)aMaxZoom
+{
+	[self setMinZoom: aMinZoom];
+	[self setMaxZoom: aMaxZoom];
+}
+
 - (void)zoomByFactor: (float) zoomFactor near:(CGPoint) pivot
 {
 	//[self zoomByFactor:zoomFactor near:pivot animated:NO];
 	
 	zoomFactor = [self adjustZoomForBoundingMask:zoomFactor];
-	//RMLog(@"Zoom Factor: %lf for Zoom:%f", zoomFactor, [self zoom]);
+	//NSLog(@"Zoom Factor: %lf for Zoom:%f", zoomFactor, [self zoom]);
 	
 	// pre-calculate zoom so we can tell if we want to perform it
 	float newZoom = [mercatorToTileProjection  
-					 calculateZoomFromScale:self.metersPerPixel/zoomFactor];
+					 calculateZoomFromScale:self.scale/zoomFactor];
 	
 	if ((newZoom > minZoom) && (newZoom < maxZoom))
 	{
@@ -448,13 +321,12 @@
 		float targetZoom = zoomDelta + [self zoom];
 		
 		// goal is to complete the animation in animTime seconds
-		static const float stepTime = kZoomAnimationStepTime;
-		static const float animTime = kZoomAnimationAnimationTime;
+		static const float stepTime = 0.03f;
+		static const float animTime = 0.1f;
 		float nSteps = animTime / stepTime;
 		float zoomIncr = zoomDelta / nSteps;
 		
 		CFDictionaryRef pivotDictionary = CGPointCreateDictionaryRepresentation(pivot);
-		/// \bug magic string literals
 		NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
 								  [NSNumber numberWithFloat:zoomIncr], @"zoomIncr", 
 								  [NSNumber numberWithFloat:targetZoom], @"targetZoom", 
@@ -469,16 +341,7 @@
 	}
 	else
 	{
-		//bools for syntactical sugar to understand the logic in the if statement below
-		BOOL zoomAtMax = ([self zoom] == [self maxZoom]);
-		BOOL zoomAtMin = ([self zoom] == [self minZoom]);
-		BOOL zoomGreaterMin = ([self zoom] > [self minZoom]);
-		BOOL zoomLessMax = ([self zoom] < [self maxZoom]);
-		
-		//zooming in zoomFactor > 1
-		//zooming out zoomFactor < 1
-		
-		if ((zoomGreaterMin && zoomLessMax) || (zoomAtMax && zoomFactor<1) || (zoomAtMin && zoomFactor>1))
+		if(([self zoom] >= [self minZoom]) && ([self zoom] <= [self maxZoom]))
 		{
 			[mercatorToScreenProjection zoomScreenByFactor:zoomFactor near:pivot];
 			[imagesOnScreen zoomByFactor:zoomFactor near:pivot];
@@ -496,7 +359,6 @@
 	}
 }
 
-/// \bug magic strings embedded in code
 - (void)animatedZoomStep:(NSTimer *)timer
 {
 	float zoomIncr = [[[timer userInfo] objectForKey:@"zoomIncr"] floatValue];
@@ -531,69 +393,42 @@
 	[self zoomInToNextNativeZoomAt:pivot animated:NO];
 }
 
-- (float)nextNativeZoomFactor
+- (float)getNextNativeZoomFactor
 {
-	float newZoom = fmin(floorf([self zoom] + 1.0), [self maxZoom]);
-	return exp2f(newZoom - [self zoom]);
+	float newZoom = roundf([self zoom] + 1);
+	return newZoom >= [self maxZoom] ? 0 : exp2f(newZoom - [self zoom]);
 }
 
-/// \deprecated appears to be unused
 - (void)zoomInToNextNativeZoomAt:(CGPoint) pivot animated:(BOOL) animated
 {
 	// Calculate rounded zoom
-	float newZoom = fmin(floorf([self zoom] + 1.0), [self maxZoom]);
-	RMLog(@"[self minZoom] %f [self zoom] %f [self maxZoom] %f newzoom %f", [self minZoom], [self zoom], [self maxZoom], newZoom);
+	float newZoom = roundf([self zoom] + 1);
 	
-	float factor = exp2f(newZoom - [self zoom]);
-	[self zoomByFactor:factor near:pivot animated:animated];
+	if (newZoom >= [self maxZoom])
+		return;
+	else
+	{
+		float factor = exp2f(newZoom - [self zoom]);
+		[self zoomByFactor:factor near:pivot animated:animated];
+	}
 }
-
-/// \deprecated appears to be unused except by zoomOutToNextNativeZoomAt:
-- (void)zoomOutToNextNativeZoomAt:(CGPoint) pivot animated:(BOOL) animated {
-	// Calculate rounded zoom
-	float newZoom = fmax(ceilf([self zoom] - 1.0), [self minZoom]);
-	RMLog(@"[self minZoom] %f [self zoom] %f [self maxZoom] %f newzoom %f", [self minZoom], [self zoom], [self maxZoom], newZoom);
-	
-	float factor = exp2f(newZoom - [self zoom]);
-	[self zoomByFactor:factor near:pivot animated:animated];
-}
-
-/// \deprecated appears to be unused
-- (void)zoomOutToNextNativeZoomAt:(CGPoint) pivot {
-	[self zoomOutToNextNativeZoomAt: pivot animated: FALSE];
-}
- 
 
 - (void) drawRect: (CGRect) aRect
 {
 	[renderer drawRect:aRect];
 }
 
--(void)removeAllCachedImages
-{
-	[tileSource removeAllCachedImages];
-}
-
-
 #pragma mark Properties
 
-/// \bug changing the tile source should force screen to reload images, but it doesn't
 - (void) setTileSource: (id<RMTileSource>)newTileSource
 {
 	if (tileSource == newTileSource)
 		return;
-	
-//	[imagesOnScreen removeAllTiles]; tried this 27 Apr 2009 but it made no difference
-	
-	RMCachedTileSource *newCachedTileSource = [RMCachedTileSource cachedTileSourceWithSource:newTileSource];
-	if (self.minZoom < newCachedTileSource.minZoom)
-		self.minZoom = newCachedTileSource.minZoom;
-	if (self.maxZoom > newCachedTileSource.maxZoom)
-		self.maxZoom = newCachedTileSource.maxZoom;
-	[self setZoom:[self zoom]]; // setZoom clamps zoom level to min/max limits
+
+	newTileSource = [RMCachedTileSource cachedTileSourceWithSource:newTileSource];
 	
 	[tileSource release];
-	tileSource = [newCachedTileSource retain];
+	tileSource = [newTileSource retain];
 	
 	[projection release];
 	projection = [[tileSource projection] retain];
@@ -601,6 +436,10 @@
 	[mercatorToTileProjection release];
 	mercatorToTileProjection = [[tileSource mercatorToTileProjection] retain];
 
+	// TODO: Fix the min / max zoom.
+//	[self setMinZoom:[newTileSource minZoom]];
+//	[self setMaxZoom:[newTileSource maxZoom]];
+	
 	[imagesOnScreen setTileSource:tileSource];
 
 	[tileLoader reload];
@@ -627,7 +466,7 @@
 		return;
 	
 	//	CGRect rect = [self screenBounds];
-	//	RMLog(@"%f %f %f %f", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+	//	NSLog(@"%f %f %f %f", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 	[[renderer layer] setFrame:[self screenBounds]];
 	
 	if (background != nil)
@@ -673,7 +512,7 @@
 	return [[background retain] autorelease];
 }
 
-- (void) setOverlay: (RMLayerCollection*) aLayer
+- (void) setOverlay: (RMLayerSet*) aLayer
 {
 	if (overlay == aLayer) return;
 	
@@ -703,18 +542,18 @@
 	[testLayer setFrame:CGRectMake(100, 100, 200, 200)];
 	[testLayer setBackgroundColor:[[UIColor brownColor] CGColor]];
 	
-	RMLog(@"added test layer");
+	NSLog(@"added test layer");
 	[overlay addSublayer:testLayer];*/
 }
 
-- (RMLayerCollection *)overlay
+- (RMLayerSet *)overlay
 {
 	return [[overlay retain] autorelease];
 }
 
 - (CLLocationCoordinate2D) mapCenter
 {
-	RMProjectedPoint aPoint = [mercatorToScreenProjection projectedCenter];
+	RMXYPoint aPoint = [mercatorToScreenProjection XYCenter];
 	return [projection pointToLatLong:aPoint];
 }
 
@@ -723,13 +562,13 @@
 	[self moveToLatLong:center];
 }
 
--(RMProjectedRect) projectedBounds
+-(RMXYRect) XYBounds
 {
-	return [mercatorToScreenProjection projectedBounds];
+	return [mercatorToScreenProjection XYBounds];
 }
--(void) setProjectedBounds: (RMProjectedRect) boundsRect
+-(void) setXYBounds: (RMXYRect) boundsRect
 {
-	[mercatorToScreenProjection setProjectedBounds:boundsRect];
+	[mercatorToScreenProjection setXYBounds:boundsRect];
 }
 
 -(RMTileRect) tileBounds
@@ -742,52 +581,47 @@
 	if (mercatorToScreenProjection != nil)
 		return [mercatorToScreenProjection screenBounds];
 	else
-		return CGRectZero;
+		return CGRectMake(0, 0, 0, 0);
 }
 
--(float) metersPerPixel
+-(float) scale
 {
-	return [mercatorToScreenProjection metersPerPixel];
+	return [mercatorToScreenProjection scale];
 }
 
--(void) setMetersPerPixel: (float) newMPP
+-(void) setScale: (float) scale
 {
-        float zoomFactor = newMPP / self.metersPerPixel;
-        CGPoint pivot = CGPointZero;
-
-        [mercatorToScreenProjection setMetersPerPixel:newMPP];
-        [imagesOnScreen zoomByFactor:zoomFactor near:pivot];
-        [tileLoader zoomByFactor:zoomFactor near:pivot];
-        [overlay zoomByFactor:zoomFactor near:pivot];
-        [overlay correctPositionOfAllSublayers];
-        [renderer setNeedsDisplay];
-}
-
--(void)setMaxZoom:(float)newMaxZoom
-{
-	maxZoom = fmin(newMaxZoom, [self.tileSource maxZoom]);
-}
-
--(void)setMinZoom:(float)newMinZoom
-{
-	minZoom = fmax(newMinZoom, [self.tileSource minZoom]);
+	[mercatorToScreenProjection setScale:scale];
+	[overlay correctPositionOfAllSublayers];
+	[tileLoader updateLoadedImages];
+	[renderer setNeedsDisplay];
 }
 
 -(float) zoom
 {
-        return [mercatorToTileProjection calculateZoomFromScale:[mercatorToScreenProjection metersPerPixel]];
+	return [mercatorToTileProjection calculateZoomFromScale:[mercatorToScreenProjection scale]];
 }
 
-/// if #zoom is outside of range #minZoom to #maxZoom, zoom level is clamped to that range.
+/*-(void) setZoom: (float) zoom
+{
+	//limit the zoom to maxZoom and minZoom as specified by projection - why do we also store maxZoom?
+	float normalisedZoom = [mercatorToTileProjection normaliseZoom:zoom];		
+	float scale = [mercatorToTileProjection calculateScaleFromZoom:normalisedZoom];
+	[self setScale:scale];	
+}
+*/
 -(void) setZoom: (float) zoom
 {
-        zoom = (zoom > maxZoom) ? maxZoom : zoom;
-        zoom = (zoom < minZoom) ? minZoom : zoom;
-
-        float scale = [mercatorToTileProjection calculateScaleFromZoom:zoom];
-
-        [self setMetersPerPixel:scale];
-}
+	//NSLog(@"set zoom: %f", zoom);
+	if (zoom > maxZoom)
+        return;
+	
+	float scale = [mercatorToTileProjection  
+				   calculateScaleFromZoom:zoom];
+	//NSLog(@"new scale: %f, scale");
+	[self setScale:scale];    
+	
+} 
 
 -(RMTileImageSet*) imagesOnScreen
 {
@@ -842,14 +676,9 @@ static BOOL _performExpensiveOperations = YES;
 	return [mercatorToScreenProjection projectXYPoint:[projection latLongToPoint:latlong]];
 }
 
-- (CGPoint)latLongToPixel:(CLLocationCoordinate2D)latlong withMetersPerPixel:(float)aScale
+- (CGPoint)latLongToPixel:(CLLocationCoordinate2D)latlong withScale:(float)aScale
 {	
-	return [mercatorToScreenProjection projectXYPoint:[projection latLongToPoint:latlong] withMetersPerPixel:aScale];
-}
-
-- (RMTilePoint)latLongToTilePoint:(CLLocationCoordinate2D)latlong withMetersPerPixel:(float)aScale
-{
-        return [mercatorToTileProjection project:[projection latLongToPoint:latlong] atZoom:aScale];
+	return [mercatorToScreenProjection projectXYPoint:[projection latLongToPoint:latlong] withScale:aScale];
 }
 
 - (CLLocationCoordinate2D)pixelToLatLong:(CGPoint)aPixel
@@ -857,82 +686,76 @@ static BOOL _performExpensiveOperations = YES;
 	return [projection pointToLatLong:[mercatorToScreenProjection projectScreenPointToXY:aPixel]];
 }
 
-- (CLLocationCoordinate2D)pixelToLatLong:(CGPoint)aPixel withMetersPerPixel:(float)aScale
+- (CLLocationCoordinate2D)pixelToLatLong:(CGPoint)aPixel withScale:(float)aScale
 {
-	return [projection pointToLatLong:[mercatorToScreenProjection projectScreenPointToXY:aPixel withMetersPerPixel:aScale]];
+	return [projection pointToLatLong:[mercatorToScreenProjection projectScreenPointToXY:aPixel withScale:aScale]];
 }
 
-- (double)scaleDenominator {
-	double routemeMetersPerPixel = [self metersPerPixel];
-	double iphoneMillimetersPerPixel = kiPhoneMilimeteresPerPixel;
-	double truescaleDenominator =  routemeMetersPerPixel / (0.001 * iphoneMillimetersPerPixel) ;
-	return truescaleDenominator;
-}
 
 #pragma mark Zoom With Bounds
 - (void)zoomWithLatLngBoundsNorthEast:(CLLocationCoordinate2D)ne SouthWest:(CLLocationCoordinate2D)sw
 {
 	if(ne.latitude == sw.latitude && ne.longitude == sw.longitude)//There are no bounds, probably only one marker.
 	{
-		RMProjectedRect zoomRect;
-		RMProjectedPoint myOrigin = [projection latLongToPoint:sw];
+		RMXYRect zoomRect;
+		RMXYPoint myOrigin = [projection latLongToPoint:sw];
 		//Default is with scale = 2.0 mercators/pixel
 		zoomRect.size.width = [self screenBounds].size.width * 2.0;
 		zoomRect.size.height = [self screenBounds].size.height * 2.0;
-		myOrigin.easting = myOrigin.easting - (zoomRect.size.width / 2);
-		myOrigin.northing = myOrigin.northing - (zoomRect.size.height / 2);
+		myOrigin.x = myOrigin.x - (zoomRect.size.width / 2);
+		myOrigin.y = myOrigin.y - (zoomRect.size.height / 2);
 		zoomRect.origin = myOrigin;
 		[self zoomWithRMMercatorRectBounds:zoomRect];
 	}
 	else
 	{
 		//convert ne/sw into RMMercatorRect and call zoomWithBounds
-		float pixelBuffer = kZoomRectPixelBuffer;
-		CLLocationCoordinate2D midpoint = {
-			.latitude = (ne.latitude + sw.latitude) / 2,
-			.longitude = (ne.longitude + sw.longitude) / 2
-		};
-		RMProjectedPoint myOrigin = [projection latLongToPoint:midpoint];
-		RMProjectedPoint nePoint = [projection latLongToPoint:ne];
-		RMProjectedPoint swPoint = [projection latLongToPoint:sw];
-		RMProjectedPoint myPoint = {.easting = nePoint.easting - swPoint.easting, .northing = nePoint.northing - swPoint.northing};
+		float pixelBuffer = 50;
+		CLLocationCoordinate2D latLngBounds;
+		latLngBounds.longitude = ne.longitude - sw.longitude;
+		latLngBounds.latitude = ne.latitude - sw.latitude;
+		CLLocationCoordinate2D midpoint;
+		midpoint.latitude = (ne.latitude + sw.latitude) / 2;
+		midpoint.longitude = (ne.longitude + sw.longitude) / 2;
+		RMXYPoint myOrigin = [projection latLongToPoint:midpoint];
+		RMXYPoint myPoint = [projection latLongToPoint:latLngBounds];
 		//Create the new zoom layout
-		RMProjectedRect zoomRect;
+		RMXYRect zoomRect;
 		//Default is with scale = 2.0 mercators/pixel
 		zoomRect.size.width = [self screenBounds].size.width * 2.0;
 		zoomRect.size.height = [self screenBounds].size.height * 2.0;
-		if((myPoint.easting / ([self screenBounds].size.width)) < (myPoint.northing / ([self screenBounds].size.height)))
+		if((myPoint.x / ([self screenBounds].size.width)) < (myPoint.y / ([self screenBounds].size.height)))
 		{
-			if((myPoint.northing / ([self screenBounds].size.height - pixelBuffer)) > 1)
+			if((myPoint.y / ([self screenBounds].size.height - pixelBuffer)) > 1)
 			{
-				zoomRect.size.width = [self screenBounds].size.width * (myPoint.northing / ([self screenBounds].size.height - pixelBuffer));
-				zoomRect.size.height = [self screenBounds].size.height * (myPoint.northing / ([self screenBounds].size.height - pixelBuffer));
+				zoomRect.size.width = [self screenBounds].size.width * (myPoint.y / ([self screenBounds].size.height - pixelBuffer));
+				zoomRect.size.height = [self screenBounds].size.height * (myPoint.y / ([self screenBounds].size.height - pixelBuffer));
 			}
 		}
 		else
 		{
-			if((myPoint.easting / ([self screenBounds].size.width - pixelBuffer)) > 1)
+			if((myPoint.x / ([self screenBounds].size.width - pixelBuffer)) > 1)
 			{
-				zoomRect.size.width = [self screenBounds].size.width * (myPoint.easting / ([self screenBounds].size.width - pixelBuffer));
-				zoomRect.size.height = [self screenBounds].size.height * (myPoint.easting / ([self screenBounds].size.width - pixelBuffer));
+				zoomRect.size.width = [self screenBounds].size.width * (myPoint.x / ([self screenBounds].size.width - pixelBuffer));
+				zoomRect.size.height = [self screenBounds].size.height * (myPoint.x / ([self screenBounds].size.width - pixelBuffer));
 			}
 		}
-		myOrigin.easting = myOrigin.easting - (zoomRect.size.width / 2);
-		myOrigin.northing = myOrigin.northing - (zoomRect.size.height / 2);
-		RMLog(@"Origin is calculated at: %f, %f", [projection pointToLatLong:myOrigin].latitude, [projection pointToLatLong:myOrigin].longitude);
+		myOrigin.x = myOrigin.x - (zoomRect.size.width / 2);
+		myOrigin.y = myOrigin.y - (zoomRect.size.height / 2);
+		NSLog(@"Origin is calculated at: %f, %f", [projection pointToLatLong:myOrigin].latitude, [projection pointToLatLong:myOrigin].longitude);
 		/*It gets all messed up if our origin is lower than the lowest place on the map, so we check.
-		 if(myOrigin.northing < -19971868.880409)
+		 if(myOrigin.y < -19971868.880409)
 		 {
-		 myOrigin.northing = -19971868.880409;
+		 myOrigin.y = -19971868.880409;
 		 }*/
 		zoomRect.origin = myOrigin;
 		[self zoomWithRMMercatorRectBounds:zoomRect];
 	}
 }
 
-- (void)zoomWithRMMercatorRectBounds:(RMProjectedRect)bounds
+- (void)zoomWithRMMercatorRectBounds:(RMXYRect)bounds
 {
-	[self setProjectedBounds:bounds];
+	[self setXYBounds:bounds];
 	[overlay correctPositionOfAllSublayers];
 	[tileLoader clearLoadedBounds];
 	[tileLoader updateLoadedImages];
@@ -944,58 +767,39 @@ static BOOL _performExpensiveOperations = YES;
 
 // Move overlays stuff here - at the moment overlay stuff is above...
 
-- (RMSphericalTrapezium) latitudeLongitudeBoundingBoxForScreen
+- (RMLatLongBounds) getScreenCoordinateBounds
 {
 	CGRect rect = [mercatorToScreenProjection screenBounds];
 	
-	return [self latitudeLongitudeBoundingBoxFor:rect];
+	return [self getCoordinateBounds:rect];
 }
 
-- (RMSphericalTrapezium) latitudeLongitudeBoundingBoxFor:(CGRect) rect
+- (RMLatLongBounds) getCoordinateBounds:(CGRect) rect
 {	
-	RMSphericalTrapezium boundingBox;
-	CGPoint northwestScreen = rect.origin;
+	RMLatLongBounds bounds;
+	CGPoint northWest = rect.origin;
 	
-	CGPoint southeastScreen;
-	southeastScreen.x = rect.origin.x + rect.size.width;
-	southeastScreen.y = rect.origin.y + rect.size.height;
+	CGPoint southEast;
+	southEast.x = rect.origin.x + rect.size.width;
+	southEast.y = rect.origin.y + rect.size.height;
 	
-	CGPoint northeastScreen, southwestScreen;
-	northeastScreen.x = southeastScreen.x;
-	northeastScreen.y = northwestScreen.y;
-	southwestScreen.x = northwestScreen.x;
-	southwestScreen.y = southeastScreen.y;
+//	NSLog(@"NortWest x:%lf y:%lf", northWest.x, northWest.y);
+//	NSLog(@"SouthEast x:%lf y:%lf", southEast.x, southEast.y);
 	
-	CLLocationCoordinate2D northeastLL, northwestLL, southeastLL, southwestLL;
-	northeastLL = [self pixelToLatLong:northeastScreen];
-	northwestLL = [self pixelToLatLong:northwestScreen];
-	southeastLL = [self pixelToLatLong:southeastScreen];
-	southwestLL = [self pixelToLatLong:southwestScreen];
+	bounds.northWest = [self pixelToLatLong:northWest];
+	bounds.southEast = [self pixelToLatLong:southEast];
 	
-	boundingBox.northeast.latitude = fmax(northeastLL.latitude, northwestLL.latitude);
-	boundingBox.southwest.latitude = fmin(southeastLL.latitude, southwestLL.latitude);
+//	NSLog(@"NortWest Lat:%lf Lon:%lf", bounds.northWest.latitude, bounds.northWest.longitude);
+//	NSLog(@"SouthEast Lat:%lf Lon:%lf", bounds.southEast.latitude, bounds.southEast.longitude);
 	
-	// westerly computations:
-	// -179, -178 -> -179 (min)
-	// -179, 179  -> 179 (max)
-	if (fabs(northwestLL.longitude - southwestLL.longitude) <= kMaxLong)
-		boundingBox.southwest.longitude = fmin(northwestLL.longitude, southwestLL.longitude);
-	else
-		boundingBox.southwest.longitude = fmax(northwestLL.longitude, southwestLL.longitude);
-	
-	if (fabs(northeastLL.longitude - southeastLL.longitude) <= kMaxLong)
-		boundingBox.northeast.longitude = fmax(northeastLL.longitude, southeastLL.longitude);
-	else
-		boundingBox.northeast.longitude = fmin(northeastLL.longitude, southeastLL.longitude);
-
-	return boundingBox;
+	return bounds;
 }
 
 - (void) tilesUpdatedRegion:(CGRect)region
 {
 	if(delegateHasRegionUpdate)
 	{
-		RMSphericalTrapezium locationBounds  = [self latitudeLongitudeBoundingBoxFor:region];
+		RMLatLongBounds locationBounds  = [self getCoordinateBounds:region];
 		[tilesUpdateDelegate regionUpdate:locationBounds];
 	}
 }
@@ -1010,7 +814,7 @@ static BOOL _performExpensiveOperations = YES;
 {
 	if (tilesUpdateDelegate == _tilesUpdateDelegate) return;
 	tilesUpdateDelegate= _tilesUpdateDelegate;
-	//RMLog(@"Delegate type:%@",[(NSObject *) tilesUpdateDelegate description]);
+	//NSLog(@"Delegate type:%@",[(NSObject *) tilesUpdateDelegate description]);
 	delegateHasRegionUpdate  = [(NSObject*) tilesUpdateDelegate respondsToSelector: @selector(regionUpdate:)];
 }
 

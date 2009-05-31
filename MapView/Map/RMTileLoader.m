@@ -1,7 +1,7 @@
 //
 //  RMTimeImageSet.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -24,7 +24,7 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
-#import "RMGlobalConstants.h"w
+
 #import "RMTileLoader.h"
 
 #import "RMTileImage.h"
@@ -36,15 +36,11 @@
 
 #import "RMTileCache.h"
 
-/// \bug magic string literals should be moved to central location
 NSString* const RMMapImageRemovedFromScreenNotification = @"RMMapImageRemovedFromScreen";
 NSString* const RMMapImageAddedToScreenNotification = @"RMMapImageAddedToScreen";
 
 NSString* const RMSuspendExpensiveOperations = @"RMSuspendExpensiveOperations";
 NSString* const RMResumeExpensiveOperations = @"RMResumeExpensiveOperations";
-
-NSString* const RMTileRetrieved = @"RMTileRetrieved";
-NSString* const RMTileRequested = @"RMTileRequested";
 
 @implementation RMTileLoader
 
@@ -80,7 +76,7 @@ NSString* const RMTileRequested = @"RMTileRequested";
 
 -(void) clearLoadedBounds
 {
-	loadedBounds = CGRectZero;
+	loadedBounds = CGRectMake(0, 0, 0, 0);
 	//	loadedTiles.origin.tile = RMTileDummy();
 }
 -(BOOL) screenIsLoaded
@@ -88,18 +84,16 @@ NSString* const RMTileRequested = @"RMTileRequested";
 	//	RMTileRect targetRect = [content tileBounds];
 	BOOL contained = CGRectContainsRect(loadedBounds, [content screenBounds]);
 	
-	int targetZoom = (int)([[content mercatorToTileProjection] calculateNormalisedZoomFromScale:[content metersPerPixel]]);
-	NSAssert3(((targetZoom <= content.maxZoom) && (targetZoom >= content.minZoom)),
-			 @"target zoom %d is outside of RMMapContents limits %f to %f",
-			  targetZoom, content.minZoom, content.maxZoom);
+	int targetZoom = (int)([[content mercatorToTileProjection] calculateNormalisedZoomFromScale:[content scale]]);
+	
 	if (contained == NO)
 	{
-		//		RMLog(@"reassembling because its not contained");
+		//		NSLog(@"reassembling because its not contained");
 	}
 	
 	if (targetZoom != loadedZoom)
 	{
-		//		RMLog(@"reassembling because target zoom = %f, loaded zoom = %d", targetZoom, loadedZoom);
+		//		NSLog(@"reassembling because target zoom = %f, loaded zoom = %d", targetZoom, loadedZoom);
 	}
 	
 	return contained && targetZoom == loadedZoom;
@@ -130,7 +124,7 @@ NSString* const RMTileRequested = @"RMTileRequested";
 	if ([self screenIsLoaded])
 		return;
 	
-	//      RMLog(@"assemble count = %d", [[content imagesOnScreen] count]);
+	//      NSLog(@"assemble count = %d", [[content imagesOnScreen] count]);
 	
 	RMTileRect newTileRect = [content tileBounds];
 	
@@ -141,7 +135,7 @@ NSString* const RMTileRequested = @"RMTileRequested";
 	if (!RMTileIsDummy(loadedTiles.origin.tile))
 		[images removeTiles:loadedTiles];
 	
-	//      RMLog(@"-> count = %d", [images count]);
+	//      NSLog(@"-> count = %d", [images count]);
 	
 	loadedBounds = newLoadedBounds;
 	loadedZoom = newTileRect.origin.tile.zoom;
@@ -163,7 +157,7 @@ NSString* const RMTileRequested = @"RMTileRequested";
 	if ([self screenIsLoaded])
 		return;
 	
-	//	RMLog(@"assemble count = %d", [[content imagesOnScreen] count]);
+	//	NSLog(@"assemble count = %d", [[content imagesOnScreen] count]);
 	
 	RMTileRect newTileRect = [content tileBounds];
 	
@@ -173,7 +167,7 @@ NSString* const RMTileRequested = @"RMTileRequested";
 	if (!RMTileIsDummy(loadedTiles.origin.tile))
 		[images removeTiles:loadedTiles];
 	
-	//	RMLog(@"-> count = %d", [images count]);
+	//	NSLog(@"-> count = %d", [images count]);
 	
 	loadedBounds = newLoadedBounds;
 	loadedZoom = newTileRect.origin.tile.zoom;
@@ -184,9 +178,9 @@ NSString* const RMTileRequested = @"RMTileRequested";
 
 - (void)moveBy: (CGSize) delta
 {
-	//	RMLog(@"loadedBounds %f %f %f %f -> ", loadedBounds.origin.x, loadedBounds.origin.y, loadedBounds.size.width, loadedBounds.size.height);
+	//	NSLog(@"loadedBounds %f %f %f %f -> ", loadedBounds.origin.x, loadedBounds.origin.y, loadedBounds.size.width, loadedBounds.size.height);
 	loadedBounds = RMTranslateCGRectBy(loadedBounds, delta);
-	//	RMLog(@" -> %f %f %f %f", loadedBounds.origin.x, loadedBounds.origin.y, loadedBounds.size.width, loadedBounds.size.height);
+	//	NSLog(@" -> %f %f %f %f", loadedBounds.origin.x, loadedBounds.origin.y, loadedBounds.size.width, loadedBounds.size.height);
 	[self updateLoadedImages];
 }
 

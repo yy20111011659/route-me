@@ -1,7 +1,7 @@
 //
 //  RMTileImageSet.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -60,10 +60,9 @@
 
 -(void) removeTile: (RMTile) tile
 {
-	NSAssert(!RMTileIsDummy(tile), @"attempted to remove dummy tile");
 	if (RMTileIsDummy(tile))
 	{
-		RMLog(@"attempted to remove dummy tile...??");
+		NSLog(@"attempted to remove dummy tile...??");
 		return;
 	}
 	
@@ -113,8 +112,8 @@
 {
 	NSArray * imagelist = [images allObjects];
 	for (RMTileImage * img in imagelist) {
-    NSUInteger count = [images countForObject:img];
-		for (NSUInteger i = 0; i < count; i++)
+    NSInteger count = [images countForObject:img];
+		for (int i = 0; i < count; i++)
 			[self removeTile: img.tile];
 	}
 }
@@ -151,7 +150,7 @@
 
 -(void) addTile: (RMTile) tile At: (CGRect) screenLocation
 {
-	//	RMLog(@"addTile: %d %d", tile.x, tile.y);
+	//	NSLog(@"addTile: %d %d", tile.x, tile.y);
 	
 	RMTileImage *dummyTile = [RMTileImage dummyTile:tile];
 	RMTileImage *tileImage = [images member:dummyTile];
@@ -173,7 +172,7 @@
 // extended to full tile loading area
 -(CGRect) addTiles: (RMTileRect)rect ToDisplayIn:(CGRect)bounds
 {
-//	RMLog(@"addTiles: %d %d - %f %f", rect.origin.tile.x, rect.origin.tile.y, rect.size.width, rect.size.height);
+//	NSLog(@"addTiles: %d %d - %f %f", rect.origin.tile.x, rect.origin.tile.y, rect.size.width, rect.size.height);
 	
 	RMTile t;
 	t.zoom = rect.origin.tile.zoom;
@@ -268,7 +267,7 @@
 	for (RMTileImage *image in images)
 	{
 		CGRect location = [image screenLocation];
-/*		RMLog(@"Image at %f, %f %f %f",
+/*		NSLog(@"Image at %f, %f %f %f",
 			  location.origin.x,
 			  location.origin.y,
 			  location.origin.x + location.size.width,
@@ -293,7 +292,7 @@
 			biggestSeamDown = MAX(biggestSeamDown, seamDown);
 	}
 	
-	RMLog(@"Biggest seam right: %f  down: %f", biggestSeamRight, biggestSeamDown);
+	NSLog(@"Biggest seam right: %f  down: %f", biggestSeamRight, biggestSeamDown);
 }
 
 - (void)cancelLoading

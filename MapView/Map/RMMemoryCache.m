@@ -1,7 +1,7 @@
 //
 //  RMMemoryCache.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@
 	if (![super init])
 		return nil;
 
-	RMLog(@"initializing memory cache %@ with capacity %d", self, _capacity);
+	NSLog(@"initializing memory cache with capacity %d", _capacity);
 	
 	cache = [[NSMutableDictionary alloc] initWithCapacity:_capacity];
 	
@@ -51,7 +51,6 @@
 	return self;
 }
 
-/// \bug magic number
 -(id)init
 {
 	return [self initWithCapacity:32];
@@ -59,7 +58,6 @@
 
 -(void) dealloc
 {
-	LogMethod();
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[cache release];
 	[super dealloc];
@@ -67,13 +65,12 @@
 
 -(void) didReceiveMemoryWarning
 {
-	LogMethod();		
 	[cache removeAllObjects];
 }
 
 -(void) removeTile: (RMTile) tile
 {
-//	RMLog(@"tile %d %d %d removed from cache", tile.x, tile.y, tile.zoom);
+//	NSLog(@"tile %d %d %d removed from cache", tile.x, tile.y, tile.zoom);
 	[cache removeObjectForKey:[RMTileCache tileHash: tile]];
 }
 
@@ -89,7 +86,6 @@
 	return image;
 }
 
-/// Remove the least-recently used image from cache, if cache is at or over capacity. Removes only 1 image.
 -(void)makeSpaceInCache
 {
 	while ([cache count] >= capacity)
@@ -122,17 +118,12 @@
 	if (RMTileIsDummy(tile))
 		return;
 	
-	//	RMLog(@"cache add %@", key);
+	//	NSLog(@"cache add %@", key);
 
 	[self makeSpaceInCache];
 	
 	NSNumber *key = [RMTileCache tileHash: tile];
 	[cache setObject:image forKey:key];
-}
-
--(void) removeAllCachedImages 
-{
-	[cache removeAllObjects];
 }
 
 @end

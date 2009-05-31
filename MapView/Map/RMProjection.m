@@ -1,7 +1,7 @@
 //
 //  RMProjection.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -24,13 +24,13 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
-#import "RMGlobalConstants.h"
+
 #import "proj_api.h"
 #import "RMProjection.h"
 
 
-NS_INLINE RMLatLong RMPixelPointAsLatLong(RMProjectedPoint xypoint) {
-    union _ {RMProjectedPoint xy; RMLatLong latLong;};
+NS_INLINE RMLatLong RMPixelPointAsLatLong(RMXYPoint xypoint) {
+    union _ {RMXYPoint xy; RMLatLong latLong;};
     return ((union _ *)&xypoint)->latLong;
 }
 
@@ -38,10 +38,10 @@ NS_INLINE RMLatLong RMPixelPointAsLatLong(RMProjectedPoint xypoint) {
 @implementation RMProjection
 
 @synthesize internalProjection;
-@synthesize planetBounds;
+@synthesize bounds;
 @synthesize projectionWrapsHorizontally;
 
-- (id) initWithString: (NSString*)params InBounds: (RMProjectedRect) projBounds
+- (id) initWithString: (NSString*)params InBounds: (RMXYRect) projBounds
 {
 	if (![super init])
 		return nil;
@@ -49,12 +49,12 @@ NS_INLINE RMLatLong RMPixelPointAsLatLong(RMProjectedPoint xypoint) {
 	internalProjection = pj_init_plus([params UTF8String]);
 	if (internalProjection == NULL)
 	{
-		RMLog(@"Unhandled error creating projection. String is %@", params);
+		NSLog(@"Unhandled error creating projection. String is %@", params);
 		[self dealloc];
 		return nil;
 	}
 	
-	planetBounds = projBounds;
+	bounds = projBounds;
 
 	projectionWrapsHorizontally = YES;
 	
@@ -63,8 +63,8 @@ NS_INLINE RMLatLong RMPixelPointAsLatLong(RMProjectedPoint xypoint) {
 
 - (id) initWithString: (NSString*)params
 {
-	RMProjectedRect theBounds;
-	theBounds = RMMakeProjectedRect(0,0,0,0);
+	RMXYRect theBounds;
+	theBounds = RMXYMakeRect(0,0,0,0);
 	return [self initWithString:params InBounds:theBounds];
 }
 
@@ -81,36 +81,36 @@ NS_INLINE RMLatLong RMPixelPointAsLatLong(RMProjectedPoint xypoint) {
 	[super dealloc];
 }
 
-- (RMProjectedPoint) wrapPointHorizontally: (RMProjectedPoint) aPoint
+- (RMXYPoint) wrapPointHorizontally: (RMXYPoint) aPoint
 {
-	if (!projectionWrapsHorizontally
-		|| planetBounds.size.width == 0.0f || planetBounds.size.height == 0.0f)
+	if (projectionWrapsHorizontally == NO
+		|| bounds.size.width == 0.0f || bounds.size.height == 0.0f)
 		return aPoint;
 	
-	while (aPoint.easting < planetBounds.origin.easting)
-		aPoint.easting += planetBounds.size.width;
-	while (aPoint.easting > (planetBounds.origin.easting + planetBounds.size.width))
-		aPoint.easting -= planetBounds.size.width;
+	while (aPoint.x < bounds.origin.x)
+		aPoint.x += bounds.size.width;
+	while (aPoint.x > (bounds.origin.x + bounds.size.width))
+		aPoint.x -= bounds.size.width;
 	
 	return aPoint;
 }
 
--(RMProjectedPoint) constrainPointToBounds: (RMProjectedPoint) aPoint
+-(RMXYPoint) constrainPointToBounds: (RMXYPoint) aPoint
 {
-	if (planetBounds.size.width == 0.0f || planetBounds.size.height == 0.0f)
+	if (bounds.size.width == 0.0f || bounds.size.height == 0.0f)
 		return aPoint;
 	
 	[self wrapPointHorizontally:aPoint];
 	
-	if (aPoint.northing < planetBounds.origin.northing)
-		aPoint.northing = planetBounds.origin.northing;
-	else if (aPoint.northing > (planetBounds.origin.northing + planetBounds.size.height))
-		aPoint.northing = planetBounds.origin.northing + planetBounds.size.height;
+	if (aPoint.y < bounds.origin.y)
+		aPoint.y = bounds.origin.y;
+	else if (aPoint.y > (bounds.origin.y + bounds.size.height))
+		aPoint.y = bounds.origin.y + bounds.size.height;
 	
 	return aPoint;
 }
 
-- (RMProjectedPoint)latLongToPoint:(RMLatLong)aLatLong
+- (RMXYPoint)latLongToPoint:(RMLatLong)aLatLong
 {
 	projUV uv = {
 		aLatLong.longitude * DEG_TO_RAD,
@@ -119,7 +119,7 @@ NS_INLINE RMLatLong RMPixelPointAsLatLong(RMProjectedPoint xypoint) {
 	
 	projUV result = pj_fwd(uv, internalProjection);
 	
-	RMProjectedPoint result_point = {
+	RMXYPoint result_point = {
 		result.u,
 		result.v,
 	};
@@ -127,11 +127,11 @@ NS_INLINE RMLatLong RMPixelPointAsLatLong(RMProjectedPoint xypoint) {
 	return result_point;
 }
 
-- (RMLatLong)pointToLatLong:(RMProjectedPoint)aPoint
+- (RMLatLong)pointToLatLong:(RMXYPoint)aPoint
 {
 	projUV uv = {
-		aPoint.easting,
-		aPoint.northing,
+		aPoint.x,
+		aPoint.y,
 	};
 	
 	projUV result = pj_inv(uv, internalProjection);
@@ -156,8 +156,7 @@ static RMProjection* _osgb = nil;
 	}
 	else
 	{
-/// \bug magic numbers embedded in code, this one's probably ok
-		RMProjectedRect theBounds = RMMakeProjectedRect(-20037508.34, -20037508.34, 20037508.34 * 2, 20037508.34 * 2);
+		RMXYRect theBounds = RMXYMakeRect(-20037508.34, -20037508.34, 20037508.34 * 2, 20037508.34 * 2);
 		
 		_google = [[RMProjection alloc] initWithString:@"+title= Google Mercator EPSG:900913\
 				   +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs"
@@ -174,9 +173,8 @@ static RMProjection* _osgb = nil;
 	}
 	else
 	{
-		RMProjectedRect theBounds = RMMakeProjectedRect(-kMaxLong, -kMaxLat, 360, kMaxLong);
+		RMXYRect theBounds = RMXYMakeRect(-180, -90, 360, 180);
 		
-		/// \bug magic numbers embedded in code, this one's probably ok
 		_latlong = [[RMProjection alloc] initWithString:@"+proj=latlong +ellps=WGS84" InBounds: theBounds];
 		return _latlong;
 	}
@@ -190,8 +188,7 @@ static RMProjection* _osgb = nil;
 	}
 	else
 	{// OSGB36 and tmerc
-		/// \bug TODO: This should use the new initWithString:InBounds: method... but I don't know what the bounds are!
-		/// \bug magic numbers embedded in code, this one's probably ok
+		// TODO: This should use the new initWithString:InBounds: method... but I don't know what the bounds are!
 		_osgb = [[RMProjection alloc] initWithString:@"+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.999601 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs"];
 		_osgb.projectionWrapsHorizontally = NO;
 		return _osgb;

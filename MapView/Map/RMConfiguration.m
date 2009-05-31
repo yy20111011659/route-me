@@ -1,7 +1,7 @@
 //
 //  RMConfiguration.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,6 @@ static RMConfiguration* RMConfigurationSharedInstance = nil;
 	@synchronized (RMConfigurationSharedInstance) {
 		if (RMConfigurationSharedInstance != nil) return RMConfigurationSharedInstance;
 	
-		/// \bug magic string literals
 		RMConfigurationSharedInstance = [[RMConfiguration alloc] 
 										 initWithPath: [[NSBundle mainBundle] pathForResource:@"routeme" ofType:@"plist"]];
 
@@ -63,7 +62,7 @@ static RMConfiguration* RMConfigurationSharedInstance = nil;
 		return self;
 	}
 	
-	RMLog(@"reading configuration from %@", path);	
+	NSLog(@"reading configuration from %@", path);	
 	plistData = [NSData dataWithContentsOfFile:path];
 
 	propList = [[NSPropertyListSerialization 
@@ -74,7 +73,7 @@ static RMConfiguration* RMConfigurationSharedInstance = nil;
 
 	if(!propList)
 	{
-		RMLog(@"problem reading from %@: %@", path, error);
+		NSLog(@"problem reading from %@: %@", path, error);
 		[error release];
 	}
 
@@ -92,7 +91,6 @@ static RMConfiguration* RMConfigurationSharedInstance = nil;
 - (NSDictionary*) cacheConfiguration
 {
 	if (propList==nil) return nil;
-	/// \bug magic string literals
 	return [propList objectForKey: @"caches"];
 }
 

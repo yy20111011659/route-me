@@ -1,7 +1,7 @@
 //
 //  RMMarker.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -26,140 +26,147 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import "RMMarker.h"
+#import "RMMarkerStyle.h"
+#import "RMMarkerStyles.h"
 
 #import "RMPixel.h"
 
+NSString* const RMMarkerBlueKey = @"RMMarkerBlueKey";
+NSString* const RMMarkerRedKey = @"RMMarkerRedKey";
+
+static CGImageRef _markerRed = nil;
+static CGImageRef _markerBlue = nil;
+
 @implementation RMMarker
 
-@synthesize projectedLocation;
+@synthesize location;
 @synthesize data;
-@synthesize label;
-@synthesize textForegroundColor;
-@synthesize textBackgroundColor;
+@synthesize labelView;
 
-#define defaultMarkerAnchorPoint CGPointMake(0.5, 0.5)
-
-+ (UIFont *)defaultFont
++ (RMMarker*) markerWithNamedStyle: (NSString*) styleName
 {
-	return [UIFont systemFontOfSize:15];
+	return [[[RMMarker alloc] initWithNamedStyle: styleName] autorelease];
 }
 
-// init
-- (id)init
+- (id) initWithCGImage: (CGImageRef) image
 {
-    if (self = [super init]) {
-        label = nil;
-        textForegroundColor = [UIColor blackColor];
-        textBackgroundColor = [UIColor clearColor];
-    }
-    return self;
+	return [self initWithCGImage: image anchorPoint: CGPointMake(0.5, 1.0)];
 }
 
-- (id) initWithUIImage: (UIImage*) image
+- (id) initWithCGImage: (CGImageRef) image anchorPoint: (CGPoint) _anchorPoint
 {
-	return [self initWithUIImage:image anchorPoint: defaultMarkerAnchorPoint];
-}
-
-- (id) initWithUIImage: (UIImage*) image anchorPoint: (CGPoint) _anchorPoint
-{
-	if (![self init])
+	if (![super init])
 		return nil;
 	
-	self.contents = (id)[image CGImage];
-	self.bounds = CGRectMake(0,0,image.size.width,image.size.height);
+	self.contents = (id)image;
+	self.bounds = CGRectMake(0, 0, CGImageGetWidth(image), CGImageGetHeight(image));
 	self.anchorPoint = _anchorPoint;
 	
 	self.masksToBounds = NO;
-	self.label = nil;
+	self.labelView = nil;
 	
 	return self;
 }
 
-- (void) replaceUIImage: (UIImage*) image
+- (void) replaceImage:(CGImageRef)image anchorPoint:(CGPoint)_anchorPoint
 {
-	[self replaceUIImage:image anchorPoint:defaultMarkerAnchorPoint];
-}
-
-- (void) replaceUIImage: (UIImage*) image
-			anchorPoint: (CGPoint) _anchorPoint
-{
-	self.contents = (id)[image CGImage];
-	self.bounds = CGRectMake(0,0,image.size.width,image.size.height);
+	self.contents = (id)image;
+	self.bounds = CGRectMake(0, 0, CGImageGetWidth(image), CGImageGetHeight(image));
 	self.anchorPoint = _anchorPoint;
 	
 	self.masksToBounds = NO;
 }
 
-- (void) setLabel:(UIView*)aView
+- (id) initWithUIImage: (UIImage*) image
 {
-	if (label == aView) {
+	return [self initWithCGImage: [image CGImage]];
+}
+
+- (id) initWithKey: (NSString*) key
+{
+	return [self initWithCGImage:[RMMarker markerImage:key]];
+}
+
+- (id) initWithStyle: (RMMarkerStyle*) style
+{
+	return [self initWithCGImage: [style.markerIcon CGImage] anchorPoint: style.anchorPoint]; 
+}
+
+- (id) initWithNamedStyle: (NSString*) styleName
+{
+	RMMarkerStyle* style = [[RMMarkerStyles styles] styleNamed: styleName];
+	
+	if (style==nil) {
+		NSLog(@"problem creating marker: style '%@' not found", styleName);
+		return [self initWithCGImage: [RMMarker markerImage: RMMarkerRedKey]];
+	}
+	return [self initWithStyle: style];
+}
+
+- (void) setLabel: (UIView*)aView
+{
+	if (self.labelView == aView) {
 		return;
 	}
 
-	if (label != nil)
+	if (labelView != nil)
 	{
-		[[label layer] removeFromSuperlayer];
-		[label release];
-		label = nil;
+		[[self.labelView layer] removeFromSuperlayer];
+		self.labelView = nil;
 	}
 	
 	if (aView != nil)
 	{
-		label = [aView retain];
-		[self addSublayer:[label layer]];
+		self.labelView = [aView retain];
+		[self addSublayer:[self.labelView layer]];
 	}
 }
 
-- (void) changeLabelUsingText: (NSString*)text
+
+- (void) setTextLabel: (NSString*)text
 {
-	CGPoint position = CGPointMake([self bounds].size.width / 2 - [text sizeWithFont:[RMMarker defaultFont]].width / 2, 4);
-/// \bug hardcoded font name
-	[self changeLabelUsingText:text position:position font:[RMMarker defaultFont] foregroundColor:[self textForegroundColor] backgroundColor:[self textBackgroundColor]];
+	[self setTextLabel:text toPosition:CGPointMake([self bounds].size.width / 2 - [text sizeWithFont:[UIFont systemFontOfSize:15]].width / 2, 4)];;	
 }
 
-- (void) changeLabelUsingText: (NSString*)text position:(CGPoint)position
+- (void) setTextLabel: (NSString*)text toPosition:(CGPoint)position
 {
-	[self changeLabelUsingText:text position:position font:[RMMarker defaultFont] foregroundColor:[self textForegroundColor] backgroundColor:[self textBackgroundColor]];
-}
-
-- (void) changeLabelUsingText: (NSString*)text font:(UIFont*)font foregroundColor:(UIColor*)textColor backgroundColor:(UIColor*)backgroundColor
-{
-	CGPoint position = CGPointMake([self bounds].size.width / 2 - [text sizeWithFont:font].width / 2, 4);
-	[self setTextForegroundColor:textColor];
-	[self setTextBackgroundColor:backgroundColor];
-	[self changeLabelUsingText:text  position:position font:font foregroundColor:textColor backgroundColor:backgroundColor];
-}
-
-- (void) changeLabelUsingText: (NSString*)text position:(CGPoint)position font:(UIFont*)font foregroundColor:(UIColor*)textColor backgroundColor:(UIColor*)backgroundColor
-{
-	CGSize textSize = [text sizeWithFont:font];
+	CGSize textSize = [text sizeWithFont:[UIFont systemFontOfSize:15]];
 	CGRect frame = CGRectMake(position.x,
 							  position.y,
 							  textSize.width+4,
 							  textSize.height+4);
 	
 	UILabel *aLabel = [[UILabel alloc] initWithFrame:frame];
-	[self setTextForegroundColor:textColor];
-	[self setTextBackgroundColor:backgroundColor];
 	[aLabel setNumberOfLines:0];
 	[aLabel setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
-	[aLabel setBackgroundColor:backgroundColor];
-	[aLabel setTextColor:textColor];
-	[aLabel setFont:font];
+	[aLabel setBackgroundColor:[UIColor clearColor]];
+	[aLabel setTextColor:[UIColor blackColor]];
+	[aLabel setFont:[UIFont systemFontOfSize:15]];
 	[aLabel setTextAlignment:UITextAlignmentCenter];
 	[aLabel setText:text];
 	
 	[self setLabel:aLabel];
 	[aLabel release];
+	
 }
 
+- (void) removeLabel
+{
+	if (self.labelView != nil)
+	{
+		[[self.labelView layer] removeFromSuperlayer];
+		self.labelView = nil;
+	}
+
+}
+		
 - (void) toggleLabel
 {
-	if (self.label == nil) {
+	if (self.labelView == nil) {
 		return;
 	}
 	
-	if ([self.label isHidden]) {
+	if ([self.labelView isHidden]) {
 		[self showLabel];
 	} else {
 		[self hideLabel];
@@ -168,34 +175,89 @@
 
 - (void) showLabel
 {
-	if ([self.label isHidden]) {
+	if ([self.labelView isHidden]) {
 		// Using addSublayer will animate showing the label, whereas setHidden is not animated
-		[self addSublayer:[self.label layer]];
-		[self.label setHidden:NO];
+		[self addSublayer:[self.labelView layer]];
+		[self.labelView setHidden:NO];
 	}
 }
 
 - (void) hideLabel
 {
-	if (![self.label isHidden]) {
+	if (![self.labelView isHidden]) {
 		// Using removeFromSuperlayer will animate hiding the label, whereas setHidden is not animated
-		[[self.label layer] removeFromSuperlayer];
-		[self.label setHidden:YES];
+		[[self.labelView layer] removeFromSuperlayer];
+		[self.labelView setHidden:YES];
 	}
 }
 
 - (void) dealloc 
 {
-    self.data = nil;
-    self.label = nil;
-    self.textForegroundColor = nil;
-    self.textBackgroundColor = nil;
+	self.labelView = nil;
+	self.data = nil;
 	[super dealloc];
 }
 
 - (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center
 {
 	self.position = RMScaleCGPointAboutPoint(self.position, zoomFactor, center);
+	
+/*	CGRect currentRect = CGRectMake(self.position.x, self.position.y, self.bounds.size.width, self.bounds.size.height);
+	CGRect newRect = RMScaleCGRectAboutPoint(currentRect, zoomFactor, center);
+	self.position = newRect.origin;
+	self.bounds = CGRectMake(0, 0, newRect.size.width, newRect.size.height);
+*/
+}
+
++ (CGImageRef) loadPNGFromBundle: (NSString *)filename
+{
+	NSString *path = [[NSBundle mainBundle] pathForResource:filename ofType:@"png"];
+	CGDataProviderRef dataProvider = CGDataProviderCreateWithFilename([path UTF8String]);
+	CGImageRef image = CGImageCreateWithPNGDataProvider(dataProvider, NULL, FALSE, kCGRenderingIntentDefault);
+	[NSMakeCollectable(image) autorelease];
+	CGDataProviderRelease(dataProvider);
+	
+	return image;
+}
+
++ (CGImageRef) markerImage: (NSString *) key
+{
+	if (RMMarkerBlueKey == key
+		|| [RMMarkerBlueKey isEqualToString:key])
+	{
+		if (_markerBlue == nil)
+			_markerBlue = [self loadPNGFromBundle:@"marker-blue"];
+		
+		return _markerBlue;
 	}
+	else if (RMMarkerRedKey == key
+		|| [RMMarkerRedKey isEqualToString: key])
+	{
+		if (_markerRed == nil)
+			_markerRed = [self loadPNGFromBundle:@"marker-red"];
+		
+		return _markerRed;
+	}
+	
+	return nil;
+}
+
+- (void) hide 
+{
+	[self setHidden:YES];
+}
+
+- (void) unhide
+{
+	[self setHidden:NO];
+}
+
+
+/*- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+//	[label setAlpha:1.0f - [label alpha]];
+//	[self setTextLabel:@"hello there"];
+	//	NSLog(@"marker at %f %f m %f %f touchesEnded", self.position.x, self.position.y, location.x, location.y);
+}*/
 
 @end

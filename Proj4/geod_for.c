@@ -48,8 +48,7 @@ geod_pre(void) {
 	void
 geod_for(void) {
 	double d,sind,u,V,X,ds,cosds,sinds,ss,de;
-	ss = 0.;
-	
+
 	if (ellipse) {
 		d = geod_S / (D * geod_a);
 		if (signS) d = -d;

@@ -1,7 +1,7 @@
 //
 //  RMFractalTileProjection.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -31,24 +31,24 @@
 @class RMProjection;
 
 @interface RMFractalTileProjection : NSObject<RMMercatorToTileProjection> {
-	/// Maximum zoom for which our tile server stores images
-	NSUInteger maxZoom;
+	// Maximum zoom for which our tile server stores images
+	int maxZoom;
 	
-	/// projected bounds of the planet, in meters
-	RMProjectedRect planetBounds;
+	// Mercator bounds of the earth 
+	RMXYRect bounds;
 	
-	/// Normally 256. This class assumes tiles are square.
-	NSUInteger tileSideLength;
+	// Normally 256. This class assumes tiles are square.
+	int tileSideLength;
 	
-	/// The deal is, we have a scale which stores how many mercator gradiants per pixel
-	/// in the image.
-	/// If you run the maths, scale = bounds.width/(2^zoom * tileSideLength)
-	/// or if you want, z = log(bounds.width/tileSideLength) - log(s)
-	/// So here we'll cache the first term for efficiency.
-	/// I'm using width arbitrarily - I'm not sure what the effect of using the other term is when they're not the same.
+	// The deal is, we have a scale which stores how many mercator gradiants per pixel
+	// in the image.
+	// If you run the maths, scale = bounds.width/(2^zoom * tileSideLength)
+	// or if you want, z = log(bounds.width/tileSideLength) - log(s)
+	// So here we'll cache the first term for efficiency.
+	// I'm using width arbitrarily - I'm not sure what the effect of using the other term is when they're not the same.
 	double scaleFactor;
 }
 
--(id) initFromProjection:(RMProjection*)projection tileSideLength:(NSUInteger)tileSideLength maxZoom: (NSUInteger) max_zoom;
+-(id) initFromProjection:(RMProjection*)projection tileSideLength:(int)tileSideLength maxZoom: (int) max_zoom;
 
 @end

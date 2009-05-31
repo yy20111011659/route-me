@@ -1,7 +1,7 @@
 //
 //  RMMarker.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,60 +28,50 @@
 #import <UIKit/UIKit.h>
 #import "RMMapLayer.h"
 #import "RMFoundation.h"
-#ifdef DEBUG
-#import <CoreLocation/CoreLocation.h>
-#endif
 
 @class RMMarkerStyle;
 
-/// one marker drawn on the map. Note that RMMarker ultimately descends from CALayer, and has an image contents.
-/// RMMarker inherits "position" and "anchorPoint" from CALayer.
+extern NSString * const RMMarkerBlueKey;
+extern NSString * const RMMarkerRedKey;
+
 @interface RMMarker : RMMapLayer <RMMovingMapLayer> {
-	/// expressed in projected meters. The anchorPoint of the image is plotted here. 
-	RMProjectedPoint projectedLocation;	
-	/// provided for storage of arbitrary user data
-	NSObject* data; 
+	RMXYPoint location;	
+	NSObject* data;
 	
-	/// Text label, visible by default if it has content, but not required.
-	UIView *label;
-	UIColor *textForegroundColor;
-	UIColor *textBackgroundColor;
+	// A label which comes up when you tap the marker
+	UIView* labelView;
 }
-@property (assign, nonatomic) RMProjectedPoint projectedLocation;
 
-@property (nonatomic, retain) NSObject* data;
-@property (nonatomic, retain) UIView* label;
-@property(nonatomic,retain) UIColor *textForegroundColor;
-@property(nonatomic,retain) UIColor *textBackgroundColor;
++ (RMMarker*) markerWithNamedStyle: (NSString*) styleName;
++ (CGImageRef) markerImage: (NSString *) key;
++ (CGImageRef) loadPNGFromBundle: (NSString *)filename;
 
-/// the font used for labels when another font is not explicitly requested; currently [UIFont systemFontOfSize:15]
-+ (UIFont *)defaultFont;
-
-/// returns RMMarker initialized with #image, and the default anchor point (0.5, 0.5)
+- (id) initWithCGImage: (CGImageRef) image anchorPoint: (CGPoint) anchorPoint;
+- (id) initWithCGImage: (CGImageRef) image;
+- (id) initWithKey: (NSString*) key;
 - (id) initWithUIImage: (UIImage*) image;
-/// \brief returns RMMarker initialized with provided image and anchorPoint. 
-/// #anchorPoint x and y range from 0 to 1, normalized to the width and height of image, 
-/// referenced to upper left corner, y increasing top to bottom. To put the image's upper right corner on the marker's 
-/// #projectedLocation, use an anchor point of (1.0, 0.0);
-- (id) initWithUIImage: (UIImage*) image anchorPoint: (CGPoint) anchorPoint;
+- (id) initWithStyle: (RMMarkerStyle*) style;
+- (id) initWithNamedStyle: (NSString*) styleName;
 
-/// changes the labelView to a UILabel with supplied #text and default marker font, using existing text foreground/background color.
-- (void) changeLabelUsingText: (NSString*)text;
-/// changes the labelView to a UILabel with supplied #text and default marker font, positioning the text some weird way i don't understand yet. Uses existing text color/background color.
-- (void) changeLabelUsingText: (NSString*)text position:(CGPoint)position;
-/// changes the labelView to a UILabel with supplied #text and default marker font, changing this marker's text foreground/background colors for this and future text strings.
-- (void) changeLabelUsingText: (NSString*)text font:(UIFont*)font foregroundColor:(UIColor*)textColor backgroundColor:(UIColor*)backgroundColor;
-/// changes the labelView to a UILabel with supplied #text and default marker font, changing this marker's text foreground/background colors for this and future text strings; modifies position as in #changeLabelUsingText:position.
-- (void) changeLabelUsingText: (NSString*)text position:(CGPoint)position font:(UIFont*)font foregroundColor:(UIColor*)textColor backgroundColor:(UIColor*)backgroundColor;
-
+- (void) setLabel: (UIView*)aView;
+- (void) setTextLabel: (NSString*)text;
+- (void) setTextLabel: (NSString*)text toPosition:(CGPoint)position;
 - (void) toggleLabel;
 - (void) showLabel;
 - (void) hideLabel;
+- (void) removeLabel;
 
-- (void) replaceUIImage:(UIImage*)image;
-- (void) replaceUIImage:(UIImage*)image anchorPoint:(CGPoint)anchorPoint;
-
+- (void) replaceImage:(CGImageRef)image anchorPoint:(CGPoint)_anchorPoint;
+- (void) hide;
+- (void) unhide;
 
 - (void) dealloc;
+
+@property (assign, nonatomic) RMXYPoint location;
+@property (retain) NSObject* data;
+@property (nonatomic, retain) UIView* labelView;
+
+// Call this with either RMMarkerBlue or RMMarkerRed for the key.
++ (CGImageRef) markerImage: (NSString *) key;
 
 @end

@@ -1,7 +1,7 @@
 //
 //  RMLatLong.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -31,18 +31,11 @@
 #import <TargetConditionals.h>
 #if TARGET_OS_IPHONE
 #import <CoreLocation/CoreLocation.h>
-#import "RMGlobalConstants.h"
 
-/*! \struct RMSphericalTrapezium
- 
- \brief Specifies a spherical trapezium by northwest and southeast corners, each given as CLLocationCoordinate2D, similar to specifying the corners of a box.
- 
- A spherical trapezium is the surface of a sphere or ellipsoid bounded by two meridians and two parallels. Note that in almost all cases, the lengths of the northern and southern sides of the box are different.
- */
 typedef struct {
-	CLLocationCoordinate2D northeast;
-	CLLocationCoordinate2D southwest;
-} RMSphericalTrapezium;
+	CLLocationCoordinate2D northWest;
+	CLLocationCoordinate2D southEast;
+} RMLatLongBounds;
 
 #else
 
@@ -73,17 +66,14 @@ typedef struct {
 	CLLocationDegrees longitude;
 } CLLocationCoordinate2D;
 
+
 #endif
 
-/*! \struct RMLatLong 
- \brief latitude/longitude of a point, in WGS-84 degrees
- */
 typedef CLLocationCoordinate2D RMLatLong;
 
-/// \bug magic numbers
-static const double kRMMinLatitude = -kMaxLat;
-static const double kRMMaxLatitude = kMaxLat;
-static const double kRMMinLongitude = -kMaxLong;
-static const double kRMMaxLongitude = kMaxLong;
+static const double kRMMinLatitude = -90.0f;
+static const double kRMMaxLatitude = 90.0f;
+static const double kRMMinLongitude = -180.0f;
+static const double kRMMaxLongitude = 180.0f;
 
 #endif

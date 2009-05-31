@@ -1,7 +1,7 @@
 //
 //  RMFoundation.c
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,49 +28,49 @@
 #import "RMFoundation.h"
 
 
-RMProjectedPoint RMScaleProjectedPointAboutPoint(RMProjectedPoint point, float factor, RMProjectedPoint pivot)
+RMXYPoint RMScaleXYPointAboutPoint(RMXYPoint point, float factor, RMXYPoint pivot)
 {
-	point.easting = (point.easting - pivot.easting) * factor + pivot.easting;
-	point.northing = (point.northing - pivot.northing) * factor + pivot.northing;
+	point.x = (point.x - pivot.x) * factor + pivot.x;
+	point.y = (point.y - pivot.y) * factor + pivot.y;
 	
 	return point;
 }
 
-RMProjectedRect  RMScaleProjectedRectAboutPoint (RMProjectedRect rect,   float factor, RMProjectedPoint pivot)
+RMXYRect  RMScaleXYRectAboutPoint (RMXYRect rect,   float factor, RMXYPoint pivot)
 {
-	rect.origin = RMScaleProjectedPointAboutPoint(rect.origin, factor, pivot);
+	rect.origin = RMScaleXYPointAboutPoint(rect.origin, factor, pivot);
 	rect.size.width *= factor;
 	rect.size.height *= factor;
 	
 	return rect;
 }
 
-RMProjectedPoint RMTranslateProjectedPointBy(RMProjectedPoint point, RMProjectedSize delta)
+RMXYPoint RMTranslateXYPointBy(RMXYPoint point, RMXYSize delta)
 {
-	point.easting += delta.width;
-	point.northing += delta.height;
+	point.x += delta.width;
+	point.y += delta.height;
 	return point;
 }
 
-RMProjectedRect  RMTranslateProjectedRectBy(RMProjectedRect rect,   RMProjectedSize delta)
+RMXYRect  RMTranslateXYRectBy(RMXYRect rect,   RMXYSize delta)
 {
-	rect.origin = RMTranslateProjectedPointBy(rect.origin, delta);
+	rect.origin = RMTranslateXYPointBy(rect.origin, delta);
 	return rect;
 }
 
-RMProjectedPoint  RMMakeProjectedPoint (double easting, double northing)
+RMXYPoint  RMXYMakePoint (double x, double y)
 {
-	RMProjectedPoint point = {
-		easting, northing
+	RMXYPoint point = {
+		x, y
 	};
 	
 	return point;
 }
 
-RMProjectedRect  RMMakeProjectedRect (double easting, double northing, double width, double height)
+RMXYRect  RMXYMakeRect (double x, double y, double width, double height)
 {
-	RMProjectedRect rect = {
-		{easting, northing},
+	RMXYRect rect = {
+		{x, y},
 		{width, height}
 	};
 	

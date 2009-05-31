@@ -1,7 +1,7 @@
 //
 //  RMMapViewDelegate.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,6 @@
 @class RMMapView;
 @class RMMarker;
 
-/// Use this for notifications of map panning, zooming, and taps on the RMMapView.
 @protocol RMMapViewDelegate 
 
 @optional
@@ -46,8 +45,7 @@
 
 - (void) tapOnMarker: (RMMarker*) marker onMap: (RMMapView*) map;
 - (void) tapOnLabelForMarker: (RMMarker*) marker onMap: (RMMapView*) map;
-- (BOOL) mapView:(RMMapView *)map shouldDragMarker:(RMMarker *)marker withEvent:(UIEvent *)event;
-- (void) mapView:(RMMapView *)map didDragMarker:(RMMarker *)marker withEvent:(UIEvent *)event;
+- (void) dragMarkerPosition: (RMMarker*) marker onMap: (RMMapView*)map position:(CGPoint)position;
 
 - (void) afterMapTouch: (RMMapView*) map;
 

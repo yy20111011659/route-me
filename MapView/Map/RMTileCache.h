@@ -1,7 +1,7 @@
 //
 //  RMTileCache.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -39,15 +39,13 @@ typedef enum {
 
 @protocol RMTileCache<NSObject>
 
-/// Returns the cached image if it exists. nil otherwise.
+// Returns the cached image if it exists. nil otherwise.
 -(RMTileImage*) cachedImage:(RMTile)tile;
 -(void)didReceiveMemoryWarning;
 
 @optional
 
 -(void)addTile: (RMTile)tile WithImage: (RMTileImage*)image;
-/// removes all tile images from the memory and disk subcaches
--(void)removeAllCachedImages;
 
 @end
 
@@ -61,15 +59,10 @@ typedef enum {
 
 +(NSNumber*) tileHash: (RMTile)tile;
 
-/// Add tile to cache
-/*! 
- \bug Calls -makeSpaceInCache for every tile/image addition. -makeSpaceInCache does a linear scan of its contents at each call.
-
- \bug Since RMTileImage has an RMTile ivar, this API should be simplified to just -addImage:.
- */
+// Add tile to cache
 -(void)addTile: (RMTile)tile WithImage: (RMTileImage*)image;
 
-/// Add another cache to the chain
+// Add another cache to the chain
 -(void)addCache: (id<RMTileCache>)cache;
 
 -(void)didReceiveMemoryWarning;

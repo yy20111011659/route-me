@@ -1,7 +1,7 @@
 //
 //  DAO.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,6 @@
 
 @class FMDatabase;
 
-/// the interface between RMDatabaseCache and FMDB
 @interface RMTileCacheDAO : NSObject {
 	FMDatabase* db;	
 }
@@ -41,6 +40,7 @@
 -(void) touchTile: (uint64_t) tileHash withDate: (NSDate*) date;
 -(void) addData: (NSData*) data LastUsed: (NSDate*)date ForTile: (uint64_t) tileHash;
 -(void) purgeTiles: (NSUInteger) count;
--(void) removeAllCachedImages;
+
+//-(NSArray*) getLocalTimetableInformationAt: (int)stopId;
 
 @end

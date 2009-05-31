@@ -2,7 +2,7 @@
 //  RMCloudMadeMapSource.h
 //  MapView
 //
-// Copyright (c) 2008-2009, Cloudmade
+// Copyright (c) 2008, Cloudmade
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -26,26 +26,14 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import "RMAbstractMercatorWebSource.h"
+#import "RMAbstractMecatorWebSource.h"
 
-/*! 
- \brief Subclass of RMAbstractMercatorWebSource  for access to CloudMade's commercial-grade tile servers.
- 
- Provides key-based access to tiles from CloudMade's servers. This is Open Street Map data, but 
- rendered much more nicely, in your choice of stylings. See http://www.cloudmade.com/ for 
- licensing terms and fees. 
- */
-@interface RMCloudMadeMapSource : RMAbstractMercatorWebSource <RMAbstractMercatorWebSource>
+
+@interface RMCloudMadeMapSource : RMAbstractMecatorWebSource <RMAbstractMecatorWebSource>
 {
-	/// see http://maps.cloudmade.com/ to sample the various CloudMade image styles
-	NSUInteger cloudmadeStyleNumber; 
-	/// unique key identifying a particular developer/CloudMade licensee. 
-	/// See http://developers.cloudmade.com/projects to obtain a CloudMade API key.
-	NSString *accessKey;
+
 }
 
-/// designated initializer
-- (id) initWithAccessKey:(NSString *)developerAccessKey
-			 styleNumber:(NSUInteger)styleNumber;
++(int)tileSideLength;
 
 @end

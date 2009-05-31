@@ -1,7 +1,7 @@
 //
 //  RMMarkerManager.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -40,17 +40,19 @@
 
 - (id)initWithContents:(RMMapContents *)mapContents;
 
+- (void) addMarker: (RMMarker*)marker;
 - (void) addMarker: (RMMarker*)marker AtLatLong:(CLLocationCoordinate2D)point;
+- (void) addDefaultMarkerAt: (CLLocationCoordinate2D)point;
 - (void) removeMarkers;
 - (void) hideAllMarkers;
 - (void) unhideAllMarkers;
 
-- (NSArray *)markers;
+- (NSArray *)getMarkers;
 - (void) removeMarker:(RMMarker *)marker;
 - (void) removeMarkers:(NSArray *)markers;
-- (CGPoint) screenCoordinatesForMarker: (RMMarker *)marker;
-- (CLLocationCoordinate2D) latitudeLongitudeForMarker: (RMMarker *) marker;
-- (NSArray *) markersWithinScreenBounds;
+- (CGPoint) getMarkerScreenCoordinate: (RMMarker *)marker;
+- (CLLocationCoordinate2D) getMarkerCoordinate2D: (RMMarker *) marker;
+- (NSArray *) getMarkersForScreenBounds;
 - (BOOL) isMarkerWithinScreenBounds:(RMMarker*)marker;
 - (BOOL) isMarker:(RMMarker*)marker withinBounds:(CGRect)rect;
 - (BOOL) managingMarker:(RMMarker*)marker;

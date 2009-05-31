@@ -1,7 +1,7 @@
 //
 //  RMTileImage.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -53,14 +53,11 @@ extern NSString * const RMMapImageLoadingCancelledNotification;
 	RMTile tile;
 	CGRect screenLocation;
 	
-	/// \deprecated appears to be cruft
 	int loadingPriorityCount;
 	
-	/// Used by cache
+	// Used by cache
 	NSDate *lastUsedTime;
 	
-	/// \bug placing the "layer" on the RMTileImage implicitly assumes that a particular RMTileImage will be used in only 
-	/// one UIView. Might see some interesting crashes if you have two RMMapViews using the same tile source.
 	// Only used when appropriate
 	CALayer *layer;
 }
@@ -72,9 +69,9 @@ extern NSString * const RMMapImageLoadingCancelledNotification;
 //- (id) increaseLoadingPriority;
 //- (id) decreaseLoadingPriority;
 
-+ (RMTileImage*)imageForTile: (RMTile) tile withURL: (NSString*)url;
-+ (RMTileImage*)imageForTile: (RMTile) tile fromFile: (NSString*)filename;
-+ (RMTileImage*)imageForTile: (RMTile) tile withData: (NSData*)data;
++ (RMTileImage*)imageWithTile: (RMTile) tile FromURL: (NSString*)url;
++ (RMTileImage*)imageWithTile: (RMTile) tile FromFile: (NSString*)filename;
++ (RMTileImage*)imageWithTile: (RMTile) tile FromData: (NSData*)data;
 
 - (void)drawInRect:(CGRect)rect;
 - (void)draw;
@@ -86,7 +83,7 @@ extern NSString * const RMMapImageLoadingCancelledNotification;
 
 - (void)cancelLoading;
 
-- (void)updateImageUsingData: (NSData*) data;
+- (void)setImageToData: (NSData*) data;
 
 - (void)touch;
 

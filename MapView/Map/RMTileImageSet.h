@@ -1,7 +1,7 @@
 //
 //  RMTileImageSet.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -56,7 +56,8 @@
 
 -(void) addTile: (RMTile) tile WithImage: (RMTileImage *)image At: (CGRect) screenLocation;
 -(void) addTile: (RMTile) tile At: (CGRect) screenLocation;
-/// Add tiles inside rect protected to bounds. Return rectangle containing bounds extended to full tile loading area
+// Add tiles inside rect protected to bounds. Return rectangle containing bounds
+// extended to full tile loading area
 -(CGRect) addTiles: (RMTileRect)rect ToDisplayIn:(CGRect)bounds;
 
 -(RMTileImage*) imageWithTile: (RMTile) tile;

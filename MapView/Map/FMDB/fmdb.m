@@ -7,22 +7,18 @@ int main (int argc, const char * argv[]) {
     
     // delete the old db.
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    [fileManager removeFileAtPath:@"/tmp/tmp.db" handler:nil];
+    [fileManager removeItemAtPath:@"/tmp/tmp.db" error:NULL];
     
     FMDatabase* db = [FMDatabase databaseWithPath:@"/tmp/tmp.db"];
     if (![db open]) {
-        RMLog(@"Could not open db.");
-        [pool release];
+        NSLog(@"Could not open db.");
         return 0;
     }
-    
-    // kind of experimentalish.
-    [db setShouldCacheStatements:YES];
     
     // create a bad statement, just to test the error code.
     [db executeUpdate:@"blah blah blah"];
     if ([db hadError]) {
-        RMLog(@"Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);
+        NSLog(@"Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);
     }
     
     // but of course, I don't bother checking the error codes below.
@@ -44,28 +40,10 @@ int main (int argc, const char * argv[]) {
     [db commit];
     
     
-    
-    // do it again, just because
-    [db beginTransaction];
-    i = 0;
-    while (i++ < 20) {
-        [db executeUpdate:@"insert into test (a, b, c, d, e) values (?, ?, ?, ?, ?)" ,
-         @"hi again'", // look!  I put in a ', and I'm not escaping it!
-         [NSString stringWithFormat:@"number %d", i],
-         [NSNumber numberWithInt:i],
-         [NSDate date],
-         [NSNumber numberWithFloat:2.2f]];
-    }
-    [db commit];
-    
-    
-    
-    
-    
     FMResultSet *rs = [db executeQuery:@"select rowid,* from test where a = ?", @"hi'"];
     while ([rs next]) {
         // just print out what we've got in a number of formats.
-        RMLog(@"%d %@ %@ %@ %@ %f %f",
+        NSLog(@"%d %@ %@ %@ %@ %f %f",
               [rs intForColumn:@"c"],
               [rs stringForColumn:@"b"],
               [rs stringForColumn:@"a"],
@@ -95,31 +73,27 @@ int main (int argc, const char * argv[]) {
             
             // let's look at our fancy image that we just wrote out..
             system("/usr/bin/open /tmp/compass.icns");
-            
-            // ye shall read the header for this function, or suffer the consequences.
-            d = [rs dataNoCopyForColumn:@"b"];
-            [d writeToFile:@"/tmp/compass_data_no_copy.icns" atomically:NO];
-            system("/usr/bin/open /tmp/compass_data_no_copy.icns");
         }
         else {
-            RMLog(@"Could not select image.");
+            NSLog(@"Could not select image.");
         }
         
         [rs close];
         
     }
     else {
-        RMLog(@"Can't find compass image..");
+        NSLog(@"Can't find compass image..");
     }
     
     
     // test out the convenience methods in +Additions
     [db executeUpdate:@"create table t1 (a integer)"];
-    [db executeUpdate:@"insert into t1 values (?)", [NSNumber numberWithInt:5]];
-    int a = [db intForQuery:@"select a from t1 where a = ?", [NSNumber numberWithInt:5]];
+    [db executeUpdate:@"insert into t1 values (?)", [NSNumber numberWithUnsignedInteger:5]];
+    int a = [db intForQuery:@"select a from t1 where a = ?", [NSNumber numberWithUnsignedInteger:5]];
     if (a != 5) {
-        RMLog(@"intForQuery didn't work (a != 5)");
+        NSLog(@"intForQuery didn't work (a != 5)");
     }
+    
     
     // test the busy rety timeout schtuff.
     
@@ -131,16 +105,16 @@ int main (int argc, const char * argv[]) {
     rs = [newDb executeQuery:@"select rowid,* from test where a = ?", @"hi'"];
     [rs next]; // just grab one... which will keep the db locked.
     
-    RMLog(@"Testing the busy timeout");
+    NSLog(@"Testing the busy timeout");
     
     BOOL success = [db executeUpdate:@"insert into t1 values (5)"];
     
     if (success) {
-        RMLog(@"Whoa- the database didn't stay locked!");
+        NSLog(@"Whoa- the database didn't stay locked!");
         return 7;
     }
     else {
-        RMLog(@"Hurray, our timeout worked");
+        NSLog(@"Hurray, our timeout worked");
     }
     
     [rs close];
@@ -148,130 +122,12 @@ int main (int argc, const char * argv[]) {
     
     success = [db executeUpdate:@"insert into t1 values (5)"];
     if (!success) {
-        RMLog(@"Whoa- the database shouldn't be locked!");
+        NSLog(@"Whoa- the database shouldn't be locked!");
         return 8;
     }
     else {
-        RMLog(@"Hurray, we can insert again!");
+        NSLog(@"Hurray, we can insert again!");
     }
-    
-    
-    
-    // test some nullness.
-    [db executeUpdate:@"create table t2 (a integer, b integer)"];
-    
-    if (![db executeUpdate:@"insert into t2 values (?, ?)", nil, [NSNumber numberWithInt:5]]) {
-        RMLog(@"UH OH, can't insert a nil value for some reason...");
-    }
-    
-    
-    
-    
-    rs = [db executeQuery:@"select * from t2"];
-    while ([rs next]) {
-        NSString *a = [rs stringForColumnIndex:0];
-        NSString *b = [rs stringForColumnIndex:1];
-        
-        if (a != nil) {
-            RMLog(@"%s:%d", __FUNCTION__, __LINE__);
-            RMLog(@"OH OH, PROBLEMO!");
-            return 10;
-        }
-        else {
-            RMLog(@"YAY, NULL VALUES");
-        }
-        
-        if (![b isEqualToString:@"5"]) {
-            RMLog(@"%s:%d", __FUNCTION__, __LINE__);
-            RMLog(@"OH OH, PROBLEMO!");
-            return 10;
-        }
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    // test some inner loop funkness.
-    [db executeUpdate:@"create table t3 (a somevalue)"];
-    
-    
-    // do it again, just because
-    [db beginTransaction];
-    i = 0;
-    while (i++ < 20) {
-        [db executeUpdate:@"insert into t3 (a) values (?)" , [NSNumber numberWithInt:i]];
-    }
-    [db commit];
-    
-    
-    
-    
-    rs = [db executeQuery:@"select * from t3"];
-    while ([rs next]) {
-        int foo = [rs intForColumnIndex:0];
-        
-        int newVal = foo + 100;
-        
-        [db executeUpdate:@"update t3 set a = ? where a = ?" , [NSNumber numberWithInt:newVal], [NSNumber numberWithInt:foo]];
-        
-        
-        FMResultSet *rs2 = [db executeQuery:@"select a from t3 where a = ?", [NSNumber numberWithInt:newVal]];
-        [rs2 next];
-        
-        if ([rs2 intForColumnIndex:0] != newVal) {
-            RMLog(@"Oh crap, our update didn't work out!");
-            return 9;
-        }
-        
-        [rs2 close];
-    }
-    
-    
-    // NSNull tests
-    [db executeUpdate:@"create table nulltest (a text, b text)"];
-    
-    [db executeUpdate:@"insert into nulltest (a, b) values (?, ?)" , [NSNull null], @"a"];
-    [db executeUpdate:@"insert into nulltest (a, b) values (?, ?)" , nil, @"b"];
-    
-    rs = [db executeQuery:@"select * from nulltest"];
-    
-    while ([rs next]) {
-        
-        NSString *a = [rs stringForColumnIndex:0];
-        NSString *b = [rs stringForColumnIndex:1];
-        
-        if (!b) {
-            RMLog(@"Oh crap, the nil / null inserts didn't work!");
-            return 10;
-        }
-        
-        if (a) {
-            RMLog(@"Oh crap, the nil / null inserts didn't work (son of error message)!");
-            return 11;
-        }
-        else {
-            RMLog(@"HURRAH FOR NSNULL (and nil)!");
-        }
-    }
-    
-    // print out some stats if we are using cached statements.
-    if ([db shouldCacheStatements]) {
-        
-        NSEnumerator *e = [[db cachedStatements] objectEnumerator];;
-        FMStatement *statement;
-        
-        while ((statement = [e nextObject])) {
-        	RMLog(@"%@", statement);
-        }
-    }
-    RMLog(@"That was version %@ of sqlite", [FMDatabase sqliteLibVersion]);
-    
     
     [db close];
     

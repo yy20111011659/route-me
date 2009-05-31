@@ -1,7 +1,7 @@
 //
 //  RMDatabaseCache.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -46,8 +46,7 @@
 	
 	if ([paths count] > 0) // Should only be one...
 	{
-		/// \bug magic string literals
-		NSString *filename = [NSString stringWithFormat:@"Map%@.sqlite", [source uniqueTilecacheKey]];
+		NSString *filename = [NSString stringWithFormat:@"Map%@.sqlite", [source description]];
 		
 		return [[paths objectAtIndex:0] stringByAppendingPathComponent:filename];
 	}
@@ -59,7 +58,7 @@
 	if (![super init])
 		return nil;
 	
-	//	RMLog(@"%d items in DB", [[DAO sharedManager] count]);
+	//	NSLog(@"%d items in DB", [[DAO sharedManager] count]);
 	
 	self.databasePath = path;
 	dao = [[RMTileCacheDAO alloc] initWithDatabase:path];
@@ -117,7 +116,6 @@
 -(void) addImageData: (NSNotification *)notification
 {
 	NSData *data = [[notification userInfo] objectForKey:@"data"];
-	/// \bug magic string literals
 	RMTileImage *image = (RMTileImage*)[notification object];
 	
 	@synchronized (self) {
@@ -129,7 +127,7 @@
 			}
 		}
 	
-		[dao addData:data LastUsed:[image lastUsedTime] ForTile:RMTileKey([image tile])];
+		[dao addData:data LastUsed:[image lastUsedTime] ForTile:RMTileHash([image tile])];
 	}
 	
 	[[NSNotificationCenter defaultCenter] removeObserver:self
@@ -137,38 +135,36 @@
 												  object:image];
 	
 	
-//	RMLog(@"%d items in DB", [dao count]);
+//	NSLog(@"%d items in DB", [dao count]);
 }
 
 -(RMTileImage*) cachedImage:(RMTile)tile
 {
-//	RMLog(@"Looking for cached image in DB");
+//	NSLog(@"Looking for cached image in DB");
 
 	NSData *data = nil;
 	
 	@synchronized (self) {
 	
-		data = [dao dataForTile:RMTileKey(tile)];
+		data = [dao dataForTile:RMTileHash(tile)];
 		if (data == nil)
 			return nil;
 	
 		if (capacity != 0 && purgeStrategy == RMCachePurgeStrategyLRU) {
-			[dao touchTile: RMTileKey(tile) withDate: [NSDate date]];
+			[dao touchTile: RMTileHash(tile) withDate: [NSDate date]];
 		}
 		
 	}
 	
-	RMTileImage *image = [RMTileImage imageForTile:tile withData:data];
-//	RMLog(@"DB cache hit for tile %d %d %d", tile.x, tile.y, tile.zoom);
+	RMTileImage *image = [RMTileImage imageWithTile:tile FromData:data];
+//	NSLog(@"DB cache hit for tile %d %d %d", tile.x, tile.y, tile.zoom);
 	return image;
 }
 
-/// \bug FIXME: shouldn't reinitialize database in a low-memory warning
 -(void)didReceiveMemoryWarning
 {
-	LogMethod();		
 	if (self.databasePath==nil) {
-		RMLog(@"unknown db path, unable to reinitialize dao!");
+		NSLog(@"unknown db path, unable to reinitialize dao!");
 		return;
 	}
 
@@ -177,11 +173,6 @@
 		dao = [[RMTileCacheDAO alloc] initWithDatabase:self.databasePath];
 	}
 
-}
-
--(void) removeAllCachedImages 
-{
-	[dao removeAllCachedImages];
 }
 
 @end

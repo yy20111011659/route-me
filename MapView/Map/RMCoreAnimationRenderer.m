@@ -1,7 +1,7 @@
 //
 //  RMCoreAnimationRenderer.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -24,7 +24,7 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
-#import "RMGlobalConstants.h"
+
 #import "RMCoreAnimationRenderer.h"
 #import <QuartzCore/QuartzCore.h>
 #import "RMTile.h"
@@ -45,7 +45,7 @@
 	//       strange data.
 
 	layer = [[CAScrollLayer layer] retain];
-	layer.anchorPoint = CGPointZero;
+	layer.anchorPoint = CGPointMake(0.0f, 0.0f);
 	layer.masksToBounds = YES;
 	// If the frame is set incorrectly here, it will be fixed when setRenderer is called in RMMapContents
 	layer.frame = [content screenBounds];
@@ -65,7 +65,6 @@
 	[super dealloc];
 }
 
-/// \bug this is a no-op
 -(void)mapImageLoaded: (NSNotification*)notification
 {
 }
@@ -75,7 +74,7 @@
 {
 	if (theLayer == layer)
 	{
-//		RMLog(@"base layer key: %@", key);
+//		NSLog(@"base layer key: %@", key);
 		return nil;
 	}
 	
@@ -86,7 +85,7 @@
 //		return (id<CAAction>)[NSNull null];
 	else
 	{
-//		RMLog(@"key: %@", key);
+//		NSLog(@"key: %@", key);
 		
 		return nil;
 	}
@@ -94,10 +93,10 @@
 
 - (void)tileAdded: (RMTile) tile WithImage: (RMTileImage*) image
 {
-//	RMLog(@"tileAdded: %d %d %d at %f %f %f %f", tile.x, tile.y, tile.zoom, image.screenLocation.origin.x, image.screenLocation.origin.y,
+//	NSLog(@"tileAdded: %d %d %d at %f %f %f %f", tile.x, tile.y, tile.zoom, image.screenLocation.origin.x, image.screenLocation.origin.y,
 //		  image.screenLocation.size.width, image.screenLocation.size.height);
 	
-//	RMLog(@"tileAdded");
+//	NSLog(@"tileAdded");
 	[image makeLayer];
 	
 	CALayer *sublayer = [image layer];
@@ -111,10 +110,15 @@
 {
 	RMTileImage *image = [[content imagesOnScreen] imageWithTile:tile];
 	
-//	RMLog(@"tileRemoved: %d %d %d at %f %f %f %f", tile.x, tile.y, tile.zoom, image.screenLocation.origin.x, image.screenLocation.origin.y,
+//	NSLog(@"tileRemoved: %d %d %d at %f %f %f %f", tile.x, tile.y, tile.zoom, image.screenLocation.origin.x, image.screenLocation.origin.y,
 //		  image.screenLocation.size.width, image.screenLocation.size.height);
 	
 	[[image layer] removeFromSuperlayer];
+}
+
+-(NSString*) description
+{
+	return @"CoreAnimation map renderer";
 }
 
 - (void)setFrame:(CGRect)frame

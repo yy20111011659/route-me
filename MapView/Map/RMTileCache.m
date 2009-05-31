@@ -1,7 +1,7 @@
 //
 //  RMTileCache.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -57,7 +57,6 @@
 	if (cacheCfg==nil)
 	{
 		cacheCfg = [NSArray arrayWithObjects:
-					/// \bug magic string literals
 			[NSDictionary dictionaryWithObject: @"memory-cache" forKey: @"type"],
 			[NSDictionary dictionaryWithObject: @"db-cache"     forKey: @"type"],
 			nil
@@ -71,7 +70,6 @@
 		@try {
 			NSString* type = [cfg valueForKey:@"type"];
 			
-			/// \bug magic string literals
 			if ([@"memory-cache" isEqualToString: type]) 
 				newCache = [self newMemoryCacheWithConfig: cfg];
 
@@ -82,11 +80,11 @@
 				[caches addObject: newCache];
 				[newCache release];
 			} else {
-				RMLog(@"failed to create cache of type %@", type);
+				NSLog(@"failed to create cache of type %@", type);
 			}
 		}
 		@catch (NSException * e) {
-			RMLog(@"*** configuration error: %@", [e reason]);
+			NSLog(@"*** configuration error: %@", [e reason]);
 		}
 				
 	}
@@ -106,7 +104,7 @@
 
 +(NSNumber*) tileHash: (RMTile)tile
 {
-	return [NSNumber numberWithUnsignedLongLong: RMTileKey(tile)];
+	return [NSNumber numberWithUnsignedLongLong: RMTileHash(tile)];
 }
 
 // Returns the cached image if it exists. nil otherwise.
@@ -135,25 +133,16 @@
 
 -(void)didReceiveMemoryWarning
 {
-	LogMethod();		
 	for (id<RMTileCache> cache in caches)
 	{
 		[cache didReceiveMemoryWarning];
 	}
 }
 
--(void) removeAllCachedImages
-{
-	for (id<RMTileCache> cache in caches)
-	{
-		[cache removeAllCachedImages];
-	}
-}
 @end
 
 @implementation RMTileCache ( Configuration )
 
-/// \bug magic numbers and strings
 - (id<RMTileCache>) newMemoryCacheWithConfig: (NSDictionary*) cfg
 {
 	NSNumber* capacity = [cfg objectForKey:@"capacity"];
@@ -161,12 +150,10 @@
 	return [[RMMemoryCache alloc] initWithCapacity: [capacity intValue]];	
 }
 
-/// \bug magic numbers and strings
 - (id<RMTileCache>) newDatabaseCacheWithConfig: (NSDictionary*) cfg tileSource: (id<RMTileSource>) theTileSource
 {
 	BOOL useCacheDir = NO;
-	RMCachePurgeStrategy strategy = RMCachePurgeStrategyFIFO;
-	/// \bug magic numbers
+	RMCachePurgeStrategy strategy = RMCachePurgeStrategyFIFO;				
 	NSUInteger capacity = 1000;
 	NSUInteger minimalPurge = capacity / 10;
 	
@@ -179,7 +166,7 @@
 			capacity =  value;
 			minimalPurge = MIN(1,capacity / 10);
 		} else 
-			RMLog(@"illegal value for capacity: %d", value);
+			NSLog(@"illegal value for capacity: %d", value);
 	}
 	
 	NSString* strategyStr = [cfg objectForKey:@"strategy"];
@@ -188,17 +175,16 @@
 		if ([strategyStr caseInsensitiveCompare:@"LRU"] == NSOrderedSame) strategy = RMCachePurgeStrategyLRU;
 	}
 	
-	/// \bug magic string literals
 	NSNumber* useCacheDirNumber = [cfg objectForKey:@"useCachesDirectory"];
 	if (useCacheDirNumber!=nil) useCacheDir =  [useCacheDirNumber boolValue];
 	
 	NSNumber* minimalPurgeNumber = [cfg objectForKey:@"minimalPurge"];
 	if (minimalPurgeNumber != nil && capacity != 0) {
-		NSUInteger value = [minimalPurgeNumber unsignedIntValue];
+		NSInteger value = [minimalPurgeNumber intValue];
 		if (value > 0 && value<=capacity) 
 			minimalPurge = value;
 		else {
-			RMLog(@"minimalPurge must be at least one and at most the cache capacity");
+			NSLog(@"minimalPurge must be at least one and at most the cache capacity");
 		}
 	}
 	

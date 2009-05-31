@@ -1,7 +1,7 @@
 //
 //  RMWebTileImage.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,14 +28,13 @@
 #import <Foundation/Foundation.h>
 #import "RMTileImage.h"
 
-/// RMTileImage subclass: a tile image loaded from a URL.
 @interface RMWebTileImage : RMTileImage {
-	/// Before image is completely loaded a proxy image can be used.
-	/// This will typically be a boilerplate image or a zoomed in or zoomed out version of another image.
+	// Before image is completely loaded a proxy image can be used.
+	// This will typically be a boilerplate image or a zoomed in or zoomed out version of another image.
 	RMTileImage *proxy;
 	
 	NSURLConnection *connection;
-	/// Data accumulator during loading.
+	// Data accumulator during loading.
 	NSMutableData *data;
 }
 
