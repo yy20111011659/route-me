@@ -56,6 +56,8 @@ typedef struct {
 	RMGestureDetails lastGesture;
 	float decelerationFactor;
 	BOOL deceleration;
+	BOOL isTouched;
+	BOOL isMultiTouch;
 }
 
 // Any other functions you need to manipulate the mapyou can access through this
@@ -77,8 +79,8 @@ typedef struct {
 - (void)moveToXYPoint: (RMXYPoint)aPoint;
 
 - (void)moveBy: (CGSize) delta;
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) aPoint;
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) aPoint animated:(BOOL)animated;
+- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) aPoint;
+- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) aPoint animated:(BOOL)animated;
 
 - (void)didReceiveMemoryWarning;
 

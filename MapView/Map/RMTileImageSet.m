@@ -35,6 +35,8 @@
 
 #import "RMMercatorToTileProjection.h"
 
+#define NSLog(a,...)
+
 @implementation RMTileImageSet
 
 @synthesize delegate, tileSource;
@@ -50,6 +52,12 @@
 	return self;
 }
 
+
+- (NSString *)description;
+{
+	return [images description];
+}
+
 -(void) dealloc
 {
 	[self removeAllTiles];
@@ -58,7 +66,7 @@
 	[super dealloc];
 }
 
--(void) removeTile: (RMTile) tile
+-(void)removeTile:(RMTile)tile forImage:(RMTileImage *)image
 {
 	if (RMTileIsDummy(tile))
 	{
@@ -69,14 +77,32 @@
 	RMTileImage *dummyTile = [RMTileImage dummyTile:tile];
 	if ([images countForObject:dummyTile] == 1)
 	{
-		if ([delegate respondsToSelector: @selector(tileRemoved:)])
-		{
-			[delegate tileRemoved:tile];
-		}
-
-		[[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageRemovedFromScreenNotification object:[self imageWithTile:tile]];
+		NSLog(@"Nuking: %@",[image description]);
+		[image setMarked:YES];
+		[image cancelLoading];
+		[image removeFromMap];
+	} else {
+		NSLog(@"Skipping: %@",[image description]);
 	}
+	[images removeObject:dummyTile];
+}
 
+-(void) removeTile: (RMTile) tile
+{
+	if (RMTileIsDummy(tile))
+	{
+		NSLog(@"attempted to remove dummy tile...??");
+		return;
+	}
+	RMTileImage *dummyTile = [RMTileImage dummyTile:tile];
+	if ([images countForObject:dummyTile] == 1)
+	{
+		RMTileImage *image = [self imageWithTile:tile];
+		NSLog(@"Nuking: %@",[image description]);
+		[image setMarked:YES];
+		[image cancelLoading];
+		[image removeFromMap];
+	}
 	[images removeObject:dummyTile];
 }
 
@@ -107,6 +133,143 @@
 	}
 }
 
+-(void) removeTilesOutsideOf: (RMTileRect)rect
+{
+	RMTileImage *img;
+	RMTile tile;
+	uint32_t x, y;
+	uint32_t minx, maxx, miny, maxy;
+	float min;
+	int dz, imgDz, rectDz;
+	short currentZoom = rect.origin.tile.zoom;
+
+	min = rect.origin.tile.x + rect.origin.offset.x;
+	minx = floorf(min);
+	maxx = floorf(min + rect.size.width);
+	min = rect.origin.tile.y + rect.origin.offset.y;
+	miny = floorf(min);
+	maxy = floorf(min + rect.size.height);
+
+	
+//NSLog(@"In %s, rect = {%u, %u}, %hi, %@; bounds == {%u..%u, %u..%u}.", __FUNCTION__, rect.origin.tile.x, rect.origin.tile.y, rect.origin.tile.zoom, NSStringFromCGRect(CGRectMake(rect.origin.offset.x, rect.origin.offset.y, rect.size.width, rect.size.height)), minx, maxx, miny, maxy);
+	for(img in [images allObjects])
+	{
+		if (0 && [img marked]) {
+			// this image got deleted elsewhere, so we ignore it
+			continue;
+		}
+		tile = img.tile;
+		x = tile.x;
+		y = tile.y;
+		dz = tile.zoom - currentZoom;
+		if(dz < 0)
+		{
+			// Tile is too large for current zoom level
+			imgDz = 0;
+			rectDz = -dz;
+		}
+		else
+		{
+			// Tile is too small & detailed for current zoom level
+			imgDz = dz;
+			rectDz = 0;
+		}
+		if(
+			x >> imgDz > maxx >> rectDz || x >> imgDz < minx >> rectDz ||
+			y >> imgDz > maxy >> rectDz || y >> imgDz < miny >> rectDz
+		) {
+NSLog(@"In %s, removing tile at {%u, %u}, %hi.", __FUNCTION__, tile.x, tile.y, tile.zoom);
+			[self removeTile:tile forImage:img];
+		} else 
+		// we should want to prune other images if the current image matches the
+		// zoom level and it is loaded, and we allowed it to stay on screen, 
+		// in which case, we should nuke anything else that looks to be on its same
+		// spot
+#if 0
+#warning choosing to prune competing tiles		
+		if(dz == 0 && [img isLoaded])
+		{
+			[self removeCompetingTiles:tile usingZoom:currentZoom];
+		}
+#else 
+#warning choosing to prune any tile that doesn't belong with this zoom
+		if (dz != 0) {
+			// tile doesn't match our zoom, delete it
+			NSLog(@"Expecting nuke: %@",[img description]);
+			[self removeTile:tile forImage:img];
+		}
+#endif		
+	}
+}
+
+- (void)removeCompetingTiles:(RMTile)newTile usingZoom:(short)zoom
+{
+	RMTileImage *img;
+	RMTile oldTile;
+	int dz, newDz, oldDz;
+	int removalCount = 0;
+	// this is a search routine attempting to find the 
+	// old tile that has the same x,y of the new tile
+	// at a given zoom... if it finds the old tile it 
+	// replaces it with the new tile... someone didn't
+	// know what a hashtable was
+	unsigned newAbsZ = abs(zoom-newTile.zoom);
+	for(img in [images allObjects])
+	{
+		if ([img marked]) {
+			// the matching tile was deleted, ignore it
+			continue;
+		}
+		oldTile = img.tile;
+		int oldAbsZ = abs(zoom-oldTile.zoom);
+#ifdef OLD_AND_BUSTED
+// if tiles load out of order, this means that the bad res tile
+// is going to come in and skip over the good res tile... instead
+// we want to walk through the tiles until we find our compatriot
+// and then examine the two tiles, and discard the worse one	
+		if(oldAbsZ <= newAbsZ)
+		{
+			continue;
+		}
+#endif		
+		dz = oldTile.zoom - newTile.zoom;
+		if(dz < 0){
+			oldDz = 0;
+			newDz = -dz;
+		} else {
+			oldDz = dz;
+			newDz = 0;
+		}
+		if(oldTile.x >> oldDz == newTile.x >> newDz &&
+		   oldTile.y >> oldDz == newTile.y >> newDz)
+		{
+			removalCount++;
+#ifdef OLD_AND_BUSTED
+			[self removeTile:oldTile];
+#else
+			// we need to compare the two tiles and discard the worse one
+			if (oldAbsZ < newAbsZ){
+				// discard new, old is closer to the zoom
+				[self removeTile:newTile];
+			} else if (oldAbsZ > newAbsZ) {
+				[self removeTile:oldTile];
+			} else {
+				// we found ourselves, don't remove us
+				// but continue to search
+				continue;
+			}
+			// we should only remove on a one to one basis
+			// so we don't need to keep looping through the whole
+			// thing... furthermore we're going to mutate our
+			// list while iterating it
+			break;
+#endif
+		}
+	}
+
+//	NSLog(@"Removed %d from stack",removalCount);
+
+}
 
 -(void) removeAllTiles
 {
@@ -132,39 +295,32 @@
  return NO;
  }*/
 
--(void) addTile: (RMTile) tile WithImage: (RMTileImage *)image At: (CGRect) screenLocation
-{
-	image.screenLocation = screenLocation;
-	[images addObject:image];
-	
-	if (!RMTileIsDummy(image.tile))
-	{
-		if([delegate respondsToSelector:@selector(tileAdded:WithImage:)])
-		{
-			[delegate tileAdded:tile WithImage:image];
-		}
 
-		[[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageAddedToScreenNotification object:image];
-	}
-}
-
--(void) addTile: (RMTile) tile At: (CGRect) screenLocation
+-(void)addTile:(RMTile)tile at:(CGRect) screenLocation
 {
 	//	NSLog(@"addTile: %d %d", tile.x, tile.y);
-	
 	RMTileImage *dummyTile = [RMTileImage dummyTile:tile];
 	RMTileImage *tileImage = [images member:dummyTile];
 	
 	if (tileImage != nil)
 	{
+#warning testing... so far so good, seems to fix everything		
+		return;
+		
 		[tileImage setScreenLocation:screenLocation];
 		[images addObject:dummyTile];
 	}
 	else
 	{
 		RMTileImage *image = [tileSource tileImage:tile];
-		if (image != nil)
-			[self addTile:tile WithImage:image At:screenLocation];
+		if (image != nil) {
+			image.screenLocation = screenLocation;
+			[images addObject:image];
+			if (!RMTileIsDummy(image.tile))
+			{
+				[delegate tileAdded:tile WithImage:image];
+			}
+		}
 	}
 }
 
@@ -178,7 +334,8 @@
 	t.zoom = rect.origin.tile.zoom;
 	
 	// ... Should be the same as equivalent calculation for height.
-	float pixelsPerTile = bounds.size.width / rect.size.width;
+	double pixelsPerTile = bounds.size.width;
+	pixelsPerTile /= rect.size.width;
 	
 	CGRect screenLocation;
 	screenLocation.size.width = pixelsPerTile;
@@ -202,7 +359,7 @@
 			screenLocation.origin.x = bounds.origin.x + (t.x - (rect.origin.offset.x + rect.origin.tile.x)) * pixelsPerTile;
 			screenLocation.origin.y = bounds.origin.y + (t.y - (rect.origin.offset.y + rect.origin.tile.y)) * pixelsPerTile;
 			
-			[self addTile:normalisedTile At:screenLocation];
+			[self addTile:normalisedTile at:screenLocation];
 		}
 	}
 	
@@ -243,7 +400,7 @@
 	}
 }
 
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center
+- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) center
 {
 	for (RMTileImage *image in images)
 	{
@@ -302,6 +459,5 @@
 		[image cancelLoading];
 	}
 }
-
 
 @end

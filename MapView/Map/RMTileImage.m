@@ -26,19 +26,19 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import "RMTileImage.h"
-#import "RMWebTileImage.h"
 #import "RMTileLoader.h"
-#import "RMFileTileImage.h"
-#import "RMTileCache.h"
 #import "RMPixel.h"
+#import "RMMapRenderer.h"
+
 #import <QuartzCore/QuartzCore.h>
 
-NSString * const RMMapImageLoadedNotification = @"MapImageLoaded";
-NSString * const RMMapImageLoadingCancelledNotification = @"MapImageLoadingCancelled";
+#define NSLog(a,...) 
 
 @implementation RMTileImage
 
-@synthesize tile, layer, image, lastUsedTime;
+@synthesize tile, layer, image;
+
+@synthesize marked;
 
 - (id) initWithTile: (RMTile)_tile
 {
@@ -48,26 +48,32 @@ NSString * const RMMapImageLoadingCancelledNotification = @"MapImageLoadingCance
 	tile = _tile;
 	image = nil;
 	layer = nil;
-	loadingPriorityCount = 0;
-	lastUsedTime = nil;
-	dataPending = nil;
 	screenLocation = CGRectMake(0, 0, 0, 0);
-	
-	[self touch];
-	
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(tileRemovedFromScreen:)
-												 name:RMMapImageRemovedFromScreenNotification object:self];
 		
 	return self;
 }
-	 
--(void) tileRemovedFromScreen: (NSNotification*) notification
+	
+
+-(id)initWithTile:(RMTile) _tile fromFile: (NSString*) file
 {
-	[self cancelLoading];
+	if (![self initWithTile:_tile]){
+		return nil;
+	}
+	image = [[UIImage alloc] initWithContentsOfFile:file];	
+	return self;
 }
 
--(id) init
+- (void)removeFromMap;
+{
+#warning implement this cleaner 	
+	[layer retain];
+#define LAYER_CLEANUP_DELAY	0.01
+	[layer performSelector:@selector(removeFromSuperlayer) withObject:nil
+				afterDelay:LAYER_CLEANUP_DELAY];
+	[layer performSelector:@selector(release) withObject:nil afterDelay:LAYER_CLEANUP_DELAY+1];
+}
+
+- init
 {
 	[NSException raise:@"Invalid initialiser" format:@"Use the designated initialiser for TileImage"];
 	[self release];
@@ -76,141 +82,104 @@ NSString * const RMMapImageLoadingCancelledNotification = @"MapImageLoadingCance
 
 + (RMTileImage*) dummyTile: (RMTile)tile
 {
-	return [[[RMTileImage alloc] initWithTile:tile] autorelease];
+	return [[[self alloc] initWithTile:tile] autorelease];
 }
 
 - (void)dealloc
 {
-//	NSLog(@"Removing tile image %d %d %d", tile.x, tile.y, tile.zoom);
+	NSLog(@"Removing tile image %d %d %d", tile.x, tile.y, tile.zoom);
+	// no point in trying to cancel here... if we were still
+	// loading then the cache would have a reference to us
+	// so we couldn't get into dealloc
+	//	[self cancelLoading];
 	
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
-
-//	if (image)
-//		CGImageRelease(image);
-
 	[image release]; image = nil;
 	[layer release]; layer = nil;
-	[dataPending release]; dataPending = nil;
-	[lastUsedTime release]; lastUsedTime = nil;
+	[key release];
+	key = nil;
 	
 	[super dealloc];
 }
-/*
-- (id) increaseLoadingPriority
-{
-	loadingPriorityCount++;
-	return self;
-}
-- (id) decreaseLoadingPriority
-{
-	loadingPriorityCount--;
-	if (loadingPriorityCount == 0)
-		[self cancelLoading];
-	return self;
-}*/
 
 - (void)drawInRect:(CGRect)rect
 {
 	[image drawInRect:rect];
-/*	if (image != NULL)
-	{
-		CGContextRef context = UIGraphicsGetCurrentContext();
-
-		NSLog(@"image width = %f", CGImageGetWidth(image));
-		//		CGContextClipToRect(context, rect);
-		CGContextDrawImage(context, rect, image);
-	}*/
 }
 
 -(void)draw
 {
-	[self drawInRect:screenLocation];
+	[image drawInRect:screenLocation];
 }
 
-+ (RMTileImage*)imageWithTile: (RMTile) _tile FromURL: (NSString*)url
++ (RMTileImage*)imageWithTile: (RMTile) _tile fromURL: (NSString*)url
 {
-	return [[[RMWebTileImage alloc] initWithTile:_tile FromURL:url] autorelease];
+	return [[[RMTileImage alloc] initWithTile:_tile fromURL:url] autorelease];
 }
 
-+ (RMTileImage*)imageWithTile: (RMTile) _tile FromFile: (NSString*)filename
++ (RMTileImage*)imageWithTile: (RMTile) _tile fromFile: (NSString*)filename
 {
-	return [[[RMFileTileImage alloc] initWithTile: _tile FromFile:filename] autorelease];
+	return [[[self alloc] initWithTile: _tile fromFile:filename] autorelease];
 }
 
-+ (RMTileImage*)imageWithTile: (RMTile) tile FromData: (NSData*)data
+
+- (NSString *)description;
 {
-	RMTileImage *image = [[RMTileImage alloc] initWithTile:tile];
-	[image setImageToData:data];
-	return [image autorelease];
+	return [NSString stringWithFormat:@"((RMTileImage *)%p) %@: [%c%c%c] X=%d Y=%d zoom=%d",self,
+			key,
+			marked?'x':' ',
+			isLoading?'+':' ',
+			isLoaded?'*':' ',
+			tile.x<<(18-tile.zoom),
+			tile.y<<(18-tile.zoom),
+			tile.zoom]; 
 }
 
 -(void) cancelLoading
 {
-	[[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadingCancelledNotification
-														object:self];
-}
-
-- (void) loadPendingData: (NSNotification*)notification
-{
-	if (dataPending != nil)
-	{
-		[self setImageToData:dataPending];
-		[dataPending release];
-		dataPending = nil;
-		
-//		NSLog(@"loadPendingData");
+	if (isLoading) {
+		[RMTileFactory cancelImage:key forClient:self];
 	}
-	
-	[[NSNotificationCenter defaultCenter] removeObserver:self name:RMResumeExpensiveOperations object:nil];
 }
 
-- (void)setImageToData: (NSData*) data
+- (void)addToLayer:(CALayer *)superlayer
 {
-	if ([RMMapContents performExpensiveOperations] == NO)
-	{
-//		NSLog(@"storing data for later loading");
-		[data retain];
-		[dataPending release];
-		dataPending = data;
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadPendingData:) name:RMResumeExpensiveOperations object:nil];
+	[superlayer insertSublayer:layer atIndex:0];
+}
+
+- (void)setImage:(UIImage *)_image;
+{
+	if (!_image) {
 		return;
 	}
-
-	UIImage *tileImage = [[UIImage alloc] initWithData:data];
-
-	if (layer == nil)
-	{
-		image = [tileImage retain];
+	isLoaded = YES;
+	if (layer) {
+		id delegate = [layer delegate];
+		layer.delegate = nil;
+		layer.contents = (id)[_image CGImage];
+		layer.delegate = delegate;
+		if ([delegate respondsToSelector:@selector(tileImageDidLoad:)]){
+			[delegate performSelector:@selector(tileImageDidLoad:) withObject:self];
+		}
+	} else {
+		image = [_image retain];
 	}
-	else
-	{
-		CGImageRef cgImage = [tileImage CGImage];
-		layer.contents = (id)cgImage;
-	}
+	[[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadedNotification 
+														object:self];
 	
-	[tileImage release];
-	
-	NSDictionary *d = [NSDictionary dictionaryWithObject:data forKey:@"data"];
-	[[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadedNotification
-														object:self
-													  userInfo:d];
 }
 
 - (BOOL)isLoaded
 {
+	return isLoaded;
+/*	
 	return image != nil
 		|| (layer != nil && layer.contents != NULL);
+*/ 
 }
 
 - (NSUInteger)hash
 {
 	return (NSUInteger)RMTileHash(tile);
-}
-
--(void) touch
-{
-	[lastUsedTime release];
-	lastUsedTime = [[NSDate date] retain];
 }
 
 - (BOOL)isEqual:(id)anObject
@@ -221,6 +190,9 @@ NSString * const RMMapImageLoadingCancelledNotification = @"MapImageLoadingCance
 	return RMTilesEqual(tile, [(RMTileImage*)anObject tile]);
 }
 
+
+
+
 - (void)makeLayer
 {
 	if (layer == nil)
@@ -230,23 +202,6 @@ NSString * const RMMapImageLoadingCancelledNotification = @"MapImageLoadingCance
 		layer.anchorPoint = CGPointMake(0.0f, 0.0f);
 		layer.bounds = CGRectMake(0, 0, screenLocation.size.width, screenLocation.size.height);
 		layer.position = screenLocation.origin;
-		
-		NSMutableDictionary *customActions=[NSMutableDictionary dictionaryWithDictionary:[layer actions]];
-		
-		[customActions setObject:[NSNull null] forKey:@"position"];
-		[customActions setObject:[NSNull null] forKey:@"bounds"];
-		[customActions setObject:[NSNull null] forKey:kCAOnOrderOut];
-		
-/*		CATransition *fadein = [[CATransition alloc] init];
-		fadein.duration = 2.0;
-		fadein.type = kCATransitionFade;
-		[customActions setObject:fadein forKey:kCAOnOrderIn];
-		[fadein release];
-*/
-		[customActions setObject:[NSNull null] forKey:kCAOnOrderIn];
-		
-		layer.actions=customActions;
-		
 		layer.edgeAntialiasingMask = 0;
 		
 //		NSLog(@"location %f %f", screenLocation.origin.x, screenLocation.origin.y);
@@ -261,6 +216,7 @@ NSString * const RMMapImageLoadingCancelledNotification = @"MapImageLoadingCance
 		image = nil;
 //		NSLog(@"layer contents set");
 	}
+	
 }
 
 - (void)moveBy: (CGSize) delta
@@ -268,7 +224,7 @@ NSString * const RMMapImageLoadingCancelledNotification = @"MapImageLoadingCance
 	self.screenLocation = RMTranslateCGRectBy(screenLocation, delta);
 }
 
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center
+- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) center
 {
 	self.screenLocation = RMScaleCGRectAboutPoint(screenLocation, zoomFactor, center);
 }
@@ -278,19 +234,53 @@ NSString * const RMMapImageLoadingCancelledNotification = @"MapImageLoadingCance
 	return screenLocation;
 }
 
+inline double fround(double n, unsigned d)
+{
+	return floor(n * pow(10., d) + .5) / pow(10., d);
+}
+
 - (void) setScreenLocation: (CGRect)newScreenLocation
 {
-//	NSLog(@"location moving from %f %f to %f %f", screenLocation.origin.x, screenLocation.origin.y, newScreenLocation.origin.x, newScreenLocation.origin.y);
+	NSLog(@"location moving from %f %f to %f %f", screenLocation.origin.x, screenLocation.origin.y, newScreenLocation.origin.x, newScreenLocation.origin.y);
 	screenLocation = newScreenLocation;
-	
+
+//	screenLocation.origin.x = fround(screenLocation.origin.x,0);
+//	screenLocation.origin.y = fround(screenLocation.origin.y,0);
 	if (layer != nil)
 	{
 		//		layer.frame = screenLocation;
 		layer.position = screenLocation.origin;
-		layer.bounds = CGRectMake(0, 0, screenLocation.size.width, screenLocation.size.height);
+		layer.bounds = CGRectMake(0.0, 0.0, screenLocation.size.width, screenLocation.size.height);
 	}
 	
-	[self touch];
+}
+
+@synthesize proxy;
+
+- (void)factoryDidLoad:(UIImage *)tileImage forRequest:(NSString *)requestedResource;
+{
+	isLoading = NO;
+	[self setImage:tileImage];
+}
+
+- (id)initWithTile: (RMTile)_tile fromURL:(NSString*)urlStr
+{
+	if (![self initWithTile:_tile])
+	return nil;
+	key = [urlStr retain];
+	image = [RMTileFactory requestImage:key forClient:self];
+	if (image) {
+		[image retain];
+		isLoaded = YES;
+	} else {
+		isLoading = YES;
+	}
+	return self;
+}
+
+- (void)factoryDidFail:(NSString *)request;
+{
+	isLoading = NO;
 }
 
 @end

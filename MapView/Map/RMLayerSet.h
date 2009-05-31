@@ -50,7 +50,7 @@
 
 - (void)moveToXYPoint: (RMXYPoint)aPoint;
 - (void)moveBy: (CGSize) delta;
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center;
+- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) center;
 - (void)removeSublayer:(CALayer *)layer;
 - (void)removeSublayers:(NSArray *)layers;
 - (void) correctPositionOfAllSublayers;

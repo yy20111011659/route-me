@@ -28,12 +28,13 @@
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
 
-@interface RMMapLayer : CAScrollLayer
+//#warning changed from CAScrollLayer
+@interface RMMapLayer : CALayer
 {
 }
 
 - (void)moveBy: (CGSize) delta;
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center;
+- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) center;
 
 @end
 

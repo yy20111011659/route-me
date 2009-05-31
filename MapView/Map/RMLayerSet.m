@@ -160,7 +160,7 @@
 	}
 }
 
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center
+- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) center
 {
 @synchronized(set) {
 	for (id layer in set)

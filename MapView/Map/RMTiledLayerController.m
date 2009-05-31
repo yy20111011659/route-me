@@ -119,7 +119,7 @@
 	[CATransaction commit];
 }
 
--(void) zoomByFactor: (float) zoomFactor near:(CGPoint) center
+-(void) zoomByFactor: (double) zoomFactor near:(CGPoint) center
 {
 	[self setScale: scale * zoomFactor];
 }

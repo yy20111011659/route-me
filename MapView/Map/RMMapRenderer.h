@@ -35,17 +35,23 @@
 
 @protocol RMTileSource;
 @class RMMapContents;
+@class RMTileImage;
 
 @interface RMMapRenderer : NSObject
 {
 	RMMapContents *content;
+	BOOL animate;
+	BOOL inserting;
 }
 
+@property (nonatomic,assign) BOOL animate;
+@property (nonatomic,assign) BOOL inserting;
+
 - (id)initWithContent:(RMMapContents *)contents;
-- (void)setNeedsDisplay;
 - (void)drawRect:(CGRect)rect;
 - (void)setFrame:(CGRect)frame;
 
 - (CALayer*)layer;
+- (void)tileImageDidLoad:(RMTileImage *)image;
 
 @end
