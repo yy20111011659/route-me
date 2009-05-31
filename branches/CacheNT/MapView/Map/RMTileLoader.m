@@ -34,13 +34,10 @@
 #import "RMFractalTileProjection.h"
 #import "RMTileImageSet.h"
 
-#import "RMTileCache.h"
+#define NSLog(a,...) 
 
-NSString* const RMMapImageRemovedFromScreenNotification = @"RMMapImageRemovedFromScreen";
-NSString* const RMMapImageAddedToScreenNotification = @"RMMapImageAddedToScreen";
+NSString * const RMMapImageLoadedNotification = @"RMMapImageLoadedNotification";
 
-NSString* const RMSuspendExpensiveOperations = @"RMSuspendExpensiveOperations";
-NSString* const RMResumeExpensiveOperations = @"RMResumeExpensiveOperations";
 
 @implementation RMTileLoader
 
@@ -66,11 +63,14 @@ NSString* const RMResumeExpensiveOperations = @"RMResumeExpensiveOperations";
 	
 	suppressLoading = NO;
 	
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mapImageLoaded:) name:RMMapImageLoadedNotification object:nil];
+
 	return self;
 }
 
 -(void) dealloc
 {
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[super dealloc];
 }
 
@@ -88,52 +88,45 @@ NSString* const RMResumeExpensiveOperations = @"RMResumeExpensiveOperations";
 	
 	if (contained == NO)
 	{
-		//		NSLog(@"reassembling because its not contained");
+		NSLog(@"reassembling because its not contained");
 	}
 	
 	if (targetZoom != loadedZoom)
 	{
-		//		NSLog(@"reassembling because target zoom = %f, loaded zoom = %d", targetZoom, loadedZoom);
+		NSLog(@"reassembling because target zoom = %f, loaded zoom = %d", targetZoom, loadedZoom);
 	}
 	
 	return contained && targetZoom == loadedZoom;
 }
 
 
--(void) updateLoadedImages
+- (void) _updateLoadedImages;
 {
-	if (suppressLoading)
-		return;
-	
-	if ([content mercatorToTileProjection] == nil || [content  
-													  mercatorToScreenProjection] == nil)
-		return;
-	
-	// delay display of new images until expensive operations are  
-	//allowed
-	[[NSNotificationCenter defaultCenter] removeObserver:self  
-													name:RMResumeExpensiveOperations object:nil];
-	if ([RMMapContents performExpensiveOperations] == NO)
-	{
-        [[NSNotificationCenter defaultCenter] addObserver:self  
-												 selector:@selector(updateLoadedImages)  
-													 name:RMResumeExpensiveOperations object:nil];
-        return;
-	}
-	
-	if ([self screenIsLoaded])
-		return;
-	
-	//      NSLog(@"assemble count = %d", [[content imagesOnScreen] count]);
+	RMTileImageSet *images = [content imagesOnScreen];
+	NSLog(@"count = %d\n%@", [images count],[images description]);
 	
 	RMTileRect newTileRect = [content tileBounds];
+
+
+#if 1	
+#warning big hammer bugfix	
+	/* this does fix the bug but is a bit of overkill */
+	[[content imagesOnScreen] removeAllTiles];	
+	/* the tile loader could alternately adjust the zoom levels of
+	 loaded tiles, but it might actually be quicker to go ahead
+	 and wipe what we have and adjust, this will also allow us
+	 (via wiping) to do a nice fade transition. */
+	 
+#endif
 	
-	RMTileImageSet *images = [content imagesOnScreen];
+	CGRect screenBounds = [content screenBounds];
 	CGRect newLoadedBounds = [images addTiles:newTileRect ToDisplayIn:
-							  [content screenBounds]];
+							  screenBounds];
 	
 	if (!RMTileIsDummy(loadedTiles.origin.tile))
-		[images removeTiles:loadedTiles];
+	{
+		[images removeTilesOutsideOf:newTileRect];
+	}
 	
 	//      NSLog(@"-> count = %d", [images count]);
 	
@@ -143,6 +136,20 @@ NSString* const RMResumeExpensiveOperations = @"RMResumeExpensiveOperations";
 	
 	[content tilesUpdatedRegion:newLoadedBounds];
 
+}
+
+-(void) updateLoadedImages
+{
+	if (suppressLoading)
+		return;
+	
+	if ([content mercatorToTileProjection] == nil || [content  
+													  mercatorToScreenProjection] == nil)
+		return;
+
+	if ([self screenIsLoaded])
+		return;
+	[self _updateLoadedImages];
 } 
 
 /*
@@ -184,7 +191,7 @@ NSString* const RMResumeExpensiveOperations = @"RMResumeExpensiveOperations";
 	[self updateLoadedImages];
 }
 
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center
+- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) center
 {
 	loadedBounds = RMScaleCGRectAboutPoint(loadedBounds, zoomFactor, center);
 	[self updateLoadedImages];
@@ -205,7 +212,9 @@ NSString* const RMResumeExpensiveOperations = @"RMResumeExpensiveOperations";
 
 - (void)reload
 {
+	[[content imagesOnScreen] removeAllTiles];	
 	[self clearLoadedBounds];
+	loadedTiles.origin.tile = RMTileDummy();
 	[self updateLoadedImages];
 }
 
@@ -213,5 +222,18 @@ NSString* const RMResumeExpensiveOperations = @"RMResumeExpensiveOperations";
 //{
 //	return CGRectContainsRect(loadedBounds, bounds);
 //}
+
+- (void) mapImageLoaded:(NSNotification *)notification
+{
+	RMTileImage *image = [notification object];
+	int currentZoom = content.tileBounds.origin.tile.zoom;
+//	int dz = abs(currentZoom - image.tile.zoom);
+	RMTileImageSet *set = [content imagesOnScreen];
+
+	[set removeCompetingTiles:image.tile usingZoom:currentZoom];
+	NSLog(@"%@",[set description]);
+//	[set removeTilesWithZoomLessThan:currentZoom - dz];
+//	[set removeTilesWithZoomMoreThan:currentZoom + dz];
+}
 
 @end

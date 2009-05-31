@@ -80,7 +80,7 @@
 	
 	if (z != zo)
 	{
-		NSLog(@"z changed....");
+		//NSLog(@"z changed....");
 	}
 	if (retval != 0)
 	{	// This should be fixed to handle these errors...

@@ -33,6 +33,9 @@
 
 @interface RMCoreAnimationRenderer : RMMapRenderer {
 	CALayer *layer;
+	BOOL animating;
+	CATransition *fadein;
 }
+
 
 @end

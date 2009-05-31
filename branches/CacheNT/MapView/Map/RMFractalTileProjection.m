@@ -111,23 +111,23 @@
 	
 	double x = (newPoint.x - bounds.origin.x) / bounds.size.width * limit;
 	// Unfortunately, y is indexed from the bottom left.. hence we have to translate it.
-	double y = (double)limit * ((bounds.origin.y - newPoint.y) / bounds.size.height + 1);
+	double y = (double)limit * ((bounds.origin.y - newPoint.y) / bounds.size.height + 1.0);
 	
 	tile.tile.x = (uint32_t)x;
 	tile.tile.y = (uint32_t)y;
 	tile.tile.zoom = zoom;
-	tile.offset.x = (float)x - tile.tile.x;
-	tile.offset.y = (float)y - tile.tile.y;
+	tile.offset.x = x - tile.tile.x;
+	tile.offset.y = y - tile.tile.y;
 	
 	return tile;
 }
 
 - (RMTilePoint) project: (RMXYPoint)aPoint atZoom:(float)zoom
 {
-	float normalised_zoom = [self normaliseZoom:zoom];
-	float limit = [self limitFromNormalisedZoom:normalised_zoom];
+	float nz = [self normaliseZoom:zoom];
+	float limit = [self limitFromNormalisedZoom:nz];
 	
-	return [self projectInternal:aPoint normalisedZoom:normalised_zoom limit:limit];
+	return [self projectInternal:aPoint normalisedZoom:nz limit:limit];
 }
 
 - (RMTileRect) projectRect: (RMXYRect)aRect atZoom:(float)zoom
@@ -173,7 +173,7 @@
 
 -(float) calculateScaleFromZoom: (float) zoom
 {
-	return bounds.size.width / tileSideLength / exp2(zoom);	
+	return bounds.size.width / tileSideLength / exp2f(zoom);	
 }
 
 @end

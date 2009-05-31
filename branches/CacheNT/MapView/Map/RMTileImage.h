@@ -33,66 +33,68 @@
 typedef NSImage UIImage;
 #endif
 
+#import "RMTileFactory.h"
 #import "RMFoundation.h"
 #import "RMTile.h"
 
-@class RMTileImage;
-@class NSData;
 
-extern NSString * const RMMapImageLoadedNotification;
-extern NSString * const RMMapImageLoadingCancelledNotification;
-
-@interface RMTileImage : NSObject {
+@interface RMTileImage : NSObject <RMTileClient>{
 	UIImage *image;
-
-//	CGImageRef image;
-	
-	NSData* dataPending;
-	
 	// I know this is a bit nasty.
 	RMTile tile;
 	CGRect screenLocation;
-	
-	int loadingPriorityCount;
-	
-	// Used by cache
-	NSDate *lastUsedTime;
-	
 	// Only used when appropriate
 	CALayer *layer;
+	
+	// this is our URL that maps us to our image
+	NSString *key;
+	
+	// loading proxy
+	id proxy;
+	BOOL isLoading;
+	BOOL isLoaded;
+	// this is a temporary workaround to a stupid implementation in the tile
+	// laoder... the concept of dummy tiles and searching linearily constantly
+	// for matching tiles has to die, instead we need to have a tile stack 
+	// object that keeps tabs on various tiles for a certain location ... but 
+	// for now to make things work correctly, we're going to fix the existing
+	// stupidity and then implement to a proper solution
+	BOOL marked;
 }
 
+@property (nonatomic,assign,getter=marked) BOOL marked;
+
 - (id) initWithTile: (RMTile)tile;
+- (id)initWithTile: (RMTile) _tile fromFile: (NSString*) filename;
+- (id) initWithTile: (RMTile)tile fromURL:(NSString*)url;
 
 + (RMTileImage*) dummyTile: (RMTile)tile;
 
 //- (id) increaseLoadingPriority;
 //- (id) decreaseLoadingPriority;
 
-+ (RMTileImage*)imageWithTile: (RMTile) tile FromURL: (NSString*)url;
-+ (RMTileImage*)imageWithTile: (RMTile) tile FromFile: (NSString*)filename;
-+ (RMTileImage*)imageWithTile: (RMTile) tile FromData: (NSData*)data;
++ (RMTileImage*)imageWithTile: (RMTile) tile fromURL: (NSString*)url;
++ (RMTileImage*)imageWithTile: (RMTile) tile fromFile: (NSString*)filename;
 
 - (void)drawInRect:(CGRect)rect;
 - (void)draw;
 
-- (void)moveBy: (CGSize) delta;
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center;
-
+- (void)moveBy:(CGSize) delta;
+- (void)zoomByFactor:(double) zoomFactor near:(CGPoint) center;
 - (void)makeLayer;
-
 - (void)cancelLoading;
-
-- (void)setImageToData: (NSData*) data;
-
-- (void)touch;
-
 - (BOOL)isLoaded;
+// unplugs the image's layer from the superlayer
+- (void)removeFromMap;
+
+- (void)addToLayer:(CALayer *)superlayer;
 
 @property (readwrite, assign) CGRect screenLocation;
 @property (readonly, assign) RMTile tile;
 @property (readonly) CALayer *layer;
 @property (readonly) UIImage *image;
-@property (readonly) NSDate *lastUsedTime;
+@property (assign, nonatomic) RMTileImage *proxy;
+
+
 
 @end

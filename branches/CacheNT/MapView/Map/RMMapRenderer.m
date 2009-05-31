@@ -31,6 +31,8 @@
 
 @implementation RMMapRenderer
 
+@synthesize animate,inserting;
+
 // Designated initialiser
 - (id) initWithContent: (RMMapContents *)_contents
 {
@@ -38,26 +40,12 @@
 		return nil;
 
 	content = _contents;
-	
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mapImageLoaded:) name:RMMapImageLoadedNotification object:nil];
-	
+	animate = YES;
 	return self;
 }
-
--(void) dealloc
-{
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	[super dealloc];
-}
-
-- (void) setNeedsDisplay
+- (void)tileImageDidLoad:(RMTileImage *)image;
 {
 	
-}
-
--(void)mapImageLoaded: (NSNotification*)notification
-{
-	[self setNeedsDisplay];
 }
 
 - (void)drawRect:(CGRect)rect

@@ -34,11 +34,8 @@
 @class RMTileImageSet;
 @class RMMercatorToScreenProjection;
 
-extern NSString * const RMMapImageRemovedFromScreenNotification;
-extern NSString * const RMMapImageAddedToScreenNotification;
+extern NSString * const RMMapImageLoadedNotification ;
 
-extern NSString * const RMSuspendExpensiveOperations;
-extern NSString * const RMResumeExpensiveOperations;
 
 @protocol RMTileSource;
 
@@ -58,7 +55,7 @@ extern NSString * const RMResumeExpensiveOperations;
 - (void)updateLoadedImages;
 
 - (void)moveBy: (CGSize) delta;
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center;
+- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) center;
 
 - (void)clearLoadedBounds;
 

@@ -120,7 +120,7 @@ enum {
 @property (retain, readwrite) RMMapLayer *background;
 @property (retain, readwrite) RMLayerSet *overlay;
 @property (retain, readonly)  RMMarkerManager *markerManager;
-@property (nonatomic, retain) id<RMTilesUpdateDelegate> tilesUpdateDelegate;
+@property (nonatomic, assign) id<RMTilesUpdateDelegate> tilesUpdateDelegate;
 @property (readwrite) NSUInteger boundingMask;
 
 - (id) initForView: (UIView*) view;
@@ -137,10 +137,10 @@ enum {
 - (void)moveToXYPoint: (RMXYPoint)aPoint;
 
 - (void)moveBy: (CGSize) delta;
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center;
+- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) center;
 - (void)zoomInToNextNativeZoomAt:(CGPoint) pivot animated:(BOOL) animated;
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center animated:(BOOL) animated;
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center animated:(BOOL) animated withCallback:(id<RMMapContentsAnimationCallback>)callback;
+- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) center animated:(BOOL) animated;
+- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) center animated:(BOOL) animated withCallback:(id<RMMapContentsAnimationCallback>)callback;
 
 - (void)zoomInToNextNativeZoomAt:(CGPoint) pivot;
 - (float)adjustZoomForBoundingMask:(float)zoomFactor;
@@ -153,11 +153,6 @@ enum {
 //-(void)addLayer: (id<RMMapLayer>) layer above: (id<RMMapLayer>) other;
 //-(void)addLayer: (id<RMMapLayer>) layer below: (id<RMMapLayer>) other;
 //-(void)removeLayer: (id<RMMapLayer>) layer;
-
-// During touch and move operations on the iphone its good practice to
-// hold off on any particularly expensive operations so the user's 
-+ (BOOL) performExpensiveOperations;
-+ (void) setPerformExpensiveOperations: (BOOL)p;
 
 - (CGPoint)latLongToPixel:(CLLocationCoordinate2D)latlong;
 - (CGPoint)latLongToPixel:(CLLocationCoordinate2D)latlong withScale:(float)aScale;
@@ -172,6 +167,12 @@ enum {
 
 - (void) tilesUpdatedRegion:(CGRect)region;
 
+- (void) touchesBegan;
+- (void) touchesEnded;
+- (void) multiTouchBegan;
+- (void) multiTouchEnded;
+
+
 @end
 
 @protocol RMMapContentsFacade
@@ -181,9 +182,9 @@ enum {
 - (void)moveToXYPoint: (RMXYPoint)aPoint;
 
 - (void)moveBy: (CGSize) delta;
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center;
+- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) center;
 - (void)zoomInToNextNativeZoomAt:(CGPoint) pivot animated:(BOOL) animated;
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center animated:(BOOL) animated;
+- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) center animated:(BOOL) animated;
 
 - (void)zoomInToNextNativeZoomAt:(CGPoint) pivot;
 - (float)adjustZoomForBoundingMask:(float)zoomFactor;

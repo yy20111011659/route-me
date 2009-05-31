@@ -63,7 +63,7 @@
 }
 -(float) maxZoom
 {
-	return 18;
+	return 18.0;
 }
 
 -(NSString*) tileURL: (RMTile) tile
@@ -74,7 +74,7 @@
 -(RMTileImage *) tileImage: (RMTile)tile
 {
 	tile = [tileProjection normaliseTile:tile];
-	RMTileImage* image = [RMTileImage imageWithTile: tile FromURL:[self tileURL:tile]];
+	RMTileImage* image = [RMTileImage imageWithTile: tile fromURL:[self tileURL:tile]];
 	return image;
 }
 

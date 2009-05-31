@@ -220,7 +220,7 @@
     }
 }
 
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) pivot
+- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) pivot
 {
 	[super zoomByFactor:zoomFactor near:pivot];
 	

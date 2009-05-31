@@ -37,7 +37,6 @@
 
 #import "RMOpenStreetMapsSource.h"
 #import "RMCoreAnimationRenderer.h"
-#import "RMCachedTileSource.h"
 
 #import "RMLayerSet.h"
 #import "RMMarkerManager.h"
@@ -131,7 +130,7 @@
 	
 	[view setNeedsDisplay];
 	
-	NSLog(@"Map contents initialised. view: %@ tileSource %@ renderer %@", view, tileSource, renderer);
+	//NSLog(@"Map contents initialised. view: %@ tileSource %@ renderer %@", view, tileSource, renderer);
 	
 	return self;
 }
@@ -148,9 +147,32 @@
   [renderer setFrame:frame];
 }
 
+- (void)touchesBegan;
+{
+	// we do no animation when being touched
+	[renderer setAnimate:NO];
+}
+
+- (void) multiTouchBegan;
+{
+	// unless a multitouch started, now we animate
+	[renderer setAnimate:YES];
+	[tileLoader setSuppressLoading:YES];
+}
+
+- (void) multiTouchEnded;
+{
+	[tileLoader setSuppressLoading:NO];
+}
+
+- (void)touchesEnded;
+{
+	[renderer setAnimate:YES];
+}
+
 -(void) dealloc
 {
-  [imagesOnScreen cancelLoading];
+    [imagesOnScreen cancelLoading];
 	[self setRenderer:nil];
 	[imagesOnScreen release];
 	[tileLoader release];
@@ -162,7 +184,7 @@
 	[self setBackground:nil];
 	[layer release];
 	[markerManager release];
-	NSLog(@"mapcontents dealloced");
+	//NSLog(@"mapcontents dealloced");
 	[super dealloc];
 }
 
@@ -184,7 +206,7 @@
 	[mercatorToScreenProjection setXYCenter:aPoint];
 	[overlay correctPositionOfAllSublayers];
 	[tileLoader reload];
-	[renderer setNeedsDisplay];
+//	[renderer setNeedsDisplay];
 }
 
 - (void)moveBy: (CGSize) delta
@@ -193,7 +215,7 @@
 	[imagesOnScreen moveBy:delta];
 	[tileLoader moveBy:delta];
 	[overlay moveBy:delta];
-	[renderer setNeedsDisplay];
+//	[renderer setNeedsDisplay];
 }
 
 - (float)adjustZoomForBoundingMask:(float)zoomFactor
@@ -284,7 +306,7 @@
 	[self setMaxZoom: aMaxZoom];
 }
 
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) pivot
+- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) pivot
 {
 	//[self zoomByFactor:zoomFactor near:pivot animated:NO];
 	
@@ -301,20 +323,19 @@
 		[imagesOnScreen zoomByFactor:zoomFactor near:pivot];
 		[tileLoader zoomByFactor:zoomFactor near:pivot];
 		[overlay zoomByFactor:zoomFactor near:pivot];
-		[renderer setNeedsDisplay];
+//		[renderer setNeedsDisplay];
 	} 
 }
 
 
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) pivot animated:(BOOL) animated
+- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) pivot animated:(BOOL) animated
 {
 	[self zoomByFactor:zoomFactor near:pivot animated:animated withCallback:nil];
 }
 
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) pivot animated:(BOOL) animated withCallback:(id<RMMapContentsAnimationCallback>)callback
+- (void)zoomByFactor:(double)zoomFactor near:(CGPoint)pivot animated:(BOOL)animated withCallback:(id<RMMapContentsAnimationCallback>)callback
 {
 	zoomFactor = [self adjustZoomForBoundingMask:zoomFactor];
-	
 	if (animated)
 	{
 		float zoomDelta = log2f(zoomFactor);
@@ -341,20 +362,21 @@
 	}
 	else
 	{
-		if(([self zoom] >= [self minZoom]) && ([self zoom] <= [self maxZoom]))
+		float zoom = [self zoom];
+		if((zoom >= minZoom) && (zoom <=  maxZoom))
 		{
 			[mercatorToScreenProjection zoomScreenByFactor:zoomFactor near:pivot];
 			[imagesOnScreen zoomByFactor:zoomFactor near:pivot];
 			[tileLoader zoomByFactor:zoomFactor near:pivot];
 			[overlay zoomByFactor:zoomFactor near:pivot];
-			[renderer setNeedsDisplay];
+//			[renderer setNeedsDisplay];
 		}
 		else
 		{
-			if([self zoom] > [self maxZoom])
-				[self setZoom:[self maxZoom]];
-			if([self zoom] < [self minZoom])
-				[self setZoom:[self minZoom]];
+			if(zoom > maxZoom)
+				[self setZoom:maxZoom];
+			if(zoom < minZoom)
+				[self setZoom:minZoom];
 		}
 	}
 }
@@ -363,8 +385,8 @@
 {
 	float zoomIncr = [[[timer userInfo] objectForKey:@"zoomIncr"] floatValue];
 	float targetZoom = [[[timer userInfo] objectForKey:@"targetZoom"] floatValue];
-
-	if ((zoomIncr > 0 && [self zoom] >= targetZoom) || (zoomIncr < 0 && [self zoom] <= targetZoom))
+	float zoom = [self zoom];
+	if ((zoomIncr > 0 && zoom >= targetZoom) || (zoomIncr < 0 && zoom <= targetZoom))
 	{
 		NSDictionary * userInfo = [[timer userInfo] retain];
 		[timer invalidate];	// ASAP
@@ -395,20 +417,22 @@
 
 - (float)getNextNativeZoomFactor
 {
-	float newZoom = roundf([self zoom] + 1);
-	return newZoom >= [self maxZoom] ? 0 : exp2f(newZoom - [self zoom]);
+	float zoom = [self zoom];
+	float newZoom = roundf(zoom + 1);
+	return newZoom >= maxZoom ? 0 : exp2f(newZoom - zoom);
 }
 
 - (void)zoomInToNextNativeZoomAt:(CGPoint) pivot animated:(BOOL) animated
 {
 	// Calculate rounded zoom
-	float newZoom = roundf([self zoom] + 1);
+	float zoom = [self zoom];
+	float newZoom = roundf(zoom + 1);
 	
-	if (newZoom >= [self maxZoom])
+	if (newZoom >= maxZoom)
 		return;
 	else
 	{
-		float factor = exp2f(newZoom - [self zoom]);
+		float factor = exp2f(newZoom - zoom);
 		[self zoomByFactor:factor near:pivot animated:animated];
 	}
 }
@@ -425,11 +449,9 @@
 	if (tileSource == newTileSource)
 		return;
 
-	newTileSource = [RMCachedTileSource cachedTileSourceWithSource:newTileSource];
-	
 	[tileSource release];
 	tileSource = [newTileSource retain];
-	
+
 	[projection release];
 	projection = [[tileSource projection] retain];
 	
@@ -447,7 +469,7 @@
 
 - (id<RMTileSource>) tileSource
 {
-	return [[tileSource retain] autorelease];
+	return tileSource;
 }
 
 - (void) setRenderer: (RMMapRenderer*) newRenderer
@@ -458,9 +480,9 @@
 	[imagesOnScreen setDelegate:newRenderer];
 	
 	[[renderer layer] removeFromSuperlayer];
+	[newRenderer retain];
 	[renderer release];
-	
-	renderer = [newRenderer retain];
+	renderer = newRenderer;
 	
 	if (renderer == nil)
 		return;
@@ -479,7 +501,7 @@
 
 - (RMMapRenderer *)renderer
 {
-	return [[renderer retain] autorelease];
+	return renderer;
 }
 
 - (void) setBackground: (RMMapLayer*) aLayer
@@ -488,8 +510,9 @@
 	
 	if (background != nil)
 	{
-		[background release];
 		[background removeFromSuperlayer];		
+		[background release];
+		background = nil;
 	}
 	
 	background = [aLayer retain];
@@ -509,7 +532,7 @@
 
 - (RMMapLayer *)background
 {
-	return [[background retain] autorelease];
+	return background;
 }
 
 - (void) setOverlay: (RMLayerSet*) aLayer
@@ -518,8 +541,9 @@
 	
 	if (overlay != nil)
 	{
-		[overlay release];
 		[overlay removeFromSuperlayer];		
+		[overlay release];
+		overlay = nil;
 	}
 	
 	overlay = [aLayer retain];
@@ -548,7 +572,7 @@
 
 - (RMLayerSet *)overlay
 {
-	return [[overlay retain] autorelease];
+	return overlay;
 }
 
 - (CLLocationCoordinate2D) mapCenter
@@ -594,22 +618,13 @@
 	[mercatorToScreenProjection setScale:scale];
 	[overlay correctPositionOfAllSublayers];
 	[tileLoader updateLoadedImages];
-	[renderer setNeedsDisplay];
 }
 
--(float) zoom
+- (float)zoom
 {
 	return [mercatorToTileProjection calculateZoomFromScale:[mercatorToScreenProjection scale]];
 }
 
-/*-(void) setZoom: (float) zoom
-{
-	//limit the zoom to maxZoom and minZoom as specified by projection - why do we also store maxZoom?
-	float normalisedZoom = [mercatorToTileProjection normaliseZoom:zoom];		
-	float scale = [mercatorToTileProjection calculateScaleFromZoom:normalisedZoom];
-	[self setScale:scale];	
-}
-*/
 -(void) setZoom: (float) zoom
 {
 	//NSLog(@"set zoom: %f", zoom);
@@ -625,48 +640,30 @@
 
 -(RMTileImageSet*) imagesOnScreen
 {
-	return [[imagesOnScreen retain] autorelease];
+	return imagesOnScreen;
 }
 
 -(RMTileLoader*) tileLoader
 {
-	return [[tileLoader retain] autorelease];
+	return tileLoader;
 }
 
 -(RMProjection*) projection
 {
-	return [[projection retain] autorelease];
+	return projection;
 }
 -(id<RMMercatorToTileProjection>) mercatorToTileProjection
 {
-	return [[mercatorToTileProjection retain] autorelease];
+	return mercatorToTileProjection;
 }
 -(RMMercatorToScreenProjection*) mercatorToScreenProjection
 {
-	return [[mercatorToScreenProjection retain] autorelease];
+	return mercatorToScreenProjection;
 }
 
 - (CALayer *)layer
 {
-	return [[layer retain] autorelease];
-}
-
-static BOOL _performExpensiveOperations = YES;
-+ (BOOL) performExpensiveOperations
-{
-	return _performExpensiveOperations;
-}
-+ (void) setPerformExpensiveOperations: (BOOL)p
-{
-	if (p == _performExpensiveOperations)
-		return;
-	
-	_performExpensiveOperations = p;
-
-	if (p)
-		[[NSNotificationCenter defaultCenter] postNotificationName:RMResumeExpensiveOperations object:self];
-	else
-		[[NSNotificationCenter defaultCenter] postNotificationName:RMSuspendExpensiveOperations object:self];
+	return layer;
 }
 
 #pragma mark LatLng/Pixel translation functions
@@ -695,22 +692,29 @@ static BOOL _performExpensiveOperations = YES;
 #pragma mark Zoom With Bounds
 - (void)zoomWithLatLngBoundsNorthEast:(CLLocationCoordinate2D)ne SouthWest:(CLLocationCoordinate2D)sw
 {
+	CGRect screenBounds = [self screenBounds];
 	if(ne.latitude == sw.latitude && ne.longitude == sw.longitude)//There are no bounds, probably only one marker.
 	{
 		RMXYRect zoomRect;
 		RMXYPoint myOrigin = [projection latLongToPoint:sw];
 		//Default is with scale = 2.0 mercators/pixel
-		zoomRect.size.width = [self screenBounds].size.width * 2.0;
-		zoomRect.size.height = [self screenBounds].size.height * 2.0;
-		myOrigin.x = myOrigin.x - (zoomRect.size.width / 2);
-		myOrigin.y = myOrigin.y - (zoomRect.size.height / 2);
+		zoomRect.size.width = screenBounds.size.width * 2.0;
+		zoomRect.size.height = screenBounds.size.height * 2.0;
+#if 0		
+		// what the fuck is this stupidity
+		myOrigin.x = myOrigin.x - CEIL((zoomRect.size.width / 2.0));
+		myOrigin.y = myOrigin.y - CEIL((zoomRect.size.height / 2.0));
+#else
+		myOrigin.x -= screenBounds.size.width;
+		myOrigin.y -= screenBounds.size.height;
+#endif		
 		zoomRect.origin = myOrigin;
 		[self zoomWithRMMercatorRectBounds:zoomRect];
 	}
 	else
 	{
 		//convert ne/sw into RMMercatorRect and call zoomWithBounds
-		float pixelBuffer = 50;
+		float pixelBuffer = 50.0;
 		CLLocationCoordinate2D latLngBounds;
 		latLngBounds.longitude = ne.longitude - sw.longitude;
 		latLngBounds.latitude = ne.latitude - sw.latitude;
@@ -722,27 +726,30 @@ static BOOL _performExpensiveOperations = YES;
 		//Create the new zoom layout
 		RMXYRect zoomRect;
 		//Default is with scale = 2.0 mercators/pixel
-		zoomRect.size.width = [self screenBounds].size.width * 2.0;
-		zoomRect.size.height = [self screenBounds].size.height * 2.0;
-		if((myPoint.x / ([self screenBounds].size.width)) < (myPoint.y / ([self screenBounds].size.height)))
+		zoomRect.size.width = screenBounds.size.width * 2.0;
+		zoomRect.size.height = screenBounds.size.height * 2.0;
+		if((myPoint.x / (screenBounds.size.width)) < (myPoint.y / (screenBounds.size.height)))
 		{
-			if((myPoint.y / ([self screenBounds].size.height - pixelBuffer)) > 1)
+			if((myPoint.y / (screenBounds.size.height - pixelBuffer)) > 1)
 			{
-				zoomRect.size.width = [self screenBounds].size.width * (myPoint.y / ([self screenBounds].size.height - pixelBuffer));
-				zoomRect.size.height = [self screenBounds].size.height * (myPoint.y / ([self screenBounds].size.height - pixelBuffer));
+				zoomRect.size.width = screenBounds.size.width * (myPoint.y / (screenBounds.size.height - pixelBuffer));
+				zoomRect.size.height = screenBounds.size.height * (myPoint.y / (screenBounds.size.height - pixelBuffer));
 			}
 		}
 		else
 		{
-			if((myPoint.x / ([self screenBounds].size.width - pixelBuffer)) > 1)
+			if((myPoint.x / (screenBounds.size.width - pixelBuffer)) > 1)
 			{
-				zoomRect.size.width = [self screenBounds].size.width * (myPoint.x / ([self screenBounds].size.width - pixelBuffer));
-				zoomRect.size.height = [self screenBounds].size.height * (myPoint.x / ([self screenBounds].size.width - pixelBuffer));
+				zoomRect.size.width = screenBounds.size.width * (myPoint.x / (screenBounds.size.width - pixelBuffer));
+				zoomRect.size.height = screenBounds.size.height * (myPoint.x / (screenBounds.size.width - pixelBuffer));
 			}
 		}
-		myOrigin.x = myOrigin.x - (zoomRect.size.width / 2);
-		myOrigin.y = myOrigin.y - (zoomRect.size.height / 2);
-		NSLog(@"Origin is calculated at: %f, %f", [projection pointToLatLong:myOrigin].latitude, [projection pointToLatLong:myOrigin].longitude);
+// going to try to keep the origin on an integral basis
+#define ROUND(a) a
+		myOrigin.x = ROUND((myOrigin.x - (zoomRect.size.width / 2)));
+		myOrigin.y = ROUND((myOrigin.y - (zoomRect.size.height / 2)));
+		
+		//NSLog(@"Origin is calculated at: %f, %f", [projection pointToLatLong:myOrigin].latitude, [projection pointToLatLong:myOrigin].longitude);
 		/*It gets all messed up if our origin is lower than the lowest place on the map, so we check.
 		 if(myOrigin.y < -19971868.880409)
 		 {
@@ -759,7 +766,6 @@ static BOOL _performExpensiveOperations = YES;
 	[overlay correctPositionOfAllSublayers];
 	[tileLoader clearLoadedBounds];
 	[tileLoader updateLoadedImages];
-	[renderer setNeedsDisplay];
 }
 
 
