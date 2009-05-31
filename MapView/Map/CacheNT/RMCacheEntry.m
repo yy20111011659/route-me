@@ -92,9 +92,14 @@ static NSString * const kRMCacheEntryData = @"RMData";
 
 - (NSURL *)URL;
 {
-	// clean the string out of paranoia
-	NSString *query = [key stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];	NSURL *url = [NSURL URLWithString:query];
-	return url;
+#if PARANOIA_IS_THE_ANSWER
+  // clean the string out of paranoia
+  NSString *query = [key stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+#else
+  NSString *query = key;
+#endif
+  NSURL *url = [NSURL URLWithString:query];
+  return url;
 }
 
 - (void)loadFromNetwork:(NSURL *)url;
