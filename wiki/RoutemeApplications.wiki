@@ -4,11 +4,13 @@ List your own project here, with a screenshot.
 
 = Not For Tourists =
 
-Not For Tourists (NFT) is launching their very first iPhone app. First stop is Manhattan, where NFT will put the most exciting island on the planet in the comfort of your own pocket. With beautiful custom maps and thousands of essential listings, NFT will help you accomplish the any task in just a few seconds including: caffeinate, buy paint at 3 am, fix your bike, mail a late birthday card, chill out in a community garden, buy arugula from the nearest farmers market, or find a hotel by the hour (seriously, it’s that comprehensive).
+Not For Tourists (NFT) [http://www.notfortourists.com] is launching their very first iPhone app. First stop is Manhattan, where NFT will put the most exciting island on the planet in the comfort of your own pocket. With beautiful custom maps and thousands of essential listings, NFT will help you accomplish the any task in just a few seconds including: caffeinate, buy paint at 3 am, fix your bike, mail a late birthday card, chill out in a community garden, buy arugula from the nearest farmers market, or find a hotel by the hour (seriously, it’s that comprehensive).
 
 And it’s incredibly fast. Unlike most travel apps, NFT doesn’t need to be online to work its magic. Whether you’re on the subway at rush hour or in the middle of Central Park on a lazy Sunday, NFT will be there for you.
 
 It’s like having a best friend in every neighborhood. Sneak preview: [http://www.nftiphone.com]
+
+Designed and Developed by: [http://www.tuftandco.com]
 
 [http://www.nftiphone.com/wp-content/themes/nft/images/3up.jpg]
 
