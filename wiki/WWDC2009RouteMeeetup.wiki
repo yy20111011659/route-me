@@ -2,14 +2,9 @@
 
 = Apple WWDC 2009 =
 
-If you're attending WWDC 2009 (June 8-12) or live in the SF Bay area, and you're interested in getting together with other Route-Me developers or users, fill in your info below. If you have suggestions on day/time to gather, include those too. This might turn into a few people staking out a table for lunch inside Moscone, or meeting for lunch or dinner outside Moscone, or a full-fledged hack session and bug squash.
+Route-Me is having a meetup on Wednesday, June 10 at 7 pm at John's Grill, 63 Ellis St. Many of us will be moving from there to the CloudMade party which begins at 9:30.
 
-Note these events. Anything we schedule will conflict with something.
-  * sfMacIndie soiree on Sunday evening
-  * is there a Buzz Andersen party on Monday evening this year?
-  * Apple Design Awards Tuesday evening
-  * special Cocoaheads meeting at Apple Store Wednesday evening
-  * closing beer bash on Thursday evening
+Attending the meetup: Hal, Olivier, Matt, Quazie (maybe). More are welcome; email halmueller@gmail.com to reserve a seat.
 
 A comprehensive list of off-site parties and events is at http://blog.quazie.net/2009/05/wwdc-partiesevents/. For the detailed schedule of official WWDC events, see http://developer.apple.com/wwdc/attendee/sessions/ (WWDC registration required).
 
