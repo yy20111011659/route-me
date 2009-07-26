@@ -1,7 +1,7 @@
 //
 //  RMTiledLayerController.m
 //
-// Copyright (c) 2008, Route-Me Contributors
+// Copyright (c) 2008-2009, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -24,7 +24,7 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
-
+#import "RMGlobalConstants.h"
 #import "RMTiledLayerController.h"
 #import "RMFractalTileProjection.h"
 #import "RMTileSource.h"
@@ -55,7 +55,7 @@
 	
 	RMXYRect boundsRect = tileProjection.bounds;
 	layer.bounds = CGRectMake(boundsRect.origin.x, boundsRect.origin.y, boundsRect.size.width, boundsRect.size.height) ;
-	layer.position = CGPointMake(0, 0);
+	layer.position = CGPointZero;
 
 	[self setScale:1];
 	[layer setNeedsDisplay];
@@ -82,7 +82,7 @@
 	return scale;
 }
 
--(void) centerXYPoint: (RMXYPoint) aPoint animate: (BOOL) animate
+-(void) centerProjectedPoint: (RMProjectedPoint) aPoint animate: (BOOL) animate
 {
 	if (animate == NO)
 	{
@@ -127,17 +127,18 @@
 - (void)drawLayer:(CALayer *)theLayer
         inContext:(CGContextRef)theContext
 {
-	NSLog(@"drawLayer:inContext:");
+	RMLog(@"drawLayer:inContext:");
 	
 	//	CGRect visibleRect = [self visibleRect];
-	//	NSLog(@"visibleRect: %d %d %d %d", visibleRect.origin.x, visibleRect.origin.y, visibleRect.size.width, visibleRect.size.height);
+	//	RMLog(@"visibleRect: %d %d %d %d", visibleRect.origin.x, visibleRect.origin.y, visibleRect.size.width, visibleRect.size.height);
 	
 	CGRect rect = CGContextGetClipBoundingBox(theContext);
-	//	NSLog(@"rect: %d %d %d %d", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+	//	RMLog(@"rect: %d %d %d %d", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 	
 	//CGAffineTransform transform = CGContextGetCTM(theContext);
-	//	NSLog(@"transform scale: a:%f b:%f c:%f d:%f tx:%f ty:%f", transform.a, transform.b, transform.c, transform.d, transform.tx, transform.ty);
-	
+	//	RMLog(@"transform scale: a:%f b:%f c:%f d:%f tx:%f ty:%f", transform.a, transform.b, transform.c, transform.d, transform.tx, transform.ty);
+
+	/// \bug magic string literals
 	NSString *path = [[NSBundle mainBundle] pathForResource:@"loading" ofType:@"png"];
 	CGDataProviderRef dataProvider = CGDataProviderCreateWithFilename([path UTF8String]);
 	CGImageRef image = CGImageCreateWithPNGDataProvider(dataProvider, NULL, FALSE, kCGRenderingIntentDefault);

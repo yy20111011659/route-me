@@ -1,7 +1,7 @@
 //
 //  RMTiledLayerController.h
 //
-// Copyright (c) 2008, Route-Me Contributors
+// Copyright (c) 2008-2009, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -31,8 +31,7 @@
 
 @protocol RMTileSource;
 
-////////////////////////////// NOT COMPLETE. DO NOT USE
-
+/// ////////////////////////// NOT COMPLETE. DO NOT USE
 @interface RMTiledLayerController : NSObject
 {
 	CATiledLayer *layer;
@@ -42,19 +41,16 @@
 	// Size in pixels
 //	CGSize viewSize;
 	
-	// Scale is how many meters in 1 pixel. Larger scale means bigger things are smaller on the screen.
-	// Scale of 1 means 1 pixel == 1 meter.
-	// Scale of 10 means 1 pixel == 10 meters.
-	float scale;
+	float metersPerPixel;
 	
 	id tileSource;
 }
 
 -(id) initWithTileSource: (id <RMTileSource>) tileSource;
 
--(void) setScale: (float) scale;
+-(void) setMetersPerPixel: (float) scale;
 
--(void) centerXYPoint: (RMXYPoint) aPoint animate: (BOOL) animate;
+-(void) centerProjectedPoint: (RMProjectedPoint) aPoint animate: (BOOL) animate;
 -(void) centerLatLong: (CLLocationCoordinate2D) point animate: (BOOL) animate;
 -(void) dragBy: (CGSize) delta;
 -(void) zoomByFactor: (double) zoomFactor near:(CGPoint) center;
@@ -68,7 +64,7 @@
 
 -(MercatorRect) bounds;
 */
-@property (assign, readwrite, nonatomic) float scale;
+@property (assign, readwrite, nonatomic) float metersPerPixel;
 @property (readonly, nonatomic) CATiledLayer *layer;
 
 @end

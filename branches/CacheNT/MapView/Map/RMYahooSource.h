@@ -7,9 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "RMAbstractMecatorWebSource.h"
+#import "RMAbstractMercatorWebSource.h"
 
-@interface RMYahooSource : RMAbstractMecatorWebSource <RMAbstractMecatorWebSource> {
+@interface RMYahooSource : RMAbstractMercatorWebSource <RMAbstractMercatorWebSource> {
 
 }
 

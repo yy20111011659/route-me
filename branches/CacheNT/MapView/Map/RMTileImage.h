@@ -1,7 +1,7 @@
 //
 //  RMTileImage.h
 //
-// Copyright (c) 2008, Route-Me Contributors
+// Copyright (c) 2008-2009, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -43,11 +43,11 @@ typedef NSImage UIImage;
 	// I know this is a bit nasty.
 	RMTile tile;
 	CGRect screenLocation;
-	// Only used when appropriate
-	CALayer *layer;
 	
 	// this is our URL that maps us to our image
 	NSString *key;
+	/// \deprecated appears to be cruft
+	int loadingPriorityCount;
 	
 	// loading proxy
 	id proxy;
@@ -60,6 +60,13 @@ typedef NSImage UIImage;
 	// for now to make things work correctly, we're going to fix the existing
 	// stupidity and then implement to a proper solution
 	BOOL marked;
+	/// Used by cache
+	NSDate *lastUsedTime;
+	
+	/// \bug placing the "layer" on the RMTileImage implicitly assumes that a particular RMTileImage will be used in only 
+	/// one UIView. Might see some interesting crashes if you have two RMMapViews using the same tile source.
+	// Only used when appropriate
+	CALayer *layer;
 }
 
 @property (nonatomic,assign,getter=marked) BOOL marked;
@@ -73,8 +80,11 @@ typedef NSImage UIImage;
 //- (id) increaseLoadingPriority;
 //- (id) decreaseLoadingPriority;
 
-+ (RMTileImage*)imageWithTile: (RMTile) tile fromURL: (NSString*)url;
-+ (RMTileImage*)imageWithTile: (RMTile) tile fromFile: (NSString*)filename;
+
++ (RMTileImage*)imageForTile: (RMTile) tile withURL: (NSString*)url;
++ (RMTileImage*)imageForTile: (RMTile) tile fromFile: (NSString*)filename;
+// Need to re-implement this after CacheNT Merge
+//+ (RMTileImage*)imageForTile: (RMTile) tile withData: (NSData*)data;
 
 - (void)drawInRect:(CGRect)rect;
 - (void)draw;
@@ -88,6 +98,8 @@ typedef NSImage UIImage;
 - (void)removeFromMap;
 
 - (void)addToLayer:(CALayer *)superlayer;
+- (void)setImage:(UIImage *)_image;
+//- (void)updateImageUsingData: (NSData*) data;
 
 @property (readwrite, assign) CGRect screenLocation;
 @property (readonly, assign) RMTile tile;

@@ -1,7 +1,7 @@
 //
 //  RMTimeImageSet.h
 //
-// Copyright (c) 2008, Route-Me Contributors
+// Copyright (c) 2008-2009, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -37,19 +37,22 @@
 extern NSString * const RMMapImageLoadedNotification ;
 
 
+extern NSString * const RMTileRetrieved;
+extern NSString * const RMTileRequested;
+
 @protocol RMTileSource;
 
 @interface RMTileLoader : NSObject {
 	RMMapContents *content;
 
 	CGRect loadedBounds;
-	int loadedZoom;
+	NSUInteger loadedZoom;
 	RMTileRect loadedTiles;
 	
 	BOOL suppressLoading;
 }
 
-// Designated initialiser
+/// Designated initialiser
 - (id)initWithContent: (RMMapContents *)contents;
 
 - (void)updateLoadedImages;
@@ -62,7 +65,7 @@ extern NSString * const RMMapImageLoadedNotification ;
 - (void)reload;
 
 @property (readonly, nonatomic) CGRect loadedBounds;
-@property (readonly, nonatomic) int loadedZoom;
+@property (readonly, nonatomic) NSUInteger loadedZoom;
 @property (readwrite, assign) BOOL suppressLoading;
 
 //-(BOOL) containsRect: (CGRect)bounds;

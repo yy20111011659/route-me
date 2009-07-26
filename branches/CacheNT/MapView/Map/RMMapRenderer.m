@@ -1,7 +1,7 @@
 //
 //  RMMapRenderer.m
 //
-// Copyright (c) 2008, Route-Me Contributors
+// Copyright (c) 2008-2009, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -45,17 +45,26 @@
 }
 - (void)tileImageDidLoad:(RMTileImage *)image;
 {
+	//not sure if these should stay [martin's cacheNT merge]
 	
+	//[[NSNotificationCenter defaultCenter] removeObserver:self];
+	//[super dealloc];
 }
 
+
+
+
+/// \bug no-op
 - (void)drawRect:(CGRect)rect
 { }
 
+/// \bug no-op
 - (void)setFrame:(CGRect)frame
 {
 }
 
 
+/// \bug no-op
 - (CALayer*) layer
 {
 	return nil;

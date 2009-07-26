@@ -1,7 +1,7 @@
 //
 //  RMTileImage.m
 //
-// Copyright (c) 2008, Route-Me Contributors
+// Copyright (c) 2008-2009, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -24,7 +24,7 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
-
+#import "RMGlobalConstants.h"
 #import "RMTileImage.h"
 #import "RMTileLoader.h"
 #import "RMPixel.h"
@@ -48,7 +48,7 @@
 	tile = _tile;
 	image = nil;
 	layer = nil;
-	screenLocation = CGRectMake(0, 0, 0, 0);
+	screenLocation = CGRectZero;
 		
 	return self;
 }
@@ -87,11 +87,11 @@
 
 - (void)dealloc
 {
-	NSLog(@"Removing tile image %d %d %d", tile.x, tile.y, tile.zoom);
 	// no point in trying to cancel here... if we were still
 	// loading then the cache would have a reference to us
 	// so we couldn't get into dealloc
 	//	[self cancelLoading];
+//	RMLog(@"Removing tile image %d %d %d", tile.x, tile.y, tile.zoom);
 	
 	[image release]; image = nil;
 	[layer release]; layer = nil;
@@ -104,6 +104,14 @@
 - (void)drawInRect:(CGRect)rect
 {
 	[image drawInRect:rect];
+/*	if (image != NULL)
+	{
+		CGContextRef context = UIGraphicsGetCurrentContext();
+
+		RMLog(@"image width = %f", CGImageGetWidth(image));
+		//		CGContextClipToRect(context, rect);
+		CGContextDrawImage(context, rect, image);
+	}*/
 }
 
 -(void)draw
@@ -111,18 +119,19 @@
 	[image drawInRect:screenLocation];
 }
 
-+ (RMTileImage*)imageWithTile: (RMTile) _tile fromURL: (NSString*)url
++ (RMTileImage*)imageForTile:(RMTile) _tile withURL: (NSString*)url
 {
 	return [[[RMTileImage alloc] initWithTile:_tile fromURL:url] autorelease];
 }
 
-+ (RMTileImage*)imageWithTile: (RMTile) _tile fromFile: (NSString*)filename
+
++ (RMTileImage*)imageForTile:(RMTile) _tile fromFile: (NSString*)filename
 {
 	return [[[self alloc] initWithTile: _tile fromFile:filename] autorelease];
 }
 
 
-- (NSString *)description;
+- (NSString *)description
 {
 	return [NSString stringWithFormat:@"((RMTileImage *)%p) %@: [%c%c%c] X=%d Y=%d zoom=%d",self,
 			key,
@@ -131,8 +140,17 @@
 			isLoaded?'*':' ',
 			tile.x<<(18-tile.zoom),
 			tile.y<<(18-tile.zoom),
-			tile.zoom]; 
+			tile.zoom];
 }
+
+/*
++ (RMTileImage*)imageForTile:(RMTile) tile withData: (NSData*)data
+{
+	RMTileImage *image = [[RMTileImage alloc] initWithTile:tile];
+	[image updateImageUsingData:data];
+	return [image autorelease];
+}
+*/
 
 -(void) cancelLoading
 {
@@ -144,7 +162,22 @@
 - (void)addToLayer:(CALayer *)superlayer
 {
 	[superlayer insertSublayer:layer atIndex:0];
+
+/* CacheNT merge - not sure about this
+	if (dataPending != nil)
+	{
+		[self updateImageUsingData:dataPending];
+		[dataPending release];
+		dataPending = nil;
+		
+//		RMLog(@"loadPendingData");
+	}
+	
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:RMResumeExpensiveOperations object:nil];
+
+	*/
 }
+
 
 - (void)setImage:(UIImage *)_image;
 {
@@ -167,6 +200,42 @@
 														object:self];
 	
 }
+
+
+/* CacheNT merge - not sure if these and setImage need to be merged
+ 
+- (void)updateImageUsingData: (NSData*) data
+{
+	if ([RMMapContents performExpensiveOperations] == NO)
+	{
+		//		RMLog(@"storing data for later loading");
+		[data retain];
+		[dataPending release];
+		dataPending = data;
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadPendingData:) name:RMResumeExpensiveOperations object:nil];
+		return;
+	}
+	
+	UIImage *tileImage = [[UIImage alloc] initWithData:data];
+	
+	if (layer == nil)
+	{
+		image = [tileImage retain];
+	}
+	else
+	{
+		CGImageRef cgImage = [tileImage CGImage];
+		layer.contents = (id)cgImage;
+	}
+	
+	[tileImage release];
+	
+	NSDictionary *d = [NSDictionary dictionaryWithObject:data forKey:@"data"];
+	[[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadedNotification
+														object:self
+													  userInfo:d];
+}
+ */
 
 - (BOOL)isLoaded
 {
@@ -199,14 +268,14 @@
 	{
 		layer = [[CALayer alloc] init];
 		layer.contents = nil;
-		layer.anchorPoint = CGPointMake(0.0f, 0.0f);
+		layer.anchorPoint = CGPointZero;
 		layer.bounds = CGRectMake(0, 0, screenLocation.size.width, screenLocation.size.height);
 		layer.position = screenLocation.origin;
 		layer.edgeAntialiasingMask = 0;
 		
-//		NSLog(@"location %f %f", screenLocation.origin.x, screenLocation.origin.y);
+//		RMLog(@"location %f %f", screenLocation.origin.x, screenLocation.origin.y);
 
-	//		NSLog(@"layer made");
+	//		RMLog(@"layer made");
 	}
 	
 	if (image != nil)
@@ -214,7 +283,7 @@
 		layer.contents = (id)[image CGImage];
 		[image release];
 		image = nil;
-//		NSLog(@"layer contents set");
+//		RMLog(@"layer contents set");
 	}
 	
 }
@@ -241,7 +310,8 @@ inline double fround(double n, unsigned d)
 
 - (void) setScreenLocation: (CGRect)newScreenLocation
 {
-	NSLog(@"location moving from %f %f to %f %f", screenLocation.origin.x, screenLocation.origin.y, newScreenLocation.origin.x, newScreenLocation.origin.y);
+
+//	RMLog(@"location moving from %f %f to %f %f", screenLocation.origin.x, screenLocation.origin.y, newScreenLocation.origin.x, newScreenLocation.origin.y);
 	screenLocation = newScreenLocation;
 
 //	screenLocation.origin.x = fround(screenLocation.origin.x,0);

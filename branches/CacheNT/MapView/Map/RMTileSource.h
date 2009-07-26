@@ -1,7 +1,7 @@
 //
 //  RMTileSource.h
 //
-// Copyright (c) 2008, Route-Me Contributors
+// Copyright (c) 2008-2009, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,9 @@
 @protocol RMTileSource <NSObject>
 
 -(RMTileImage *) tileImage: (RMTile) tile;
+-(NSString *) tileURL: (RMTile) tile;
+-(NSString *) tileFile: (RMTile) tile;
+-(NSString *) tilePath;
 -(id<RMMercatorToTileProjection>) mercatorToTileProjection;
 -(RMProjection*) projection;
 
@@ -47,5 +50,17 @@
 -(float) maxZoom;
 
 -(void) didReceiveMemoryWarning;
+
+-(NSString *)uniqueTilecacheKey;
+
+-(NSString *)shortName;
+-(NSString *)longDescription;
+-(NSString *)shortAttribution;
+-(NSString *)longAttribution;
+
+/*! \brief clear all images from the in-memory and on-disk image caches
+ \bug This method belongs on RMCachedTileSource, not on RMTileSource, because an RMTileSource doesn't have a cache.
+ */
+-(void)removeAllCachedImages;
 
 @end
