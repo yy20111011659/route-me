@@ -7,10 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "RMAbstractMecatorWebSource.h"
+#import "RMAbstractMercatorWebSource.h"
 
 
-@interface RMNoNameSource : RMAbstractMecatorWebSource <RMAbstractMecatorWebSource> {
+@interface RMNoNameSource : RMAbstractMercatorWebSource <RMAbstractMercatorWebSource> {
 
 }
 

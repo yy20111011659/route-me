@@ -1,7 +1,7 @@
 //
 //  RMMapViewDelegate.h
 //
-// Copyright (c) 2008, Route-Me Contributors
+// Copyright (c) 2008-2009, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,7 @@
 @class RMMapView;
 @class RMMarker;
 
+/// Use this for notifications of map panning, zooming, and taps on the RMMapView.
 @protocol RMMapViewDelegate 
 
 @optional
@@ -37,15 +38,16 @@
 - (void) beforeMapMove: (RMMapView*) map;
 - (void) afterMapMove: (RMMapView*) map ;
 
-- (void) beforeMapZoom: (RMMapView*) map byFactor: (double)zoomFactor near:(CGPoint) center;
-- (void) afterMapZoom: (RMMapView*) map byFactor: (double) zoomFactor near:(CGPoint) center;
+- (void) beforeMapZoom: (RMMapView*) map byFactor: (float)zoomFactor near:(CGPoint) center;
+- (void) afterMapZoom: (RMMapView*) map byFactor: (float) zoomFactor near:(CGPoint) center;
 
 - (void) doubleTapOnMap: (RMMapView*) map At: (CGPoint) point;
 - (void) singleTapOnMap: (RMMapView*) map At: (CGPoint) point;
 
 - (void) tapOnMarker: (RMMarker*) marker onMap: (RMMapView*) map;
 - (void) tapOnLabelForMarker: (RMMarker*) marker onMap: (RMMapView*) map;
-- (void) dragMarkerPosition: (RMMarker*) marker onMap: (RMMapView*)map position:(CGPoint)position;
+- (BOOL) mapView:(RMMapView *)map shouldDragMarker:(RMMarker *)marker withEvent:(UIEvent *)event;
+- (void) mapView:(RMMapView *)map didDragMarker:(RMMarker *)marker withEvent:(UIEvent *)event;
 
 - (void) afterMapTouch: (RMMapView*) map;
 

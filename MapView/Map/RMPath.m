@@ -1,7 +1,7 @@
 //
 //  RMPath.m
 //
-// Copyright (c) 2008, Route-Me Contributors
+// Copyright (c) 2008-2009, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -24,7 +24,7 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
-
+#import "RMGlobalConstants.h"
 #import "RMPath.h"
 #import "RMMapView.h"
 #import "RMMapContents.h"
@@ -34,8 +34,11 @@
 
 @implementation RMPath
 
-@synthesize origin;
+@synthesize origin, scaleLineWidth;
 
+#define kDefaultLineWidth 100
+
+/// \bug default values for lineWidth, lineColor, fillColor are hardcoded
 - (id) initWithContents: (RMMapContents*)aContents
 {
 	if (![super init])
@@ -45,7 +48,7 @@
 
 	path = CGPathCreateMutable();
 	
-	lineWidth = 100.0f;
+	lineWidth = kDefaultLineWidth;
 	drawingMode = kCGPathFillStroke;
 	lineColor = [UIColor blackColor];
 	fillColor = [UIColor redColor];
@@ -78,35 +81,43 @@
 }
 
 - (void) recalculateGeometry
-{
-	float scale = [[contents mercatorToScreenProjection] scale];
+{	
+	float scale = [[contents mercatorToScreenProjection] metersPerPixel];
+	
+	float scaledLineWidth = lineWidth;
+	if(!scaleLineWidth) {
+		renderedScale = [contents metersPerPixel];
+		scaledLineWidth *= renderedScale;
+	}
+	
 	// The bounds are actually in mercators...
+	/// \bug if "bounds are actually in mercators", shouldn't be using a CGRect
 	CGRect boundsInMercators = CGPathGetBoundingBox(path);
-	boundsInMercators.origin.x -= lineWidth;
-	boundsInMercators.origin.y -= lineWidth;
-	boundsInMercators.size.width += 2*lineWidth;
-	boundsInMercators.size.height += 2*lineWidth;
+	boundsInMercators.origin.x -= scaledLineWidth;
+	boundsInMercators.origin.y -= scaledLineWidth;
+	boundsInMercators.size.width += 2*scaledLineWidth;
+	boundsInMercators.size.height += 2*scaledLineWidth;
 	
-	CGRect pixelBounds = RMScaleCGRectAboutPoint(boundsInMercators, 1.0f / scale, CGPointMake(0,0));
+	CGRect pixelBounds = RMScaleCGRectAboutPoint(boundsInMercators, 1.0f / scale, CGPointZero);
 
-//	NSLog(@"old bounds: %f %f %f %f", self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
+//	RMLog(@"old bounds: %f %f %f %f", self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
 	self.bounds = pixelBounds;
-//	NSLog(@"new bounds: %f %f %f %f", self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
+//	RMLog(@"new bounds: %f %f %f %f", self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
 	
-//	NSLog(@"old position: %f %f", self.position.x, self.position.y);
+//	RMLog(@"old position: %f %f", self.position.x, self.position.y);
 	self.position = [[contents mercatorToScreenProjection] projectXYPoint: origin];
-//	NSLog(@"new position: %f %f", self.position.x, self.position.y);
+//	RMLog(@"new position: %f %f", self.position.x, self.position.y);
 
-//	NSLog(@"Old anchor point %f %f", self.anchorPoint.x, self.anchorPoint.y);
+//	RMLog(@"Old anchor point %f %f", self.anchorPoint.x, self.anchorPoint.y);
 	self.anchorPoint = CGPointMake(-pixelBounds.origin.x / pixelBounds.size.width,-pixelBounds.origin.y / pixelBounds.size.height);
-//	NSLog(@"new anchor point %f %f", self.anchorPoint.x, self.anchorPoint.y);
+//	RMLog(@"new anchor point %f %f", self.anchorPoint.x, self.anchorPoint.y);
 }
 
-- (void) addLineToXY: (RMXYPoint) point
+- (void) addLineToXY: (RMProjectedPoint) point
 {
-//	NSLog(@"addLineToXY %f %f", point.x, point.y);
+//	RMLog(@"addLineToXY %f %f", point.easting, point.northing);
 	
-	NSValue* value = [NSValue value:&point withObjCType:@encode(RMXYPoint)];
+	NSValue* value = [NSValue value:&point withObjCType:@encode(RMProjectedPoint)];
 
 	if (points == nil)
 	{
@@ -115,17 +126,17 @@
 		origin = point;
 	
 		self.position = [[contents mercatorToScreenProjection] projectXYPoint: origin];
-//		NSLog(@"screen position set to %f %f", self.position.x, self.position.y);
+//		RMLog(@"screen position set to %f %f", self.position.x, self.position.y);
 		CGPathMoveToPoint(path, NULL, 0.0f, 0.0f);
 	}
 	else
 	{
 		[points addObject:value];
 		
-		point.x = point.x - origin.x;
-		point.y = point.y - origin.y;
+		point.easting = point.easting - origin.easting;
+		point.northing = point.northing - origin.northing;
 		
-		CGPathAddLineToPoint(path, NULL, point.x, -point.y);
+		CGPathAddLineToPoint(path, NULL, point.easting, -point.northing);
 	
 		[self recalculateGeometry];
 	}
@@ -134,36 +145,40 @@
 
 - (void) addLineToScreenPoint: (CGPoint) point
 {
-	RMXYPoint mercator = [[contents mercatorToScreenProjection] projectScreenPointToXY: point];
+	RMProjectedPoint mercator = [[contents mercatorToScreenProjection] projectScreenPointToXY: point];
 	
 	[self addLineToXY: mercator];
 }
 
 - (void) addLineToLatLong: (RMLatLong) point
 {
-	RMXYPoint mercator = [[contents projection] latLongToPoint:point];
+	RMProjectedPoint mercator = [[contents projection] latLongToPoint:point];
 	
 	[self addLineToXY:mercator];
 }
 
 - (void)drawInContext:(CGContextRef)theContext
 {
-	renderedScale = [contents scale];
+	renderedScale = [contents metersPerPixel];
 	
-//	CGContextFillRect(theContext, self.bounds);//CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height));
+	float scale = 1.0f / [contents metersPerPixel];
 	
-	float scale = 1.0f / [contents scale];
+	float scaledLineWidth = lineWidth;
+	if(!scaleLineWidth) {
+		scaledLineWidth *= renderedScale;
+	}
 	
 	CGContextScaleCTM(theContext, scale, scale);
 	
 	CGContextBeginPath(theContext);
 	CGContextAddPath(theContext, path);
 	
-	CGContextSetLineWidth(theContext, lineWidth);
+	CGContextSetLineWidth(theContext, scaledLineWidth);
 	CGContextSetStrokeColorWithColor(theContext, [lineColor CGColor]);
 	CGContextSetFillColorWithColor(theContext, [fillColor CGColor]);
+	
+	// according to Apple's documentation, DrawPath closes the path if it's a filled style, so a call to ClosePath isn't necessary
 	CGContextDrawPath(theContext, drawingMode);
-	CGContextClosePath(theContext);
 }
 
 - (void) closePath
@@ -211,6 +226,7 @@
 {
     return fillColor; 
 }
+
 - (void)setFillColor:(UIColor *)aFillColor
 {
     if (fillColor != aFillColor) {
@@ -224,12 +240,14 @@
 {
 	[super zoomByFactor:zoomFactor near:pivot];
 	
-	float newScale = [contents scale];
-	if (newScale / renderedScale >= 2.0f
-		|| newScale / renderedScale <= 0.4f)
+	// don't redraw if the path hasn't been scaled very much
+	float newMPP = [contents metersPerPixel];
+	if (newMPP / renderedScale >= 2.0f
+		|| newMPP / renderedScale <= 0.5f)
 	{
 		[self setNeedsDisplay];
 	}
 }
+
 
 @end

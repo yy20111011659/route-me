@@ -1,7 +1,7 @@
 //
 //  RMMapContents.h
 //
-// Copyright (c) 2008, Route-Me Contributors
+// Copyright (c) 2008-2009, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -43,6 +43,13 @@ enum {
 	RMMapMinWidthBound		= 2
 };
 
+#define kDefaultInitialLatitude -33.858771
+#define kDefaultInitialLongitude 151.201596
+
+#define kDefaultMinimumZoomLevel 0.0
+#define kDefaultMaximumZoomLevel 25.0
+#define kDefaultInitialZoomLevel 13.0
+
 @class RMMarkerManager;
 @class RMProjection;
 @class RMMercatorToScreenProjection;
@@ -50,7 +57,7 @@ enum {
 @class RMTileLoader;
 @class RMMapRenderer;
 @class RMMapLayer;
-@class RMLayerSet;
+@class RMLayerCollection;
 @class RMMarker;
 @protocol RMMercatorToTileProjection;
 @protocol RMTileSource;
@@ -62,25 +69,39 @@ enum {
 @end
 
 
+/*! \brief The cartographic and data components of a map. Do not retain.
+ 
+ There is exactly one RMMapContents instance for each RMMapView instance.
+ 
+ \warning Do not retain an RMMapContents instance. Instead, ask the RMMapView for its contents 
+ when you need it. It is an error for an RMMapContents instance to exist without a view, and 
+ if you retain the RMMapContents, it can't go away when the RMMapView is released.
+ 
+ At some point, it's likely that RMMapContents and RMMapView will be merged into one class.
+ 
+ */
 @interface RMMapContents : NSObject
 {
-	// TODO: Also support NSView.
-	
-	// This is the underlying UIView's layer.
+	/// This is the underlying UIView's layer.
 	CALayer *layer;
 	
 	RMMarkerManager *markerManager;
+	/// subview for the image displayed while tiles are loading. Set its contents by providing your own "loading.png".
 	RMMapLayer *background;
-	RMLayerSet *overlay;
+	/// subview for markers and paths
+	RMLayerCollection *overlay;
 	
-	// Latlong is calculated dynamically from mercatorBounds.
+	/// (guess) the projection object to convert from latitude/longitude to meters.
+	/// Latlong is calculated dynamically from mercatorBounds.
 	RMProjection *projection;
 	
 	id<RMMercatorToTileProjection> mercatorToTileProjection;
 //	RMTileRect tileBounds;
 	
+	/// (guess) converts from projected meters to screen pixel coordinates
 	RMMercatorToScreenProjection *mercatorToScreenProjection;
 	
+	/// controls what images are used. Can be changed while the view is visible, but see http://code.google.com/p/route-me/issues/detail?id=12
 	id<RMTileSource> tileSource;
 	
 	RMTileImageSet *imagesOnScreen;
@@ -89,21 +110,24 @@ enum {
 	RMMapRenderer *renderer;
 	NSUInteger		boundingMask;
 	
-	// These should probably not be here. Instead equivalent functions
-	// should just fetch them when needed from the tileosurce.
-	float minZoom, maxZoom;
+	/// minimum zoom number allowed for the view. #minZoom and #maxZoom must be within the limits of #tileSource but can be stricter; they are clamped to tilesource limits if needed.
+	float minZoom;
+	/// maximum zoom number allowed for the view. #minZoom and #maxZoom must be within the limits of #tileSource but can be stricter; they are clamped to tilesource limits if needed.
+	float maxZoom;
 
 	id<RMTilesUpdateDelegate> tilesUpdateDelegate;
 }
 
 @property (readwrite) CLLocationCoordinate2D mapCenter;
-@property (readwrite) RMXYRect XYBounds;
+@property (readwrite) RMProjectedRect projectedBounds;
 @property (readonly)  RMTileRect tileBounds;
 @property (readonly)  CGRect screenBounds;
-@property (readwrite) float scale;
+@property (readwrite) float metersPerPixel;
+/// zoom level is clamped to range (minZoom, maxZoom)
 @property (readwrite) float zoom;
 
-@property (readwrite) float minZoom, maxZoom;
+@property (readwrite) float minZoom;
+@property (readwrite) float maxZoom;
 
 @property (readonly)  RMTileImageSet *imagesOnScreen;
 @property (readonly)  RMTileLoader *tileLoader;
@@ -118,35 +142,52 @@ enum {
 @property (readonly)  CALayer *layer;
 
 @property (retain, readwrite) RMMapLayer *background;
-@property (retain, readwrite) RMLayerSet *overlay;
+@property (retain, readwrite) RMLayerCollection *overlay;
 @property (retain, readonly)  RMMarkerManager *markerManager;
 @property (nonatomic, assign) id<RMTilesUpdateDelegate> tilesUpdateDelegate;
 @property (readwrite) NSUInteger boundingMask;
+/// The denominator in a cartographic scale like 1/24000, 1/50000, 1/2000000.
+@property (readonly)double scaleDenominator;
 
+- (id)initWithView: (UIView*) view;
+- (id)initWithView: (UIView*) view
+		tilesource:(id<RMTileSource>)newTilesource;
+/// designated initializer
+- (id)initWithView:(UIView*)view
+		tilesource:(id<RMTileSource>)tilesource
+	  centerLatLon:(CLLocationCoordinate2D)initialCenter
+		 zoomLevel:(float)initialZoomLevel
+	  maxZoomLevel:(float)maxZoomLevel
+	  minZoomLevel:(float)minZoomLevel
+   backgroundImage:(UIImage *)backgroundImage;
+
+/// \deprecated subject to removal at any moment after 0.5 is released
 - (id) initForView: (UIView*) view;
+/// \deprecated subject to removal at any moment after 0.5 is released
 - (id) initForView: (UIView*) view WithLocation:(CLLocationCoordinate2D)latlong;
-
-// Designated initialiser
+/// \deprecated subject to removal at any moment after 0.5 is released
 - (id)initForView:(UIView*)view WithTileSource:(id<RMTileSource>)tileSource WithRenderer:(RMMapRenderer*)renderer LookingAt:(CLLocationCoordinate2D)latlong;
 
 - (void)setFrame:(CGRect)frame;
 
-- (void) didReceiveMemoryWarning;
+- (void)handleMemoryWarningNotification:(NSNotification *)notification;
+- (void)didReceiveMemoryWarning;
 
 - (void)moveToLatLong: (CLLocationCoordinate2D)latlong;
-- (void)moveToXYPoint: (RMXYPoint)aPoint;
+- (void)moveToProjectedPoint: (RMProjectedPoint)aPoint;
 
 - (void)moveBy: (CGSize) delta;
 - (void)zoomByFactor: (double) zoomFactor near:(CGPoint) center;
 - (void)zoomInToNextNativeZoomAt:(CGPoint) pivot animated:(BOOL) animated;
-- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) center animated:(BOOL) animated;
-- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) center animated:(BOOL) animated withCallback:(id<RMMapContentsAnimationCallback>)callback;
+- (void)zoomOutToNextNativeZoomAt:(CGPoint) pivot animated:(BOOL) animated; 
+- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center animated:(BOOL) animated;
+- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center animated:(BOOL) animated withCallback:(id<RMMapContentsAnimationCallback>)callback;
 
 - (void)zoomInToNextNativeZoomAt:(CGPoint) pivot;
+- (void)zoomOutToNextNativeZoomAt:(CGPoint) pivot; 
 - (float)adjustZoomForBoundingMask:(float)zoomFactor;
 - (void)adjustMapPlacementWithScale:(float)aScale;
-- (void)setZoomBounds:(float)aMinZoom maxZoom:(float)aMaxZoom;
-- (float)getNextNativeZoomFactor;
+- (float)nextNativeZoomFactor;
 
 - (void) drawRect: (CGRect) rect;
 
@@ -155,15 +196,18 @@ enum {
 //-(void)removeLayer: (id<RMMapLayer>) layer;
 
 - (CGPoint)latLongToPixel:(CLLocationCoordinate2D)latlong;
-- (CGPoint)latLongToPixel:(CLLocationCoordinate2D)latlong withScale:(float)aScale;
+- (CGPoint)latLongToPixel:(CLLocationCoordinate2D)latlong withMetersPerPixel:(float)aScale;
+- (RMTilePoint)latLongToTilePoint:(CLLocationCoordinate2D)latlong withMetersPerPixel:(float)aScale;
 - (CLLocationCoordinate2D)pixelToLatLong:(CGPoint)aPixel;
-- (CLLocationCoordinate2D)pixelToLatLong:(CGPoint)aPixel withScale:(float)aScale;
+- (CLLocationCoordinate2D)pixelToLatLong:(CGPoint)aPixel withMetersPerPixel:(float)aScale;
 
 - (void)zoomWithLatLngBoundsNorthEast:(CLLocationCoordinate2D)ne SouthWest:(CLLocationCoordinate2D)se;
-- (void)zoomWithRMMercatorRectBounds:(RMXYRect)bounds;
+- (void)zoomWithRMMercatorRectBounds:(RMProjectedRect)bounds;
 
-- (RMLatLongBounds) getScreenCoordinateBounds;
-- (RMLatLongBounds) getCoordinateBounds:(CGRect) rect;
+/// returns the smallest bounding box containing the entire screen
+- (RMSphericalTrapezium) latitudeLongitudeBoundingBoxForScreen;
+/// returns the smallest bounding box containing a rectangular region of the screen
+- (RMSphericalTrapezium) latitudeLongitudeBoundingBoxFor:(CGRect) rect;
 
 - (void) tilesUpdatedRegion:(CGRect)region;
 
@@ -173,34 +217,50 @@ enum {
 - (void) multiTouchEnded;
 
 
+
+/*! \brief Clear all images from the #tileSource's caching system.
+ 
+ All of the existing RMTileSource implementations load tile images via NSURLRequest. It's possible that some images will remain in your
+ application's shared URL cache. If you need to clear this out too, use this call:
+ \code
+ [[NSURLCache sharedURLCache] removeAllCachedResponses];
+ \endcode
+ */
+-(void)removeAllCachedImages;
+
 @end
 
+/// Appears to be the methods actually implemented by RMMapContents, but generally invoked on RMMapView, and forwarded to the contents object.
 @protocol RMMapContentsFacade
 
 @optional
 - (void)moveToLatLong: (CLLocationCoordinate2D)latlong;
-- (void)moveToXYPoint: (RMXYPoint)aPoint;
+- (void)moveToProjectedPoint: (RMProjectedPoint)aPoint;
 
 - (void)moveBy: (CGSize) delta;
 - (void)zoomByFactor: (double) zoomFactor near:(CGPoint) center;
 - (void)zoomInToNextNativeZoomAt:(CGPoint) pivot animated:(BOOL) animated;
-- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) center animated:(BOOL) animated;
+
+- (void)zoomOutToNextNativeZoomAt:(CGPoint) pivot animated:(BOOL) animated; 
+- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center animated:(BOOL) animated;
 
 - (void)zoomInToNextNativeZoomAt:(CGPoint) pivot;
+- (void)zoomOutToNextNativeZoomAt:(CGPoint) pivot; 
 - (float)adjustZoomForBoundingMask:(float)zoomFactor;
 - (void)adjustMapPlacementWithScale:(float)aScale;
-- (void)setZoomBounds:(float)aMinZoom maxZoom:(float)aMaxZoom;
 
 - (CGPoint)latLongToPixel:(CLLocationCoordinate2D)latlong;
-- (CGPoint)latLongToPixel:(CLLocationCoordinate2D)latlong withScale:(float)aScale;
+- (CGPoint)latLongToPixel:(CLLocationCoordinate2D)latlong withMetersPerPixel:(float)aScale;
 - (CLLocationCoordinate2D)pixelToLatLong:(CGPoint)aPixel;
-- (CLLocationCoordinate2D)pixelToLatLong:(CGPoint)aPixel withScale:(float)aScale;
+- (CLLocationCoordinate2D)pixelToLatLong:(CGPoint)aPixel withMetersPerPixel:(float)aScale;
 
 - (void)zoomWithLatLngBoundsNorthEast:(CLLocationCoordinate2D)ne SouthWest:(CLLocationCoordinate2D)se;
-- (void)zoomWithRMMercatorRectBounds:(RMXYRect)bounds;
+- (void)zoomWithRMMercatorRectBounds:(RMProjectedRect)bounds;
 
-- (RMLatLongBounds) getScreenCoordinateBounds;
-- (RMLatLongBounds) getCoordinateBounds:(CGRect) rect;
+/// \deprecated name change pending after 0.5
+- (RMSphericalTrapezium) latitudeLongitudeBoundingBoxForScreen;
+/// \deprecated name change pending after 0.5
+- (RMSphericalTrapezium) latitudeLongitudeBoundingBoxFor:(CGRect) rect;
 
 - (void) tilesUpdatedRegion:(CGRect)region;
 

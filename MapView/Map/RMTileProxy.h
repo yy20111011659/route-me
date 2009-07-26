@@ -1,7 +1,7 @@
 //
 //  RMTileProxy.h
 //
-// Copyright (c) 2008, Route-Me Contributors
+// Copyright (c) 2008-2009, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,10 +29,13 @@
 #import "RMTile.h"
 
 @class RMTileImage;
+/// Has only class methods defined, to return generic "error image", "not-yet-loaded image", and proxy images.
+/// \bug This functionality belongs on the tile source, and should not be freestanding.
 @interface RMTileProxy : NSObject {
 	
 }
 
+/// \deprecated hardcoded to return nil
 +(RMTileImage*) bestProxyFor: (RMTile) t;
 +(RMTileImage*) errorTile;
 +(RMTileImage*) loadingTile;

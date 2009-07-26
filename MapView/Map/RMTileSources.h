@@ -1,5 +1,5 @@
 //
-//  RMSource.h
+//  RMTileSource.h
 //  MapView
 //
 //  Created by samurai on 3/21/09.

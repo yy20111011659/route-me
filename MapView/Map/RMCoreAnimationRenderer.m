@@ -1,7 +1,7 @@
 //
 //  RMCoreAnimationRenderer.m
 //
-// Copyright (c) 2008, Route-Me Contributors
+// Copyright (c) 2008-2009, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -24,7 +24,7 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
-
+#import "RMGlobalConstants.h"
 #import "RMCoreAnimationRenderer.h"
 #import <QuartzCore/QuartzCore.h>
 #import "RMTile.h"
@@ -44,7 +44,7 @@
 	//       is called. Be careful using any of methods - they might return
 	//       strange data.
 	layer = [[CAScrollLayer layer] retain];
-	layer.anchorPoint = CGPointMake(0.0f, 0.0f);
+	layer.anchorPoint = CGPointZero;
 	layer.masksToBounds = YES;
 	// If the frame is set incorrectly here, it will be fixed when setRenderer is called in RMMapContents
 	layer.frame = [content screenBounds];
@@ -117,10 +117,10 @@
 
 - (void)tileAdded: (RMTile) tile WithImage: (RMTileImage*) image
 {
-//	NSLog(@"tileAdded: %d %d %d at %f %f %f %f", tile.x, tile.y, tile.zoom, image.screenLocation.origin.x, image.screenLocation.origin.y,
+//	RMLog(@"tileAdded: %d %d %d at %f %f %f %f", tile.x, tile.y, tile.zoom, image.screenLocation.origin.x, image.screenLocation.origin.y,
 //		  image.screenLocation.size.width, image.screenLocation.size.height);
 	
-//	NSLog(@"tileAdded");
+//	RMLog(@"tileAdded");
 	[image makeLayer];
 	CALayer *sublayer = [image layer];
 	sublayer.delegate = self;
@@ -143,17 +143,12 @@
 {
 	RMTileImage *image = [[content imagesOnScreen] imageWithTile:tile];
 	
-//	NSLog(@"tileRemoved: %d %d %d at %f %f %f %f", tile.x, tile.y, tile.zoom, image.screenLocation.origin.x, image.screenLocation.origin.y,
+//	RMLog(@"tileRemoved: %d %d %d at %f %f %f %f", tile.x, tile.y, tile.zoom, image.screenLocation.origin.x, image.screenLocation.origin.y,
 //		  image.screenLocation.size.width, image.screenLocation.size.height);
 	[image cancelLoading];
 	[[image layer] removeFromSuperlayer];
  }
 */
-
--(NSString*) description
-{
-	return @"CoreAnimation map renderer";
-}
 
 - (void)setFrame:(CGRect)frame
 {

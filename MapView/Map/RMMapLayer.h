@@ -1,7 +1,7 @@
 //
 //  RMMapLayer.h
 //
-// Copyright (c) 2008, Route-Me Contributors
+// Copyright (c) 2008-2009, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -41,6 +41,6 @@
 #import "RMFoundation.h"
 @protocol RMMovingMapLayer
 
-@property (assign, nonatomic) RMXYPoint location;
+@property (assign, nonatomic) RMProjectedPoint projectedLocation;
 
 @end

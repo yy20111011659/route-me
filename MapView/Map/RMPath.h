@@ -1,7 +1,7 @@
 //
 //  RMPath.h
 //
-// Copyright (c) 2008, Route-Me Contributors
+// Copyright (c) 2008-2009, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -34,24 +34,26 @@
 @class RMMapContents;
 @class RMMapView;
 
+/*! \brief buggy, incomplete, untested; overlays paths/polygons on map
+ */
 @interface RMPath : RMMapLayer
 {
 	NSMutableArray *points;
 
-	// This is the first point.
-	RMXYPoint origin;
+	/// This is the first point.
+	RMProjectedPoint origin;
 	
-	// The color of the line and polygon's fill.
+	/// The color of the line, or the outline if a polygon
 	UIColor *lineColor;
+	/// The color of polygon's fill.
 	UIColor *fillColor;
 	
 	CGMutablePathRef path;
 
-	// Width of the line.
+	/// Width of the line, units unknown; pixels maybe?
 	float lineWidth;
 	
-	// Drawing mode of the path. Choices are:
-	/* 
+	/*! Drawing mode of the path; Choices are
 	 kCGPathFill,
 	 kCGPathEOFill,
 	 kCGPathStroke,
@@ -69,23 +71,21 @@
 - (id) initForMap: (RMMapView*)map;
 
 @property CGPathDrawingMode drawingMode;
-// This is the position on the map of the first point.
 
 @property float lineWidth;
-@property (nonatomic, assign) RMXYPoint origin;
+@property BOOL	scaleLineWidth;
+@property (nonatomic, assign) RMProjectedPoint origin;
 @property (readwrite, assign) UIColor *lineColor;
 @property (readwrite, assign) UIColor *fillColor;
 
-- (void) addLineToXY: (RMXYPoint) point;
+- (void) addLineToXY: (RMProjectedPoint) point;
 - (void) addLineToScreenPoint: (CGPoint) point;
 - (void) addLineToLatLong: (RMLatLong) point;
 
-// This closes the path, connecting the last point to the first.
-// After this point, no further points can be added to the path.
+/// This closes the path, connecting the last point to the first.
+/// After this action, no further points can be added to the path.
+/// There is no requirement that a path be closed.
 - (void) closePath;
 
-//- (void) setPoints: (NSArray*) arr;
-
-//- (void) moveBy: (RMXYSize) delta;
 
 @end
