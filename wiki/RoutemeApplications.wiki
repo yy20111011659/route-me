@@ -101,3 +101,13 @@ This app shows webcam images from over 9000 webcams worldview. It also shows the
 [http://groups.google.com/group/route-me-map/web/en_image_05.jpg]
 
 [http://www.worldviewmobileapp.com/ WorldView Homepage]
+
+= Old Map App =
+
+Old Map App allows an iPhone user to explore the effects of time on geography and urban development.
+
+The application displays layers of geo-referenced historical maps projected onto a modern coordinate system, so that the same location can be compared over time. Layers can be faded, adjusted, and explored freely. If the user is located within the region of the historical map, the user's position will be mapped on the old maps to the position of the compass indicator.
+
+[http://oldmapapp.com/oldMapAppScreencast-poster.jpg]
+
+[http://oldmapapp.com/ Old Map App Homepage]
