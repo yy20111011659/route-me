@@ -66,12 +66,15 @@
 - (void)removeFromMap;
 {
 	[[layer superlayer] removeAllAnimations];
+	[layer removeFromSuperlayer];
+	/*
 #warning implement this cleaner 	
 	[layer retain];
 #define LAYER_CLEANUP_DELAY	0.01
 	[layer performSelector:@selector(removeFromSuperlayer) withObject:nil
 				afterDelay:LAYER_CLEANUP_DELAY];
 	[layer performSelector:@selector(release) withObject:nil afterDelay:LAYER_CLEANUP_DELAY+1];
+	 */
 }
 
 - init
