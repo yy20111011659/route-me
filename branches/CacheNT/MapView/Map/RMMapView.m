@@ -310,8 +310,6 @@
 	}
 }
 
-
-
 /// \bug touchesCancelled should clean up, not pass event to markers
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
 {
@@ -370,6 +368,7 @@
 		}
 	}
 	
+		
 	if (touch.tapCount == 1) 
 	{
 		CALayer* hit = [self.contents.overlay hitTest:[touch locationInView:self]];
@@ -383,7 +382,6 @@
 				if (_delegateHasTapOnMarker) {
 					[delegate tapOnMarker:(RMMarker*)hit onMap:self];
 				}
-
 			} else if (superlayer != nil && [superlayer isKindOfClass: [RMMarker class]]) {
 				if (_delegateHasTapOnLabelForMarker) {
 					[delegate tapOnLabelForMarker:(RMMarker*)superlayer onMap:self];
@@ -395,6 +393,7 @@
 		}
 		
 	}
+
 	if (_delegateHasAfterMapTouch) [delegate afterMapTouch: self];
 
 //		[self.contents recalculateImageSet];
@@ -432,6 +431,7 @@
 	}
 	
 	RMGestureDetails newGesture = [self gestureDetails:[event allTouches]];
+	
 	if (enableDragging && newGesture.numTouches == lastGesture.numTouches)
 	{
 		CGSize delta;
@@ -454,6 +454,7 @@
 		}
 		
 	}
+	
 	lastGesture = newGesture;
 }
 

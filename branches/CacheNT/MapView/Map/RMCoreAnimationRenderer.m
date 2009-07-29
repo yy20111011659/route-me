@@ -35,14 +35,15 @@
 
 @implementation RMCoreAnimationRenderer
 
-
 - (id) initWithContent: (RMMapContents *)_contents
 {
 	if (![super initWithContent:_contents])
 		return nil;
+	
 	// NOTE: RMMapContents may still be initialising when this function
 	//       is called. Be careful using any of methods - they might return
 	//       strange data.
+
 	layer = [[CAScrollLayer layer] retain];
 	layer.anchorPoint = CGPointZero;
 	layer.masksToBounds = YES;
@@ -122,7 +123,9 @@
 	
 //	RMLog(@"tileAdded");
 	[image makeLayer];
+	
 	CALayer *sublayer = [image layer];
+	
 	sublayer.delegate = self;
 	if ([image isLoaded]){
 		inserting = YES;

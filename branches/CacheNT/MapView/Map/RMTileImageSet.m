@@ -300,6 +300,7 @@ NSLog(@"In %s, removing tile at {%u, %u}, %hi.", __FUNCTION__, tile.x, tile.y, t
 -(void)addTile:(RMTile)tile at:(CGRect) screenLocation
 {
 	//	RMLog(@"addTile: %d %d", tile.x, tile.y);
+	
 	RMTileImage *dummyTile = [RMTileImage dummyTile:tile];
 	RMTileImage *tileImage = [images member:dummyTile];
 	
@@ -460,5 +461,6 @@ NSLog(@"In %s, removing tile at {%u, %u}, %hi.", __FUNCTION__, tile.x, tile.y, t
 		[image cancelLoading];
 	}
 }
+
 
 @end

@@ -38,7 +38,7 @@
 - (void) beforeMapMove: (RMMapView*) map;
 - (void) afterMapMove: (RMMapView*) map ;
 
-- (void) beforeMapZoom: (RMMapView*) map byFactor: (float)zoomFactor near:(CGPoint) center;
+- (void) beforeMapZoom: (RMMapView*) map byFactor: (float) zoomFactor near:(CGPoint) center;
 - (void) afterMapZoom: (RMMapView*) map byFactor: (float) zoomFactor near:(CGPoint) center;
 
 - (void) doubleTapOnMap: (RMMapView*) map At: (CGPoint) point;

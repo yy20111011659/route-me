@@ -309,7 +309,6 @@
 	[self setBackground:nil];
 	[layer release];
 	[markerManager release];
-
 	[super dealloc];
 }
 
@@ -346,7 +345,6 @@
 	[imagesOnScreen moveBy:delta];
 	[tileLoader moveBy:delta];
 	[overlay moveBy:delta];
-
 	[overlay correctPositionOfAllSublayers];
 //	[renderer setNeedsDisplay];
 }
@@ -465,6 +463,7 @@
 - (void)zoomByFactor:(float)zoomFactor near:(CGPoint)pivot animated:(BOOL)animated withCallback:(id<RMMapContentsAnimationCallback>)callback
 {
 	zoomFactor = [self adjustZoomForBoundingMask:zoomFactor];
+	
 	if (animated)
 	{
 		float zoomDelta = log2f(zoomFactor);
@@ -564,7 +563,6 @@
 - (void)zoomInToNextNativeZoomAt:(CGPoint) pivot animated:(BOOL) animated
 {
 	// Calculate rounded zoom
-
 	float newZoom = fmin(floorf([self zoom] + 1.0), [self maxZoom]);
 	RMLog(@"[self minZoom] %f [self zoom] %f [self maxZoom] %f newzoom %f", [self minZoom], [self zoom], [self maxZoom], newZoom);
 	
@@ -797,7 +795,6 @@
 
 }
 
-
 -(void)setMaxZoom:(float)newMaxZoom
 {
 	maxZoom = fmin(newMaxZoom, [self.tileSource maxZoom]);
@@ -895,7 +892,6 @@
 		RMProjectedRect zoomRect;
 		RMProjectedPoint myOrigin = [projection latLongToPoint:sw];
 		//Default is with scale = 2.0 mercators/pixel
-
 		zoomRect.size.width = [self screenBounds].size.width * 2.0;
 		zoomRect.size.height = [self screenBounds].size.height * 2.0;
 		myOrigin.easting = myOrigin.easting - (zoomRect.size.width / 2);
@@ -906,7 +902,6 @@
 	else
 	{
 		//convert ne/sw into RMMercatorRect and call zoomWithBounds
-
 		float pixelBuffer = kZoomRectPixelBuffer;
 		CLLocationCoordinate2D midpoint = {
 			.latitude = (ne.latitude + sw.latitude) / 2,
@@ -919,7 +914,6 @@
 		//Create the new zoom layout
 		RMProjectedRect zoomRect;
 		//Default is with scale = 2.0 mercators/pixel
-
 		zoomRect.size.width = [self screenBounds].size.width * 2.0;
 		zoomRect.size.height = [self screenBounds].size.height * 2.0;
 		if((myPoint.easting / ([self screenBounds].size.width)) < (myPoint.northing / ([self screenBounds].size.height)))
