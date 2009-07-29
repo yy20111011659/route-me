@@ -80,7 +80,6 @@ typedef NSImage UIImage;
 //- (id) increaseLoadingPriority;
 //- (id) decreaseLoadingPriority;
 
-
 + (RMTileImage*)imageForTile: (RMTile) tile withURL: (NSString*)url;
 + (RMTileImage*)imageForTile: (RMTile) tile fromFile: (NSString*)filename;
 // Need to re-implement this after CacheNT Merge
@@ -92,6 +91,7 @@ typedef NSImage UIImage;
 - (void)moveBy:(CGSize) delta;
 - (void)zoomByFactor:(double) zoomFactor near:(CGPoint) center;
 - (void)makeLayer;
+
 - (void)cancelLoading;
 - (BOOL)isLoaded;
 // unplugs the image's layer from the superlayer

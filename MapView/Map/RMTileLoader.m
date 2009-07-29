@@ -89,13 +89,11 @@ NSString * const RMMapImageLoadedNotification = @"RMMapImageLoadedNotification";
 			  targetZoom, content.minZoom, content.maxZoom);
 	if (contained == NO)
 	{
-
 		//		RMLog(@"reassembling because its not contained");
 	}
 	
 	if (targetZoom != loadedZoom)
 	{
-
 		//		RMLog(@"reassembling because target zoom = %f, loaded zoom = %d", targetZoom, loadedZoom);
 	}
 	

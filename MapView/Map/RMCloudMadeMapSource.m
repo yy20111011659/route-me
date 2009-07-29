@@ -52,7 +52,7 @@
 		else
 			cloudmadeStyleNumber = kDefaultCloudMadeStyleNumber;
 	}
-	return self;
+		return self;
 }
 
 - (NSString*) tileURL: (RMTile) tile

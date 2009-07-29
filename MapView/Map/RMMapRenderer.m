@@ -51,9 +51,6 @@
 	//[super dealloc];
 }
 
-
-
-
 /// \bug no-op
 - (void)drawRect:(CGRect)rect
 { }

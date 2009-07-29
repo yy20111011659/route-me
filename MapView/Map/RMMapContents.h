@@ -240,7 +240,6 @@ enum {
 - (void)moveBy: (CGSize) delta;
 - (void)zoomByFactor: (double) zoomFactor near:(CGPoint) center;
 - (void)zoomInToNextNativeZoomAt:(CGPoint) pivot animated:(BOOL) animated;
-
 - (void)zoomOutToNextNativeZoomAt:(CGPoint) pivot animated:(BOOL) animated; 
 - (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center animated:(BOOL) animated;
 

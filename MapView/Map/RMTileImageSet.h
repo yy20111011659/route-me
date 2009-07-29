@@ -47,6 +47,7 @@
 @interface RMTileImageSet : NSObject {
 	IBOutlet id delegate;
 	id<RMTileSource> tileSource;
+
 	NSCountedSet *images;
 }
 

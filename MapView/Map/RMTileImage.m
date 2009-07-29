@@ -128,7 +128,6 @@
 	return [[[RMTileImage alloc] initWithTile:_tile fromURL:url] autorelease];
 }
 
-
 + (RMTileImage*)imageForTile:(RMTile) _tile fromFile: (NSString*)filename
 {
 	return [[[self alloc] initWithTile: _tile fromFile:filename] autorelease];
@@ -212,7 +211,7 @@
 {
 	if ([RMMapContents performExpensiveOperations] == NO)
 	{
-		//		RMLog(@"storing data for later loading");
+//		RMLog(@"storing data for later loading");
 		[data retain];
 		[dataPending release];
 		dataPending = data;
@@ -289,7 +288,6 @@
 		image = nil;
 //		RMLog(@"layer contents set");
 	}
-	
 }
 
 - (void)moveBy: (CGSize) delta
@@ -314,7 +312,6 @@ inline double fround(double n, unsigned d)
 
 - (void) setScreenLocation: (CGRect)newScreenLocation
 {
-
 //	RMLog(@"location moving from %f %f to %f %f", screenLocation.origin.x, screenLocation.origin.y, newScreenLocation.origin.x, newScreenLocation.origin.y);
 	screenLocation = newScreenLocation;
 

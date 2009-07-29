@@ -127,10 +127,10 @@
 
 - (RMTilePoint) project: (RMProjectedPoint)aPoint atZoom:(float)zoom
 {
-	float nz = [self normaliseZoom:zoom];
-	float limit = [self limitFromNormalisedZoom:nz];
+	float normalised_zoom = [self normaliseZoom:zoom];
+	float limit = [self limitFromNormalisedZoom:normalised_zoom];
 	
-	return [self projectInternal:aPoint normalisedZoom:nz limit:limit];
+	return [self projectInternal:aPoint normalisedZoom:normalised_zoom limit:limit];
 }
 
 - (RMTileRect) projectRect: (RMProjectedRect)aRect atZoom:(float)zoom
