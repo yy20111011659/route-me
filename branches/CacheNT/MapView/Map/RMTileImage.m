@@ -65,6 +65,7 @@
 
 - (void)removeFromMap;
 {
+	[[layer superlayer] removeAllAnimations];
 #warning implement this cleaner 	
 	[layer retain];
 #define LAYER_CLEANUP_DELAY	0.01

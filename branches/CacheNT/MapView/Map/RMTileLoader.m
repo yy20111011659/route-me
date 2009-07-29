@@ -116,7 +116,7 @@ NSString * const RMMapImageLoadedNotification = @"RMMapImageLoadedNotification";
 	RMTileRect newTileRect = [content tileBounds];
 
 
-#if 1	
+#if 0	
 #warning big hammer bugfix	
 	/* this does fix the bug but is a bit of overkill */
 	[[content imagesOnScreen] removeAllTiles];	
