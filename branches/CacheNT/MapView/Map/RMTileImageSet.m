@@ -35,7 +35,7 @@
 
 #import "RMMercatorToTileProjection.h"
 
-#define NSLog(a,...)
+//#define NSLog(a,...)
 
 @implementation RMTileImageSet
 
@@ -68,17 +68,19 @@
 
 -(void)removeTile:(RMTile)tile forImage:(RMTileImage *)image
 {
+	//NSLog(@"removeTile forImage");
+
 	NSAssert(!RMTileIsDummy(tile), @"attempted to remove dummy tile");
 	if (RMTileIsDummy(tile))
 	{
-		RMLog(@"attempted to remove dummy tile...??");
+		//RMLog(@"attempted to remove dummy tile...??");
 		return;
 	}
 	
 	RMTileImage *dummyTile = [RMTileImage dummyTile:tile];
 	if ([images countForObject:dummyTile] == 1)
 	{
-		NSLog(@"Nuking: %@",[image description]);
+		//NSLog(@"Nuking: %@",[image description]);
 		[image setMarked:YES];
 		[image cancelLoading];
 		[image removeFromMap];
@@ -90,6 +92,8 @@
 
 -(void) removeTile: (RMTile) tile
 {
+	//NSLog(@"removeTile: tile");
+
 	if (RMTileIsDummy(tile))
 	{
 		NSLog(@"attempted to remove dummy tile...??");
@@ -99,7 +103,7 @@
 	if ([images countForObject:dummyTile] == 1)
 	{
 		RMTileImage *image = [self imageWithTile:tile];
-		NSLog(@"Nuking: %@",[image description]);
+		//NSLog(@"Nuking: %@",[image description]);
 		[image setMarked:YES];
 		[image cancelLoading];
 		[image removeFromMap];
@@ -109,6 +113,8 @@
 
 -(void) removeTiles: (RMTileRect)rect
 {	
+	NSLog(@"TileImageSet removeTiles: rect");
+
 	RMTileRect roundedRect = RMTileRectRound(rect);
 	// The number of tiles we'll load in the vertical and horizontal directions
 	int tileRegionWidth = (int)roundedRect.size.width;
@@ -179,7 +185,7 @@
 			x >> imgDz > maxx >> rectDz || x >> imgDz < minx >> rectDz ||
 			y >> imgDz > maxy >> rectDz || y >> imgDz < miny >> rectDz
 		) {
-NSLog(@"In %s, removing tile at {%u, %u}, %hi.", __FUNCTION__, tile.x, tile.y, tile.zoom);
+//NSLog(@"In %s, removing tile at {%u, %u}, %hi.", __FUNCTION__, tile.x, tile.y, tile.zoom);
 			[self removeTile:tile forImage:img];
 		} else 
 		// we should want to prune other images if the current image matches the
@@ -196,7 +202,7 @@ NSLog(@"In %s, removing tile at {%u, %u}, %hi.", __FUNCTION__, tile.x, tile.y, t
 #warning choosing to prune any tile that doesn't belong with this zoom
 		if (dz != 0) {
 			// tile doesn't match our zoom, delete it
-			NSLog(@"Expecting nuke: %@",[img description]);
+			//NSLog(@"Expecting nuke: %@",[img description]);
 			[self removeTile:tile forImage:img];
 		}
 #endif		

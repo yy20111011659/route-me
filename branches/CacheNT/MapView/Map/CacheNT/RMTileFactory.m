@@ -18,6 +18,12 @@
 // the workhorse tile factory instance underlying the class interface
 static RMTileFactory *factory = nil;
 
+// Notifications when tile loading has commenced and ended
+#define kTILES_BEGAN_LOADING_NOTIFICATION @"kTILES_BEGAN_LOADING_NOTIFICATION"
+#define kTILES_LOADED_NOTIFICATION @"kTILES_LOADED_NOTIFICATION"
+
+
+
 // some convenience defines so that our defaults registration vector can be read
 // without getting confused halfway to hell and back
 
@@ -53,6 +59,24 @@ static RMTileFactory *factory = nil;
 	[dispatchTable removeObjectForKey:key];
 	[primaryCache addObject:entry];
 	[image release];
+	
+	
+	int imagesLoadingCount = [dispatchTable count];
+	if(!currentlyLoading && imagesLoadingCount != 0)
+	{
+		currentlyLoading = YES;
+		[[NSNotificationCenter defaultCenter] postNotification:	
+		 [NSNotification notificationWithName:kTILES_BEGAN_LOADING_NOTIFICATION object:nil]];
+
+		
+	}
+	else if(currentlyLoading && [dispatchTable count] == 0)
+	{
+		currentlyLoading = NO;
+		[[NSNotificationCenter defaultCenter] postNotification:	
+		 [NSNotification notificationWithName:kTILES_LOADED_NOTIFICATION object:nil]];
+		
+	}
 }
 
 - (void)cacheEntryDidFail:(RMCacheEntry *)entry;
@@ -80,6 +104,9 @@ static RMTileFactory *factory = nil;
 			[dispatchTable removeObjectForKey:key];
 		}
 	} 
+	
+	//RMLog(@"removeClient, pending item count is %d", [dispatchTable count]);
+
 }
 
 
@@ -101,6 +128,8 @@ static RMTileFactory *factory = nil;
 	} else {
 		[dispatchTable setObject:client forKey:key];
 	}
+	
+	//RMLog(@"addClient, pending item count is %d", [dispatchTable count]);
 }
 
 - (UIImage *)_imageForKey:(NSString *)key client:(id <RMTileClient>)client
@@ -118,6 +147,7 @@ static RMTileFactory *factory = nil;
 - init;
 {
 	if ((self = [super init])){
+		currentlyLoading = NO;
 		primaryCache = [RMPrimaryCache new];
 		secondaryCache = [RMSecondaryCache new];
 		dispatchTable = [NSMutableDictionary new];

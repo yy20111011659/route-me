@@ -51,6 +51,7 @@
 	layer.frame = [content screenBounds];
 	layer.delegate = self;
 	
+	//lastSublayerCount = [layer.sublayers count];
 	/*
 #if 0	
 	NSMutableDictionary *customActions = [NSMutableDictionary dictionaryWithDictionary:[layer actions]];
@@ -60,6 +61,18 @@
 #endif
 	 */
 	
+	// get a mutable version of the current actions dictionary
+	customActions=[[NSMutableDictionary dictionaryWithDictionary:[layer actions]] retain];
+	
+	//RMLog(@"actions are %@", customActions);
+	
+	// add the new action for sublayers
+	[customActions setObject:[NSNull null] forKey:@"sublayers"];
+	
+	// set theLayer actions to the updated dictionary
+	layer.actions=customActions;
+	
+	incomingLayers = [[NSMutableSet alloc] initWithCapacity:4];
 	
 	return self;
 }
@@ -85,35 +98,61 @@
 - (id<CAAction>)actionForLayer:(CALayer *)theLayer
                         forKey:(NSString *)key
 {
-	if (!animating && animate && inserting) {
-		if ([key isEqualToString:@"sublayers"] || 
+	
+	//if(theLayer == layer) RMLog(@"master layer");
+	//RMLog(@"key is %@", key);
+	//if(0){
+	//if (!animating && animate && inserting) {
+	//	if ([key isEqualToString:@"sublayers"] || 
 			//	[key isEqualToString:kCAOnOrderIn] || 
 			//	[key isEqualToString:kCAOnOrderOut] || 
 			//	([key isEqualToString:@"onLayout"] && theLayer == layer) ||
-			0
-			)
+	//		0
+	//
+	 
+	//)
+	/*
+//	if ( [key isEqualToString:@"kCAOnOrderIn"] )
+	if ( (!animating && animate && inserting) && [key isEqualToString:@"sublayers"] )
 		{
-		//	NSLog(@"allowed key: %@ for: %@",key,[theLayer description]);
-			if (!fadein) {
-				// this is copied anyway when we hand it in, so a
-				// bit more memory overhead but probably better
-				fadein = [[CATransition alloc] init];
-				fadein.duration = 0.4;
-				fadein.delegate = self;
-				fadein.type = kCATransitionFade;
-			}
-			return fadein;
+
+		//	NSLog(@"incomingLayers has %d members and %@ the current layer", [incomingLayers count], [incomingLayers containsObject:theLayer]?@"contains" : @"does not contain");
+		//	if([layer.sublayers count] > lastSublayerCount)
+		//	{
+
+			
+				//NSLog(@"sublayers count %d", [layer.sublayers count]);
+				//NSLog(@"allowed key: %@ for: %@",key,[theLayer description]);
+				if (!fadein) {
+					// this is copied anyway when we hand it in, so a
+					// bit more memory overhead but probably better
+					fadein = [[CATransition alloc] init];
+					fadein.duration = 1.4;
+					fadein.delegate = self;
+					fadein.type = kCATransitionFade;
+				}
+				//lastSublayerCount = [layer.sublayers count];
+				return fadein;
+			//}
+			//else lastSublayerCount = [layer.sublayers count];
+
 		}
-	}
+//	}
+	 */
+
 	// this kills the ongoing search for an animation, we don't want anything
 	return (id)[NSNull null];
 }
+ 
 
 - (void)tileImageDidLoad:(RMTileImage *)image;
 {
+	[incomingLayers addObject:image.layer];
 	inserting = YES;
 	[layer insertSublayer:image.layer atIndex:0];
 	inserting = NO;
+	[incomingLayers removeObject:image.layer];
+
 }
 
 - (void)tileAdded: (RMTile) tile WithImage: (RMTileImage*) image
@@ -126,12 +165,18 @@
 	
 	CALayer *sublayer = [image layer];
 	
+	sublayer.actions = customActions;
+	[incomingLayers addObject:sublayer];
+
 	sublayer.delegate = self;
 	if ([image isLoaded]){
 		inserting = YES;
 		[layer insertSublayer:sublayer atIndex:0];
 		inserting = NO;
 	}
+	
+	[incomingLayers removeObject:sublayer];
+	
 //	[layer addSublayer:sublayer];
 }
 

@@ -88,6 +88,7 @@
 - (void)removeSublayer:(CALayer *)layer
 {
 	@synchronized(sublayers) {
+		//RMLog(@"RMLayerCollection removeSublayer");
 		[sublayers removeObject:layer];
 		[layer removeFromSuperlayer];
 	}
@@ -96,6 +97,7 @@
 - (void)removeSublayers:(NSArray *)layers
 {
 	@synchronized(sublayers) {
+		//RMLog(@"RMLayerCollection removeSublayers count of %d",[layers count]);
 		for(CALayer *aLayer in layers)
 		{
 			[sublayers removeObject:aLayer];
@@ -160,7 +162,7 @@
 	}
 }
 
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center
+- (void)zoomByFactor: (double) zoomFactor near:(CGPoint) center
 {
 @synchronized(sublayers) {
 	for (id layer in sublayers)

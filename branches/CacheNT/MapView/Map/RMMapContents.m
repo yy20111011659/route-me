@@ -75,7 +75,7 @@
 
 - (id)initWithView: (UIView*) view
 {	
-	LogMethod();
+	//LogMethod();
 	CLLocationCoordinate2D here;
 	here.latitude = kDefaultInitialLatitude;
 	here.longitude = kDefaultInitialLongitude;
@@ -92,7 +92,7 @@
 - (id)initWithView: (UIView*) view
 		tilesource:(id<RMTileSource>)newTilesource
 {	
-	LogMethod();
+	//LogMethod();
 	CLLocationCoordinate2D here;
 	here.latitude = kDefaultInitialLatitude;
 	here.longitude = kDefaultInitialLongitude;
@@ -114,7 +114,7 @@
 	  minZoomLevel:(float)minZoomLevel
    backgroundImage:(UIImage *)backgroundImage
 {
-	LogMethod();
+	//LogMethod();
 	if (![super init])
 		return nil;
 
@@ -168,7 +168,7 @@
 											   object:nil];
 
 	
-	RMLog(@"Map contents initialised. view: %@ tileSource %@ renderer %@", newView, tileSource, renderer);
+	//RMLog(@"Map contents initialised. view: %@ tileSource %@ renderer %@", newView, tileSource, renderer);
 	return self;
 }
 
@@ -184,7 +184,7 @@
 - (id) initForView: (UIView*) view WithLocation:(CLLocationCoordinate2D)latlong
 {
 	WarnDeprecated();
-	LogMethod();
+	//LogMethod();
 	id<RMTileSource> _tileSource = [[RMOpenStreetMapSource alloc] init];
 	RMMapRenderer *_renderer = [[RMCoreAnimationRenderer alloc] initWithContent:self];
 	
@@ -252,7 +252,7 @@
 												 name:UIApplicationDidReceiveMemoryWarningNotification 
 											   object:nil];
 	
-	RMLog(@"Map contents initialised. view: %@ tileSource %@ renderer %@", view, tileSource, renderer);
+	//RMLog(@"Map contents initialised. view: %@ tileSource %@ renderer %@", view, tileSource, renderer);
 	
 	return self;
 }
@@ -295,7 +295,7 @@
 
 -(void) dealloc
 {
-	LogMethod();
+	//LogMethod();
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[imagesOnScreen cancelLoading];
 	[self setRenderer:nil];
@@ -564,7 +564,7 @@
 {
 	// Calculate rounded zoom
 	float newZoom = fmin(floorf([self zoom] + 1.0), [self maxZoom]);
-	RMLog(@"[self minZoom] %f [self zoom] %f [self maxZoom] %f newzoom %f", [self minZoom], [self zoom], [self maxZoom], newZoom);
+	//RMLog(@"[self minZoom] %f [self zoom] %f [self maxZoom] %f newzoom %f", [self minZoom], [self zoom], [self maxZoom], newZoom);
 	
 	float factor = exp2f(newZoom - [self zoom]);
 	[self zoomByFactor:factor near:pivot animated:animated];
@@ -574,7 +574,7 @@
 - (void)zoomOutToNextNativeZoomAt:(CGPoint) pivot animated:(BOOL) animated {
 	// Calculate rounded zoom
 	float newZoom = fmax(ceilf([self zoom] - 1.0), [self minZoom]);
-	RMLog(@"[self minZoom] %f [self zoom] %f [self maxZoom] %f newzoom %f", [self minZoom], [self zoom], [self maxZoom], newZoom);
+	//RMLog(@"[self minZoom] %f [self zoom] %f [self maxZoom] %f newzoom %f", [self minZoom], [self zoom], [self maxZoom], newZoom);
 	
 	float factor = exp2f(newZoom - [self zoom]);
 	[self zoomByFactor:factor near:pivot animated:animated];
@@ -934,7 +934,7 @@
 		}
 		myOrigin.easting = myOrigin.easting - (zoomRect.size.width / 2);
 		myOrigin.northing = myOrigin.northing - (zoomRect.size.height / 2);
-		RMLog(@"Origin is calculated at: %f, %f", [projection pointToLatLong:myOrigin].latitude, [projection pointToLatLong:myOrigin].longitude);
+		//RMLog(@"Origin is calculated at: %f, %f", [projection pointToLatLong:myOrigin].latitude, [projection pointToLatLong:myOrigin].longitude);
 		/*It gets all messed up if our origin is lower than the lowest place on the map, so we check.
 		 if(myOrigin.northing < -19971868.880409)
 		 {

@@ -41,6 +41,7 @@
 
 	content = _contents;
 	animate = YES;
+	inserting = NO;
 	return self;
 }
 - (void)tileImageDidLoad:(RMTileImage *)image;
