@@ -102,12 +102,12 @@ This app shows webcam images from over 9000 webcams worldview. It also shows the
 
 [http://www.worldviewmobileapp.com/ WorldView Homepage]
 
-= Old Map App =
+= Historic Earth =
 
-Old Map App allows an iPhone user to explore the effects of time on geography and urban development.
+Drawing on the archives of Historic Map Works, the world's largest online collection of geo-coded historic maps, Historic Earth allows you to virtually travel back through time in many U.S. cities and states. Geo-coding allows the maps to closely overlay a modern map, so that the same locations can be compared in various time periods.
 
-The application displays layers of geo-referenced historical maps projected onto a modern coordinate system, so that the same location can be compared over time. Layers can be faded, adjusted, and explored freely. If the user is located within the region of the historical map, the user's position will be mapped on the old maps to the position of the compass indicator.
+Launching with 32,000 high-resolution maps covering several cities and states (including NYC, Boston, Philadelphia, Washington DC, Maine, and most of the Midwest) the collection will be expanding to 130,000 soon after launch as more of the Historic Map Works archive is made available.
 
-[http://oldmapapp.com/oldMapAppScreencast-poster.jpg]
+[http://emergencestudios.com/images/screens/manhattan-1850.jpg]
 
-[http://oldmapapp.com/ Old Map App Homepage]
+[http://emergencestudios.com/historicearth Historic Earth Site]
