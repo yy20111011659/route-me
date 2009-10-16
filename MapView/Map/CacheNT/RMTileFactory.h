@@ -23,6 +23,7 @@
 	RMPrimaryCache *primaryCache;
 	RMSecondaryCache *secondaryCache;
 	NSMutableDictionary *dispatchTable;
+	BOOL currentlyLoading;
 }
 
 // you request an image from the tile factory, and if it is able to vend it

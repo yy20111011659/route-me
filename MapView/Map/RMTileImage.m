@@ -32,7 +32,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-#define NSLog(a,...) 
+//#define NSLog(a,...) 
 
 @implementation RMTileImage
 
@@ -65,8 +65,19 @@
 
 - (void)removeFromMap;
 {
-	[[layer superlayer] removeAllAnimations];
+//	NSLog(@"removeFromMap");
+ [[layer superlayer] removeAllAnimations];
+	[CATransaction begin];
+	[CATransaction setValue:[NSNumber numberWithFloat:0.0f]
+					 forKey:kCATransactionAnimationDuration];
+	
+	[CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
+	
 	[layer removeFromSuperlayer];
+	
+	
+	[CATransaction commit];
+	
 	/*
 #warning implement this cleaner 	
 	[layer retain];
@@ -74,6 +85,7 @@
 	[layer performSelector:@selector(removeFromSuperlayer) withObject:nil
 				afterDelay:LAYER_CLEANUP_DELAY];
 	[layer performSelector:@selector(release) withObject:nil afterDelay:LAYER_CLEANUP_DELAY+1];
+	 
 	 */
 }
 

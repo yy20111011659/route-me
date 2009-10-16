@@ -35,6 +35,10 @@
 	CALayer *layer;
 	BOOL animating;
 	CATransition *fadein;
+	int lastSublayerCount;
+	NSMutableDictionary *customActions;
+	
+	NSMutableSet *incomingLayers;
 }
 
 @end
