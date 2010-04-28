@@ -72,3 +72,10 @@ Camel case the parameter names, with initial letter lowercase. The preposition "
 Class names are always uppercase, and are always defined in files with the same name as the class. 
 
 Use bindings-compatible accessors. If the "setXyzzy" method exists, it must modify the "xyzzy" instance variable of its class.
+
+Following Apple's convention in using spaces in method names.  
+correct:
+- (void)drawRect:(CGRect)aRect
+
+incorrect:
+-(void) drawRect: (CGRect) aRect
