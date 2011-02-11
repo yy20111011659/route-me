@@ -2,3 +2,5 @@
 
 
 This project has moved to Github.  Please use the [https://github.com/route-me/route-me/issues new issue tracker]
+
+Or, view the [http://code.google.com/p/route-me/issues/list old tracker] (no longer maintained)
