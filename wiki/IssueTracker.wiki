@@ -1,0 +1,4 @@
+#summary Issue tracker now on Github
+
+
+This project has moved to Github.  Please use the [https://github.com/route-me/route-me/issues new issue tracker]
