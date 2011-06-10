@@ -77,19 +77,6 @@ You can visit SnapMyLife [http://www.snapmylife.com here]
 
 And get the iPhone application [http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=284016143&mt=8 here]
 
-= iTopoMaps =
-
-Real 1:24k USGS Topographic Maps cached locally on your iPhone!  
-
-iTopoMaps uses the route-me library with a custom tile server, and make extensive use
-of markers for waypoints and features of interest.
-
-For more information, visit [http://www.itopomaps.com iTopoMaps.com]
-
-[http://www.itopomaps.com/pics/photo-2.jpg]
-[http://www.itopomaps.com/pics/photo-1.10a.jpg]
-[http://www.itopomaps.com/pics/photo-1.10b.jpg]
-
 = [http://code.quazie.net/journey/ Journey Through the Center of the Earth] =
 
 A project designed to allow you to find out whats on the other side of the earth.
