@@ -1,0 +1,58 @@
+# Introduction #
+
+If you embed MapView into your application, a default caching strategy will be used. This page explains what you may do if you need more control about caching, for instance in tight memory situations.
+
+
+# Details #
+
+The default cache structure of MapView without customization currently consists of a memory cache of capacity 32, followed by a sqlite-powered database cache.
+
+To set up your own cache configuration, all you need to do is create a property list file named `routeme.plist` in your project and add it to the target you are building. The property list should be a dictionary with at least the key `caches`. The contents of `caches` is an array of dictionaries, each setting up one layer of your cache.
+
+An entry in the `caches`-array must contain the key `type`. Valid values for the cache type are `memory-cache`, `disk-cache` and `db-cache`. Further keys may be used to set parameters for the corresponding cache.
+
+The available parameters as of now are:
+
+  * `capacity` (Number) - maximum number of tiles in the cache. For the database cache, 0 means unlimited capacity.
+  * `strategy` (String) - [db-cache only] purging strategy. Possible values are LRU (least recently used) and FIFO.
+  * `useCachesDirectory` (Boolean) - [db-cache only] should the database be places in the caches directory. Currently defunct.
+  * `minimalPurge` (Number) - [db-cache only] smallest number of tiles to be tossed during a purge operation
+
+As an example, this is a `routeme.plist` file that sets up the default cache structure, but with a minimal purge count of 10:
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>caches</key>
+	<array>
+		<dict>
+			<key>type</key>
+			<string>memory-cache</string>
+			<key>capacity</key>
+			<integer>16</integer>
+		</dict>
+		<dict>
+			<key>type</key>
+			<string>db-cache</string>
+			<key>capacity</key>
+			<integer>1000</integer>
+			<key>strategy</key>
+			<string>LRU</string>
+			<key>useCachesDirectory</key>
+			<false/>
+			<key>minimalPurge</key>
+			<integer>10</integer>
+		</dict>
+	</array>
+</dict>
+</plist>
+```
+
+The default strategy of the database cache is currently LRU. The reason why it is possible to switch to FIFO (which is not the most intelligent cache purge strategy) is that for LRU, each read access to the db cache is followed by a write access to update the last used date. The FIFO strategy works without this penalty and as such may be favorable in some scenarios.
+
+
+## A word of caution ##
+
+With this mechanism, it is easily possible to set up cache structures that degrade MapView's performance considerably. If you are unsure, just stick to the defaults and do not set up a `routeme.plist`.
